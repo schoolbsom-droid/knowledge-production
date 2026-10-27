@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>منصتي · المهارات الرقمية</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Noto+Naskh+Arabic:wght@500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><div class="wrap"><div class="brand">منصتي<small>DIGITAL SKILLS · MIDDLE SCHOOL</small></div><div class="date" id="date"></div></div></header>
+<section class="hero"><div class="wrap">
+  <h1 id="hello">أهلًا، أ. ابتسام</h1><div class="rule"></div>
+  <p id="today"></p>
+</div></section>
+
+<main class="wrap">
+  <div class="search"><input id="q" placeholder="ابحثي عن وحدة، أو فصل، أو ملف…" autocomplete="off"><span>بحث سريع</span></div>
+  <div class="res" id="r"></div>
+
+  <div class="lbl">المراحل الدراسية</div>
+  <div class="grades" id="grades"></div>
+
+  <div class="feature">
+    <div><h3>الإنتاج المعرفي</h3><p>مكتبة الدروس والاختبارات المعدّة للطالبات، في صفحة مستقلة يمكن مشاركتها</p></div>
+    <a class="btn" href="knowledge.html">الدخول إلى المكتبة</a>
+  </div>
+
+  <div class="lbl">جدول الحصص</div>
+  <div class="tblwrap"><table id="tt"></table></div>
+
+  <div class="lbl">مجلد المنصة</div>
+  <div class="shelf">
+    <a href="https://drive.google.com/drive/folders/1-4R_EDJlnsgabfpBEPAEqoTQOI6FJCgt" target="_blank" rel="noopener"><b>كل الملفات</b><span class="arrow">Google Drive ←</span></a>
+  </div>
+</main>
+<footer>المتوسطة الحادية والعشرون · المهارات الرقمية</footer>
+
+<script src="palettes.js"></script>
+<script src="data.js"></script>
+<script>
+const D = 'https://drive.google.com/drive/folders/', F = 'https://drive.google.com/file/d/';
+const ar = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+
+// date: Hijri, Arabic-Indic digits, day/month/year
+(() => {
+  const now = new Date();
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {day: 'numeric', month: 'numeric', year: 'numeric'})
+    .formatToParts(now).map(x => [x.type, x.value]));
+  const wd = new Intl.DateTimeFormat('ar', {weekday: 'long'}).format(now);
+  date.textContent = `${wd} · ${ar(p.day)}‏/${ar(p.month)}‏/${ar(parseInt(p.year))}هـ`; // RLM keeps the day rightmost
+  const h = now.getHours();
+  hello.textContent = (h < 12 ? 'صباح الخير' : 'مساء الخير') + '، أ. ابتسام';
+  const di = now.getDay(); // 0 = Sunday
+  const list = di <= 4 ? TT[di] : [];
+  today.textContent = list.length
+    ? 'حصص اليوم: ' + list.map(s => `${s.c}${s.note ? ' (' + s.note + ')' : ''} — ${s.p.length > 1 ? 'الحصتان' : 'الحصة'} ${s.p.map(ar).join(' و')}`).join(' · ')
+    : 'لا حصص اليوم، إجازة سعيدة';
+  window.TODAY = di;
+})();
+
+// grade cards
+grades.innerHTML = GRADES.map((g, i) => `
+  <div class="g" style="--c:var(--c${i + 1})">
+    <div class="num">${ar(i + 1)}</div><h3>${g.name}</h3>
+    <div class="mut">${ar(g.units.length)} وحدات · ${ar(g.classes)} فصول</div>
+    <ul>${g.units.map((u, k) => `<li><a href="${D + u[1]}" target="_blank" rel="noopener">${u[0]}</a><em>الوحدة ${['الأولى','الثانية','الثالثة','الرابعة'][k]}</em></li>`).join('')}</ul>
+    <div class="docs">
+      <a href="${D + g.books}" target="_blank" rel="noopener">الكتب الإلكترونية</a>
+      <a href="${F + g.dist}" target="_blank" rel="noopener">توزيع المادة</a>
+    </div>
+  </div>`).join('');
+
+// timetable: 5 days × 7 periods, double periods merged
+(() => {
+  const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'];
+  const pn = ['الأولى', 'الثانية', 'الثالثة', 'الرابعة', 'الخامسة', 'السادسة', 'السابعة'];
+  let h = '<tr><th></th>' + pn.map(x => `<th>${x}</th>`).join('') + '</tr>';
+  days.forEach((d, di) => {
+    h += `<tr${di === TODAY ? ' class="today"' : ''}><th>${d}</th>`;
+    for (let p = 1; p <= 7; p++) {
+      const s = TT[di].find(x => x.p[0] === p);
+      if (s) { h += `<td colspan="${s.p.length}" class="on${s.note ? ' act' : ''}">${s.c}${s.note ? `<small>${s.note}</small>` : ''}</td>`; p += s.p.length - 1; }
+      else h += '<td></td>';
+    }
+    h += '</tr>';
+  });
+  tt.innerHTML = h;
+})();
+
+// search
+const IDX = GRADES.flatMap(g => [
+  ...g.units.map(u => [u[0] + ' · ' + g.name, D + u[1]]),
+  ['الكتب الإلكترونية · ' + g.name, D + g.books],
+  ['توزيع المادة · ' + g.name, F + g.dist]]);
+q.oninput = () => {
+  const v = q.value.trim();
+  const hits = v ? IDX.filter(x => x[0].includes(v)) : [];
+  r.innerHTML = !v ? '' : hits.length ? hits.map(x => `<a href="${x[1]}" target="_blank" rel="noopener">${x[0]}</a>`).join('') : '<span class="mut">لا توجد نتائج</span>';
+};
+</script>
+</body>
+</html>

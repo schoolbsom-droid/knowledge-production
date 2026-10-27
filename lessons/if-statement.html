@@ -1,0 +1,532 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>اختبار المعاملات في بايثون</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: one centered question card at a time; the code block is the hero of each card, with a live "slot" line the student writes into; results screen ends with the if-writing rules and operator reference */
+:root{
+  --bg:#F3F6F5; --surface:#FFFFFF; --ink:#16302C; --muted:#5B706B; --line:#D5E0DC;
+  --accent:#0B7A66; --accent-soft:#DCEFEA; --hl:#FFD54A;
+  --ok:#1F8A4C; --ok-soft:#E1F3E7; --bad:#C2413A; --bad-soft:#FBE5E3;
+  --code-bg:#10231F; --code-fg:#E7F2EE; --slot-bg:#24423B;
+  --tk-fn:#7FD3FF; --tk-kw:#FF9EC7; --tk-num:#FFD27A; --tk-bool:#9EF0B8; --tk-op:#FFFFFF; --tk-str:#C9B8FF;
+  --bulb-off:#C9D3D0; --glow:#FFC83D; --wire:#16302C;
+  --c-math:#3D6FD8; --c-cmp:#B4590E; --c-logic:#8A3FC0;
+  --f-display:"Readex Pro","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --f-body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",Consolas,"Courier New",monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1917; --surface:#15231F; --ink:#E3EEEA; --muted:#93A8A2; --line:#26403A;
+  --accent:#3CC3A6; --accent-soft:#163A33; --hl:#FFD54A;
+  --ok:#4CC27E; --ok-soft:#143525; --bad:#F07A72; --bad-soft:#3E1D1B;
+  --code-bg:#0A1311; --slot-bg:#1D3631; --bulb-off:#3A4B47; --glow:#FFD25A; --wire:#C9DAD5;
+  --c-math:#7FA4FF; --c-cmp:#F0A35C; --c-logic:#C38AF0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1917; --surface:#15231F; --ink:#E3EEEA; --muted:#93A8A2; --line:#26403A;
+  --accent:#3CC3A6; --accent-soft:#163A33; --hl:#FFD54A;
+  --ok:#4CC27E; --ok-soft:#143525; --bad:#F07A72; --bad-soft:#3E1D1B;
+  --code-bg:#0A1311; --slot-bg:#1D3631; --bulb-off:#3A4B47; --glow:#FFD25A; --wire:#C9DAD5;
+  --c-math:#7FA4FF; --c-cmp:#F0A35C; --c-logic:#C38AF0; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.7;direction:rtl;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+code,.mono{font-family:var(--f-mono);direction:ltr;unicode-bidi:isolate}
+
+header{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-size:13px;color:var(--muted);letter-spacing:.02em}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,5vw,34px);line-height:1.3;margin:0;text-wrap:balance}
+h1 .op{font-family:var(--f-mono);background:linear-gradient(transparent 60%,var(--hl) 60%);padding:0 4px;color:var(--ink);direction:ltr;unicode-bidi:isolate}
+.lead{margin:0;color:var(--muted);max-width:62ch}
+.lead code{color:var(--ink);font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:14px;color:var(--muted);margin-top:4px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+.dots{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
+.dot{height:8px;border-radius:4px;background:var(--line);position:relative;overflow:hidden}
+.dot::after{content:"";position:absolute;inset:0;background:var(--cat);opacity:.35}
+.dot.cur{outline:2px solid var(--cat);outline-offset:2px}
+.dot.ok::after{background:var(--ok);opacity:1}
+.dot.bad::after{background:var(--bad);opacity:1}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px clamp(16px,4vw,28px);display:flex;flex-direction:column;gap:16px}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:8px 12px;flex-wrap:wrap}
+.tags{display:flex;gap:8px;flex-wrap:wrap}
+.tag{font-size:13px;font-weight:700;color:var(--cat);border:1.5px solid var(--cat);border-radius:999px;padding:2px 12px}
+.kind{font-size:13px;color:var(--muted);background:var(--bg);border-radius:999px;padding:2px 12px}
+.count{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.qtext{font-family:var(--f-display);font-weight:500;font-size:clamp(18px,3.6vw,21px);line-height:1.6;margin:0;text-wrap:pretty}
+.qtext code{font-size:.9em;background:var(--accent-soft);padding:1px 6px;border-radius:5px}
+
+pre.code,pre.mini{margin:0;direction:ltr;text-align:left;background:var(--code-bg);color:var(--code-fg);font-family:var(--f-mono);overflow-x:auto}
+pre.code{border-radius:12px;padding:14px 18px;font-size:17px;line-height:1.8}
+pre.mini{border-radius:8px;padding:6px 12px;font-size:15px;line-height:1.7;white-space:pre}
+.code .ln{color:#5E7A73;user-select:none;margin-right:14px}
+.tk-fn{color:var(--tk-fn)} .tk-kw{color:var(--tk-kw);font-weight:700} .tk-num{color:var(--tk-num)} .tk-bool{color:var(--tk-bool)} .tk-op{color:var(--tk-op);font-weight:700} .tk-str{color:var(--tk-str)}
+.ind{color:#4F6B64}
+.slot{display:inline-block;min-width:6ch;padding:0 8px;border-radius:6px;border:2px dashed var(--hl);background:var(--slot-bg);color:var(--hl);font-weight:700;white-space:pre}
+.slot.empty{color:#7C968F}
+.slot.ok{border-style:solid;border-color:var(--tk-bool);color:var(--tk-bool)}
+.slot.bad{border-style:solid;border-color:#FF8A80;color:#FF8A80;text-decoration:line-through}
+
+figure{margin:0;border:1px dashed var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px}
+figure svg{width:100%;max-width:380px;height:auto;display:block}
+figcaption{font-size:14px;color:var(--muted);text-align:center}
+.w{stroke:var(--wire);stroke-width:3;fill:none;stroke-linecap:round}
+.term{fill:var(--surface);stroke:var(--wire);stroke-width:2.5}
+.lever{stroke:var(--accent);stroke-width:4;stroke-linecap:round}
+.lbl{fill:var(--ink);font-family:var(--f-mono);font-weight:700;font-size:15px}
+.sub{fill:var(--muted);font-family:var(--f-body);font-size:12px}
+.bulb{fill:var(--bulb-off);stroke:var(--wire);stroke-width:2.5;transition:fill .4s}
+.rays{stroke:var(--glow);stroke-width:3;stroke-linecap:round;opacity:0;transition:opacity .4s}
+.lit .bulb,.revealed.on .bulb.q{fill:var(--glow)}
+.lit .rays,.revealed.on .rays.q{opacity:1}
+.qmark{fill:var(--ink);font-family:var(--f-display);font-weight:700;font-size:18px;transition:opacity .3s}
+.revealed .qmark{opacity:0}
+.door{fill:var(--accent-soft);stroke:var(--wire);stroke-width:2.5;transition:transform .5s;transform-box:fill-box;transform-origin:right center}
+.revealed.on .door{transform:scaleX(.25)}
+.res-txt{opacity:0;transition:opacity .4s}
+.revealed .res-txt{opacity:1}
+.fill-ink{fill:var(--ink)} .fill-surf{fill:var(--surface);stroke:var(--wire);stroke-width:2.5}
+.stroke-ok{stroke:var(--ok);stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* multiple choice */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.opts{grid-template-columns:1fr}}
+.opt{display:flex;align-items:center;gap:12px;text-align:right;background:var(--bg);color:var(--ink);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;cursor:pointer;transition:border-color .15s,background .15s;min-width:0}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:focus-visible,.tile:focus-visible,.key:focus-visible,.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.opt:disabled{cursor:default}
+.opt .k{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--surface);border:1.5px solid var(--line);font-weight:700;font-size:15px}
+.opt .v{min-width:0;flex:1}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.right .k{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.wrong .k{background:var(--bad);border-color:var(--bad);color:var(--surface)}
+.opt.dim{opacity:.55}
+
+/* typing */
+.write{display:flex;flex-direction:column;gap:10px}
+.write label{font-size:14px;color:var(--muted)}
+.inrow{display:flex;gap:10px;flex-wrap:wrap}
+.inrow input{flex:1 1 240px;min-width:0;font-family:var(--f-mono);font-size:18px;font-weight:700;direction:ltr;text-align:left;padding:10px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
+.inrow input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.inrow input:disabled{opacity:.8}
+.pad{display:flex;flex-wrap:wrap;gap:6px;direction:ltr}
+.key{font-family:var(--f-mono);font-weight:700;font-size:16px;min-width:40px;height:38px;padding:0 8px;border-radius:8px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.key:hover{border-color:var(--accent)}
+
+/* building with tiles */
+.tiles{display:flex;flex-wrap:wrap;gap:8px;direction:ltr}
+.tiles.lines{flex-direction:column;align-items:stretch}
+.tile{font-family:var(--f-mono);font-weight:700;font-size:16px;padding:6px 14px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;text-align:left;white-space:pre}
+.tile:hover:not(:disabled){border-color:var(--accent)}
+.tile.used{opacity:.3}
+.tile:disabled{cursor:default}
+.built{min-height:50px;border:2px dashed var(--line);border-radius:10px;padding:6px;display:flex;flex-wrap:wrap;gap:6px;direction:ltr;align-items:center}
+.built.lines{flex-direction:column;align-items:stretch}
+.built .ph{color:var(--muted);font-size:14px;direction:rtl;padding:0 6px;text-align:right}
+
+.fb{border-radius:12px;padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.fb.ok{background:var(--ok-soft)} .fb.bad{background:var(--bad-soft)}
+.fb strong{font-family:var(--f-display);font-size:17px}
+.fb.ok strong{color:var(--ok)} .fb.bad strong{color:var(--bad)}
+.fb p{margin:0}
+.fb code{font-weight:700}
+.out{font-size:15px}
+.out code{background:var(--code-bg);color:var(--tk-bool);padding:1px 8px;border-radius:5px}
+
+.rule{border:1.5px solid var(--line);border-radius:12px;padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.rule b{font-family:var(--f-display);font-size:15px}
+.rule ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.rule li{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.rule li pre{flex:0 1 auto;min-width:0;max-width:100%}
+.rule .m{flex:none;width:22px;height:22px;margin-top:6px;border-radius:50%;display:inline-grid;place-items:center;font-size:12px;font-weight:700;color:var(--surface)}
+.rule .m.ok{background:var(--ok)} .rule .m.bad{background:var(--bad)}
+.rule .bad-c{opacity:.6;text-decoration:line-through;text-decoration-color:#FF8A80}
+.rule small{color:var(--muted);font-size:14px;align-self:center}
+
+.actions{display:flex;justify-content:flex-start;gap:10px;flex-wrap:wrap}
+.btn{font:inherit;font-family:var(--f-display);font-weight:500;font-size:16px;border-radius:10px;padding:10px 22px;cursor:pointer;border:1.5px solid var(--accent);background:var(--accent);color:var(--surface)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ghost{background:transparent;color:var(--accent)}
+
+.score{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.ring{width:120px;height:120px;flex:none}
+.ring circle{fill:none;stroke-width:12}
+.ring .bgc{stroke:var(--line)} .ring .fgc{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .8s}
+.ring text{fill:var(--ink);font-family:var(--f-display);font-weight:700;font-size:26px}
+.msg h2{font-family:var(--f-display);margin:0;font-size:24px}
+.msg p{margin:0;color:var(--muted)}
+.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:480px){.cats{grid-template-columns:1fr}}
+.cat{border:1px solid var(--line);border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;gap:6px}
+.cat b{color:var(--cat);font-size:14px}
+.bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--cat)}
+.cat span{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.review{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.review li{display:flex;align-items:center;gap:10px;font-size:15px;padding:8px 12px;border-radius:10px;background:var(--bg)}
+.review .st{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:var(--surface);font-size:13px;font-weight:700}
+.review .st.ok{background:var(--ok)} .review .st.bad{background:var(--bad)}
+.review button{margin-inline-start:auto;font:inherit;font-size:14px;background:none;border:none;color:var(--accent);cursor:pointer;text-decoration:underline}
+h3{font-family:var(--f-display);font-size:19px;margin:6px 0 0}
+.sheet{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+.sheet table{border-collapse:collapse;width:100%;min-width:500px;font-size:15px}
+.sheet th,.sheet td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--line);vertical-align:middle}
+.sheet th{font-size:13px;color:var(--muted);font-weight:500;background:var(--bg)}
+.sheet tr.grp td{font-weight:700;color:var(--cat);background:var(--bg);font-size:14px}
+.sheet td code{font-weight:700;font-size:15px;white-space:pre}
+.sheet td.ok code{color:var(--ok)}
+.sheet td.bad code{color:var(--bad);text-decoration:line-through}
+.sheet td.ex code{font-weight:500;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">المهارات الرقمية · الصف الثاني المتوسط · بايثون</div>
+    <h1>كيف أكتب جملة <span class="op">if</span>؟</h1>
+    <p class="lead">اكتبي جملة الشرط بنفسك. انتبهي إلى أن <code>if</code> تُكتب بحروف صغيرة، وإلى النقطتين <code>:</code> في آخر السطر، وإلى إزاحة السطر الذي بعدها، وإلى الفرق بين <code>=</code> و <code>==</code>.</p>
+    <div class="legend">
+      <span><i style="background:var(--c-math)"></i>بناء الجملة (٤)</span>
+      <span><i style="background:var(--c-cmp)"></i>شرط بمعامل شرطي (٢)</span>
+      <span><i style="background:var(--c-logic)"></i>شرط بمعامل منطقي (٤)</span>
+    </div>
+  </header>
+  <div class="dots" id="dots" aria-hidden="true"></div>
+  <main id="stage"></main>
+</div>
+
+<script>
+const CATS={
+  math:{name:'بناء الجملة',color:'var(--c-math)'},
+  cmp:{name:'شرط بمعامل شرطي',color:'var(--c-cmp)'},
+  logic:{name:'شرط بمعامل منطقي',color:'var(--c-logic)'}
+};
+const KIND={type:'اكتبي السطر',mcq:'اختاري الكتابة الصحيحة',build:'رتّبي البطاقات'};
+
+/* ---------- figures (SVG) ---------- */
+function bulb(cx,cy,cls){
+  return `<g class="${cls||''}">
+    <g class="rays ${cls?'q':''}"><line x1="${cx}" y1="${cy-26}" x2="${cx}" y2="${cy-34}"/><line x1="${cx+20}" y1="${cy-18}" x2="${cx+26}" y2="${cy-24}"/><line x1="${cx-20}" y1="${cy-18}" x2="${cx-26}" y2="${cy-24}"/><line x1="${cx+26}" y1="${cy}" x2="${cx+34}" y2="${cy}"/><line x1="${cx-26}" y1="${cy}" x2="${cx-34}" y2="${cy}"/></g>
+    <circle class="bulb ${cls?'q':''}" cx="${cx}" cy="${cy}" r="16"/>
+    <path class="w" style="stroke-width:2" d="M${cx-6} ${cy+4} l3 -7 l3 7 l3 -7 l3 7"/>
+  </g>`;
+}
+function sw(x1,y,x2,on){
+  const lev=on?`<line class="lever" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}"/>`
+             :`<line class="lever" x1="${x1}" y1="${y}" x2="${x2-6}" y2="${y-22}"/>`;
+  return `${lev}<circle class="term" cx="${x1}" cy="${y}" r="4.5"/><circle class="term" cx="${x2}" cy="${y}" r="4.5"/>`;
+}
+function battery(x,cy){
+  return `<line class="w" x1="${x-16}" y1="${cy-6}" x2="${x+16}" y2="${cy-6}"/><line class="w" style="stroke-width:5" x1="${x-8}" y1="${cy+6}" x2="${x+8}" y2="${cy+6}"/>`;
+}
+const FIG={
+  series:`<svg viewBox="0 0 340 170" role="img" aria-label="دائرة كهربائية فيها مفتاحان متتاليان A مُشغَّل و B مُطفأ ومصباح">
+    <line class="w" x1="40" y1="40" x2="90" y2="40"/>${sw(90,40,135,true)}<line class="w" x1="135" y1="40" x2="175" y2="40"/>${sw(175,40,220,false)}<line class="w" x1="220" y1="40" x2="280" y2="40"/>
+    <line class="w" x1="280" y1="40" x2="280" y2="69"/>${bulb(280,85,'q')}<line class="w" x1="280" y1="101" x2="280" y2="140"/>
+    <line class="w" x1="280" y1="140" x2="40" y2="140"/><line class="w" x1="40" y1="140" x2="40" y2="96"/>${battery(40,90)}<line class="w" x1="40" y1="84" x2="40" y2="40"/>
+    <text class="lbl" x="112" y="68" text-anchor="middle">A</text><text class="sub" x="112" y="84" text-anchor="middle">مُشغَّل</text>
+    <text class="lbl" x="197" y="68" text-anchor="middle">B</text><text class="sub" x="197" y="84" text-anchor="middle">مُطفأ</text>
+    <text class="qmark" x="314" y="91" text-anchor="middle">؟</text>
+  </svg>`,
+  parallel:`<svg viewBox="0 0 340 170" role="img" aria-label="دائرة كهربائية فيها مفتاحان على فرعين متوازيين A مُطفأ و B مُشغَّل ومصباح">
+    <line class="w" x1="40" y1="30" x2="140" y2="30"/>${sw(140,30,185,false)}<line class="w" x1="185" y1="30" x2="280" y2="30"/>
+    <line class="w" x1="110" y1="30" x2="110" y2="95"/><line class="w" x1="215" y1="30" x2="215" y2="95"/>
+    <line class="w" x1="110" y1="95" x2="140" y2="95"/>${sw(140,95,185,true)}<line class="w" x1="185" y1="95" x2="215" y2="95"/>
+    <line class="w" x1="280" y1="30" x2="280" y2="69"/>${bulb(280,85,'q')}<line class="w" x1="280" y1="101" x2="280" y2="145"/>
+    <line class="w" x1="280" y1="145" x2="40" y2="145"/><line class="w" x1="40" y1="145" x2="40" y2="96"/>${battery(40,90)}<line class="w" x1="40" y1="84" x2="40" y2="30"/>
+    <text class="lbl" x="162" y="56" text-anchor="middle">A</text><text class="sub" x="162" y="72" text-anchor="middle">مُطفأ</text>
+    <text class="lbl" x="162" y="121" text-anchor="middle">B</text><text class="sub" x="162" y="137" text-anchor="middle">مُشغَّل</text>
+    <text class="qmark" x="314" y="91" text-anchor="middle">؟</text>
+  </svg>`,
+  not:`<svg viewBox="0 0 340 160" role="img" aria-label="مصباح مطفأ قيمته light = False، وعكسه not light قيمته True">
+    ${bulb(90,70)}
+    <text class="lbl" x="90" y="120" text-anchor="middle">light</text><text class="sub" x="90" y="140" text-anchor="middle">False · مطفأ</text>
+    <path class="w" d="M150 70 h40 m-10 -9 l10 9 l-10 9"/><text class="lbl res-txt" x="170" y="56" text-anchor="middle" style="fill:var(--c-logic)">not</text>
+    ${bulb(250,70,'q')}
+    <text class="lbl" x="250" y="120" text-anchor="middle">عكس light</text><text class="sub res-txt" x="250" y="140" text-anchor="middle">True</text>
+    <text class="qmark" x="250" y="76" text-anchor="middle">؟</text>
+  </svg>`,
+  lab:`<svg viewBox="0 0 340 180" role="img" aria-label="طالبة عمرها 11 سنة معها ورقة إذن من المعلمة أمام باب معمل الحاسب">
+    <circle class="fill-ink" cx="60" cy="52" r="20"/><path class="fill-ink" d="M28 150 q0 -64 32 -64 q32 0 32 64 z"/>
+    <rect class="fill-surf" x="22" y="154" width="76" height="22" rx="11"/><text class="lbl" x="60" y="170" text-anchor="middle" style="font-size:12px">age = 11</text>
+    <g transform="rotate(-6 150 100)"><rect class="fill-surf" x="112" y="62" width="76" height="86" rx="6"/>
+      <text class="sub" x="150" y="82" text-anchor="middle" style="fill:var(--ink);font-weight:700">إذن المعلمة</text>
+      <line class="w" style="stroke-width:2;stroke:var(--line)" x1="124" y1="96" x2="176" y2="96"/><line class="w" style="stroke-width:2;stroke:var(--line)" x1="124" y1="106" x2="168" y2="106"/>
+      <path class="stroke-ok" d="M134 124 l10 10 l20 -22"/></g>
+    <text class="lbl" x="150" y="172" text-anchor="middle" style="font-size:12px">has_permit = True</text>
+    <rect class="fill-surf" x="232" y="20" width="96" height="22" rx="4"/><text class="sub" x="280" y="36" text-anchor="middle" style="fill:var(--ink);font-weight:700">معمل الحاسب</text>
+    <rect class="fill-ink" x="236" y="48" width="88" height="128" rx="3" style="opacity:.15"/>
+    <rect class="door" x="240" y="52" width="80" height="124" rx="3"/>
+    <text class="qmark" x="280" y="120" text-anchor="middle">؟</text>
+  </svg>`
+};
+
+/* ---------- questions ----------
+   ¤ in code marks the line (or part of a line) the student writes.
+   type:  accept = correct answers; spacing around symbols, outer brackets and the space before ":" are ignored, letter case is not.
+   hints: [regex, message] tried on a wrong answer, then the shared IF_HINTS. */
+const IF_HINTS=[
+  [/^\s*(If|IF)\b/,'كلمة <code>if</code> تُكتب بحروف صغيرة.'],
+  [/^\s*if[A-Za-z_]/,'ضعي مسافة بعد كلمة <code>if</code>.'],
+  [/\bthen\b/,'لا نكتب <code>then</code> في بايثون. تكفي النقطتان <code>:</code> في آخر السطر.'],
+  [/=>/,'المعامل يُكتب <code>&gt;=</code>: علامة الأكبر أولًا ثم يساوي.'],
+  [/=</,'المعامل يُكتب <code>&lt;=</code>: علامة الأصغر أولًا ثم يساوي.'],
+  [/&&|&/,'في بايثون نكتب الكلمة <code>and</code> بدل <code>&amp;&amp;</code>.'],
+  [/\|\|/,'في بايثون نكتب الكلمة <code>or</code> بدل <code>||</code>.'],
+  [/\b(AND|OR|NOT|And|Or|Not)\b/,'بايثون تفرّق بين الحروف الكبيرة والصغيرة: نكتب <code>and</code> و <code>or</code> و <code>not</code> بحروف صغيرة.'],
+  [/^(?!.*:\s*$)/,'نسيتِ النقطتين <code>:</code> في نهاية سطر الشرط.'],
+  [/^(?!\s*if\b)/,'سطر الشرط يبدأ بكلمة <code>if</code>.']
+];
+const EQ_HINT=[/^\s*if\s*\(?\s*\w+\s*=\s*[\w"]/,'علامة <code>=</code> الواحدة تعني «ضعي القيمة في المتغير». للمقارنة داخل <code>if</code> نكتب علامتين <code>==</code>.'];
+
+const Q=[
+ {cat:'math',type:'mcq',text:'أي سطر مكتوب بطريقة صحيحة في بايثون؟',opts:['if x > 5:','if x > 5','If x > 5:','if x > 5 then:'],a:0,
+  rule:{ok:['if x > 5:'],bad:['if x > 5','If x > 5:','if x > 5 then:'],note:'كلمة <code>if</code> بحروف صغيرة، ثم الشرط، ثم نقطتان <code>:</code> في آخر السطر.'},short:'شكل سطر if'},
+ {cat:'cmp',type:'type',text:'اكتبي سطر <code>if</code> الذي يتحقق هل <code>grade</code> أكبر من أو تساوي 50.',code:'grade = 72\n¤\n    print("ناجحة")',
+  accept:['if grade >= 50:','if 50 <= grade:'],out:'ناجحة',hints:[],
+  rule:{ok:['if grade >= 50:'],bad:['if grade => 50:','if grade >= 50','If grade >= 50:'],note:'<code>&gt;=</code> الأكبر أولًا ثم يساوي، والنقطتان في آخر السطر.'},short:'if مع >='},
+ {cat:'math',type:'mcq',text:'أي برنامج مكتوب بإزاحة صحيحة؟',opts:['if x > 5:\nprint("كبير")','if x > 5:\n    print("كبير")','    if x > 5:\nprint("كبير")','if x > 5\n    print("كبير")'],a:1,out:'كبير (إذا كانت x أكبر من 5)',
+  rule:{ok:['if x > 5:\n    print("كبير")'],bad:['if x > 5:\nprint("كبير")'],note:'السطر الذي يُنفَّذ عند تحقق الشرط يُزاح إلى الداخل بأربع مسافات (أو بزر Tab). بدون الإزاحة يظهر خطأ <code>IndentationError</code>.'},short:'الإزاحة بعد if'},
+ {cat:'cmp',type:'type',text:'اكتبي سطر <code>if</code> الذي يتحقق هل <code>answer</code> تساوي 7.',code:'answer = 7\n¤\n    print("إجابة صحيحة")',
+  accept:['if answer == 7:','if 7 == answer:'],out:'إجابة صحيحة',hints:[EQ_HINT],
+  rule:{ok:['answer = 7','if answer == 7:'],okNotes:['إسناد: ضعي 7 في answer','مقارنة: هل answer تساوي 7؟'],bad:['if answer = 7:'],note:'داخل <code>if</code> نستخدم دائمًا <code>==</code> للمقارنة.'},short:'if مع =='},
+ {cat:'math',type:'build',lines:true,text:'رتّبي الأسطر لتكتبي برنامجًا يطبع «زوجي» أو «فردي». بعض الأسطر مكتوبة خطأ فلا تستخدميها.',
+  tiles:['else:','    print("فردي")','if num % 2 == 0:','print("زوجي")','Else:','    print("زوجي")'],
+  accept:['if num % 2 == 0:\n    print("زوجي")\nelse:\n    print("فردي")'],pre:'num = 8',out:'زوجي',
+  hints:[[/^print\("زوجي"\)$/m,'سطر <code>print</code> بعد <code>if</code> يجب أن يُزاح بأربع مسافات.'],[/Else:/,'<code>else</code> تُكتب بحروف صغيرة.'],[/^(?!if)/,'يبدأ البرنامج بسطر <code>if</code>، ثم ما يُنفَّذ عند تحقق الشرط، ثم <code>else:</code> وما بعدها.'],[/./,'الترتيب: سطر <code>if</code>، ثم سطره المُزاح، ثم <code>else:</code>، ثم سطرها المُزاح.']],
+  rule:{ok:['if num % 2 == 0:\n    print("زوجي")\nelse:\n    print("فردي")'],bad:['Else:','print("زوجي")'],note:'<code>else</code> في بداية السطر تحت <code>if</code> مباشرة، وبعد كل منهما سطر مُزاح.'},short:'ترتيب if و else'},
+ {cat:'math',type:'mcq',text:'اختاري ما يُكتب مكان <b>؟</b> في البرنامج.',code:'x = 3\nif x > 5:\n    print("كبير")\n¤\n    print("صغير")',opts:['else','else:','else x <= 5:','Else:'],a:1,out:'صغير',
+  rule:{ok:['else:'],bad:['else','else x <= 5:','Else:'],note:'<code>else</code> لا يُكتب بعدها شرط، وتنتهي بنقطتين <code>:</code>. إذا احتجتِ شرطًا ثانيًا فاستخدمي <code>elif</code>.'},short:'كتابة else'},
+ {cat:'logic',type:'type',fig:'series',on:false,caption:'المصباح لا يضيء إلا إذا كان المفتاحان A و B مُشغَّلين معًا.',
+  text:'اكتبي سطر <code>if</code> الذي يصف هذه الدائرة.',code:'A = True\nB = False\n¤\n    print("المصباح يضيء")',
+  accept:['if A and B:','if B and A:','if A == True and B == True:'],out:'لا يظهر شيء، لأن B = False فالشرط False',
+  hints:[[/\bor\b/,'<code>or</code> يكفيه مفتاح واحد، وهذه الدائرة تحتاج المفتاحين معًا.'],[/AandB|BandA/,'ضعي مسافة قبل <code>and</code> وبعدها.']],
+  rule:{ok:['if A and B:'],bad:['if A && B:','if A AND B:','if A and B'],note:'<code>and</code> كلمة بحروف صغيرة بين الشرطين، والنقطتان في آخر السطر.'},short:'if مع and'},
+ {cat:'logic',type:'mcq',fig:'parallel',on:true,caption:'في هذه الدائرة يضيء المصباح إذا شُغِّل أي مفتاح من المفتاحين.',
+  text:'أي سطر <code>if</code> مكتوب بطريقة صحيحة ويصف هذه الدائرة؟',opts:['if A OR B:','if A || B:','if A or B','if A or B:'],a:3,out:'المصباح يضيء',
+  rule:{ok:['if A or B:'],bad:['if A OR B:','if A || B:','if A or B'],note:'كلمة <code>or</code> بحروف صغيرة، ولا تنسي النقطتين.'},short:'if مع or'},
+ {cat:'logic',type:'type',fig:'not',on:true,caption:'نريد أن تظهر الرسالة عندما يكون المصباح مطفأً.',
+  text:'اكتبي سطر <code>if</code> الذي يتحقق أن المصباح <b>مطفأ</b>، باستخدام المعامل <code>not</code>.',code:'light = False\n¤\n    print("أضيئي المصباح")',
+  accept:['if not light:','if light == False:','if light != True:'],out:'أضيئي المصباح',
+  hints:[[/!\s*light/,'<code>!</code> لا تعكس القيمة في بايثون. نكتب الكلمة <code>not</code> قبل المتغير.'],[/light\s+not/,'<code>not</code> تأتي <b>قبل</b> المتغير: <code>not light</code>.'],[/\bnotlight\b/,'ضعي مسافة بين <code>not</code> و <code>light</code>.'],[/light\s*=\s*False/,'للمقارنة نكتب <code>==</code>، والأسهل أن تكتبي <code>if not light:</code>.']],
+  rule:{ok:['if not light:'],bad:['if !light:','if light not:','if Not light:'],note:'<code>not</code> قبل المتغير، وبينهما مسافة.'},short:'if مع not'},
+ {cat:'logic',type:'build',fig:'lab',on:true,caption:'تدخل الطالبة المعمل إذا كان عمرها 12 سنة أو أكثر، أو كان معها إذن من المعلمة.',
+  text:'رتّبي البطاقات لتكتبي سطر <code>if</code> كاملًا. بعض البطاقات مكتوبة خطأ فلا تستخدميها.',code:'age = 11\nhas_permit = True\n¤\n    print("ادخلي المعمل")',
+  tiles:['has_permit','If','age',':','=>','or','12','OR','>=','if'],accept:['if age >= 12 or has_permit:','if has_permit or age >= 12:'],out:'ادخلي المعمل',hints:[],
+  rule:{ok:['if age >= 12 or has_permit:'],bad:['If age => 12 OR has_permit'],note:'شرط المقارنة <code>age &gt;= 12</code> ناتجه False، لكن <code>has_permit</code> قيمته True، و <code>or</code> يكفيها طرف واحد صحيح، فيُفتح الباب.'},short:'سطر if كامل مع or'}
+];
+
+const RULES=[
+ ['كلمة if بحروف صغيرة','if x > 5:','If x > 5:'],
+ ['نقطتان في آخر سطر الشرط','if x > 5:','if x > 5'],
+ ['إزاحة السطر التالي ٤ مسافات','if x > 5:\n    print(x)','if x > 5:\nprint(x)'],
+ ['المقارنة بعلامتين ==','if x == 5:','if x = 5:'],
+ ['else بدون شرط وبعدها نقطتان','else:','else x < 5:'],
+ ['and و or و not بحروف صغيرة','if a and b:','if a AND b:'],
+ ['>= و <= الرمز ثم يساوي','if x >= 5:','if x => 5:']
+];
+const SHEET=[
+ ['cmp','الشرطية',[['==','يساوي','if x == 5:'],['!=','لا يساوي','if x != 5:'],['>','أكبر من','if x > 5:'],['<','أصغر من','if x < 5:'],['>=','أكبر من أو يساوي','if x >= 5:'],['<=','أصغر من أو يساوي','if x <= 5:']]],
+ ['logic','المنطقية',[['and','الشرطان معًا','if a and b:'],['or','أحد الشرطين','if a or b:'],['not','عكس الشرط','if not a:']]]
+];
+
+/* ---------- helpers ---------- */
+const AR='٠١٢٣٤٥٦٧٨٩', KEYS=['أ','ب','ج','د'], PAD=[':','=','!','<','>','%','(',')'];
+const ar=n=>String(n).replace(/\d/g,d=>AR[d]);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function hl(line){
+  let lead='';
+  const m=line.match(/^( +)/); if(m){lead=`<span class="ind">${'·'.repeat(m[1].length)}</span>`; line=line.slice(m[1].length);}
+  return lead+esc(line).replace(/("[^"]*")|(\bprint\b)|(\b(?:if|elif|else|and|or|not)\b)|(\b(?:True|False)\b)|(\b\d+(?:\.\d+)?\b)|(\*\*|\/\/|&gt;=|&lt;=|==|!=|&gt;|&lt;|[+\-*%=:])/g,
+    (t,s,fn,kw,bo,num,op)=>s?`<span class="tk-str">${t}</span>`:fn?`<span class="tk-fn">${t}</span>`:kw?`<span class="tk-kw">${t}</span>`:bo?`<span class="tk-bool">${t}</span>`:num?`<span class="tk-num">${t}</span>`:`<span class="tk-op">${t}</span>`);
+}
+const hlBlock=c=>c.split('\n').map(hl).join('\n');
+function codeBlock(c,slot){
+  return `<pre class="code">${c.split('\n').map((l,i)=>`<span class="ln">${i+1}</span>${l.includes('¤')?esc(l).replace('¤',slot):hl(l)}`).join('\n')}</pre>`;
+}
+function norm(s){
+  s=String(s).trim().replace(/\s*(\*\*|\/\/|>=|<=|==|!=|[+\-*\/%<>])\s*/g,' $1 ').replace(/\s+/g,' ').replace(/\s*:$/,':').trim();
+  return s.replace(/^if\s*\(\s*(.*?)\s*\):$/,'if $1:');
+}
+const answerText=(q,v)=>q.type==='mcq'?q.opts[v]:q.type==='build'?v.map(i=>q.tiles[i]).join(q.lines?'\n':' '):String(v).trim();
+function isRight(q,v){
+  if(q.type==='mcq') return v===q.a;
+  const t=answerText(q,v);
+  return q.lines?q.accept.includes(t):q.accept.map(norm).includes(norm(t));
+}
+function hintFor(q,v){
+  const raw=answerText(q,v), t=q.lines?raw:norm(raw);
+  for(const [re,msg] of [...(q.hints||[]),...(q.lines?[]:IF_HINTS)]) if(re.test(t)||re.test(raw)) return msg;
+  return '';
+}
+
+let st={i:0,ans:Array(Q.length).fill(null),done:false,draft:''};
+const stage=document.getElementById('stage'), dotsEl=document.getElementById('dots');
+const freshDraft=i=>Q[i].type==='build'?[]:'';
+
+function drawDots(){
+  dotsEl.innerHTML=Q.map((q,i)=>{
+    const a=st.ans[i], c=a===null?'':(isRight(q,a)?'ok':'bad');
+    return `<div class="dot ${c} ${!st.done&&i===st.i?'cur':''}" style="--cat:${CATS[q.cat].color}"></div>`;
+  }).join('');
+}
+
+function ruleBox(r){
+  const ok=r.ok.map((c,i)=>`<li><span class="m ok">✓</span><pre class="mini">${hlBlock(c)}</pre>${r.okNotes?`<small>${r.okNotes[i]}</small>`:''}</li>`).join('');
+  const bad=r.bad.map(c=>`<li><span class="m bad">✗</span><pre class="mini bad-c">${hlBlock(c)}</pre></li>`).join('');
+  return `<div class="rule"><b>طريقة الكتابة</b><ul>${ok}${bad}</ul>${r.note?`<small>${r.note}</small>`:''}</div>`;
+}
+
+function slotHTML(q,a){
+  let txt, cls='';
+  if(a!==null){ txt=answerText(q,a)||'؟'; cls=isRight(q,a)?'ok':'bad'; }
+  else if(q.type==='mcq'){ txt='؟'; cls='empty'; }
+  else { txt=q.type==='build'?(st.draft||[]).map(i=>q.tiles[i]).join(' '):(st.draft||''); if(!txt){txt='؟';cls='empty';} }
+  return `<span class="slot ${cls}" id="slot">${esc(txt)}</span>`;
+}
+const tileLabel=t=>t.startsWith('    ')?`<span class="ind">····</span>${esc(t.slice(4))}`:esc(t);
+
+function drawQuestion(){
+  const q=Q[st.i], a=st.ans[st.i], answered=a!==null, ok=answered&&isRight(q,a);
+  const fig=q.fig?`<figure class="${answered?'revealed':''} ${q.on?'on':''}">${FIG[q.fig]}<figcaption>${q.caption}</figcaption></figure>`:'';
+  let code='';
+  if(q.code) code=codeBlock(q.code,slotHTML(q,a));
+  else if(q.lines){
+    const used=answered?a:(st.draft||[]);
+    code=`<pre class="code"><span class="ln">1</span>${hl(q.pre)}${used.map((ti,k)=>`\n<span class="ln">${k+2}</span>${hl(q.tiles[ti])}`).join('')}${answered?'':`\n<span class="ln">${used.length+2}</span><span class="slot empty">؟</span>`}</pre>`;
+  }
+  let body='';
+  if(q.type==='mcq'){
+    body=`<div class="opts">${q.opts.map((o,i)=>{
+      let cls=''; if(answered){ cls=i===q.a?'right':i===a?'wrong':'dim'; }
+      return `<button class="opt ${cls}" id="opt-${i}" data-i="${i}" ${answered?'disabled':''}><span class="k">${KEYS[i]}</span><span class="v"><pre class="mini">${hlBlock(o)}</pre></span></button>`;
+    }).join('')}</div>`;
+  } else if(q.type==='type'){
+    body=`<div class="write"><label for="inp">اكتبي السطر الناقص مكان <b>؟</b> في الكود</label>
+      <div class="inrow"><input id="inp" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" value="${esc(answered?answerText(q,a):(st.draft||''))}" ${answered?'disabled':''} placeholder="if …">
+      ${answered?'':`<button class="btn" id="check" ${String(st.draft||'').trim()?'':'disabled'}>تحقّقي</button>`}</div>
+      ${answered?'':`<div class="pad" aria-label="رموز">${PAD.map(k=>`<button class="key" data-k="${esc(k)}">${esc(k)}</button>`).join('')}<button class="key" data-k="⌫" aria-label="حذف آخر حرف">⌫</button></div>`}</div>`;
+  } else {
+    const used=answered?a:(st.draft||[]);
+    body=`<div class="write"><label>${q.lines?'اضغطي على الأسطر بالترتيب، وتظهر في الكود أعلاه.':'اضغطي على البطاقات بالترتيب.'} للإزالة اضغطي على البطاقة في السطر المرتّب.</label>
+      <div class="built ${q.lines?'lines':''}" id="built">${used.length?used.map((ti,pos)=>`<button class="tile" data-pos="${pos}" ${answered?'disabled':''}>${tileLabel(q.tiles[ti])}</button>`).join(''):'<span class="ph">ستظهر البطاقات هنا</span>'}</div>
+      <div class="tiles ${q.lines?'lines':''}">${q.tiles.map((t,ti)=>`<button class="tile ${used.includes(ti)?'used':''}" data-ti="${ti}" ${answered||used.includes(ti)?'disabled':''}>${tileLabel(t)}</button>`).join('')}</div>
+      ${answered?'':`<div class="actions"><button class="btn" id="check" ${used.length?'':'disabled'}>تحقّقي</button><button class="btn ghost" id="clear">مسح</button></div>`}</div>`;
+  }
+  let fb='';
+  if(answered){
+    const h=ok?'':hintFor(q,a);
+    const right=q.type==='mcq'?q.opts[q.a]:q.accept[0];
+    fb=`<div class="fb ${ok?'ok':'bad'}" role="status"><strong>${ok?'كتابة صحيحة':'كتابة غير صحيحة'}</strong>
+      ${ok?'':`${h?`<p>${h}</p>`:''}<p>الكتابة الصحيحة:</p><pre class="mini">${hlBlock(right)}</pre>`}
+      ${q.out?`<p class="out">عند تنفيذ البرنامج الصحيح: <code>${esc(q.out)}</code></p>`:''}</div>${ruleBox(q.rule)}`;
+  }
+  const last=st.i===Q.length-1;
+  stage.innerHTML=`<section class="card" style="--cat:${CATS[q.cat].color}">
+    <div class="qhead"><div class="tags"><span class="tag">${CATS[q.cat].name}</span><span class="kind">${KIND[q.type]}</span></div><span class="count">السؤال ${ar(st.i+1)} من ${ar(Q.length)}</span></div>
+    ${fig}
+    <p class="qtext">${q.text}</p>
+    ${code}
+    ${body}
+    ${fb}
+    <div class="actions">
+      ${answered?`<button class="btn" id="next">${last?'عرض النتيجة':'السؤال التالي'}</button>`:''}
+      ${st.i>0?`<button class="btn ghost" id="prev">السابق</button>`:''}
+    </div>
+  </section>`;
+  wire(q,answered,last);
+}
+
+function refreshSlot(q){
+  const s=document.getElementById('slot'); if(!s)return;
+  const txt=String(st.draft||'');
+  s.textContent=txt||'؟'; s.className='slot'+(txt?'':' empty');
+  const c=document.getElementById('check'); if(c)c.disabled=!txt.trim();
+}
+
+function wire(q,answered,last){
+  stage.querySelectorAll('.opt').forEach(b=>b.onclick=()=>submit(+b.dataset.i));
+  const inp=document.getElementById('inp');
+  if(inp&&!answered){
+    inp.oninput=()=>{st.draft=inp.value;refreshSlot(q);};
+    inp.onkeydown=e=>{ if(e.key==='Enter'&&inp.value.trim()) submit(inp.value); };
+    stage.querySelectorAll('.key').forEach(k=>k.onclick=()=>{
+      const s=inp.selectionStart??inp.value.length, e=inp.selectionEnd??inp.value.length;
+      if(k.dataset.k==='⌫'){ const from=s===e?Math.max(0,s-1):s; inp.value=inp.value.slice(0,from)+inp.value.slice(e); inp.setSelectionRange(from,from); }
+      else { inp.value=inp.value.slice(0,s)+k.dataset.k+inp.value.slice(e); inp.setSelectionRange(s+1,s+1); }
+      inp.focus({preventScroll:true}); st.draft=inp.value; refreshSlot(q);
+    });
+  }
+  if(q.type==='build'&&!answered){
+    stage.querySelectorAll('[data-ti]').forEach(b=>b.onclick=()=>{ st.draft=[...(st.draft||[]),+b.dataset.ti]; render(); });
+    stage.querySelectorAll('[data-pos]').forEach(b=>b.onclick=()=>{ const d=[...st.draft]; d.splice(+b.dataset.pos,1); st.draft=d; render(); });
+    const cl=document.getElementById('clear'); if(cl)cl.onclick=()=>{st.draft=[];render();};
+  }
+  const c=document.getElementById('check');
+  if(c)c.onclick=()=>submit(q.type==='build'?st.draft:document.getElementById('inp').value);
+  const n=document.getElementById('next'); if(n)n.onclick=()=>{ if(last){st.done=true;} else {st.i++;st.draft=freshDraft(st.i);} render(); window.scrollTo({top:0}); };
+  const p=document.getElementById('prev'); if(p)p.onclick=()=>{st.i--;st.draft=freshDraft(st.i);render();};
+}
+
+function submit(v){
+  if(st.ans[st.i]!==null)return;
+  st.ans[st.i]=v; st.draft=''; render();
+  const n=document.getElementById('next'); if(n)n.focus({preventScroll:true});
+}
+
+function drawResult(){
+  const right=i=>st.ans[i]!==null&&isRight(Q[i],st.ans[i]);
+  const score=Q.reduce((s,q,i)=>s+(right(i)?1:0),0);
+  const pct=score/Q.length, C=2*Math.PI*50;
+  const msg=score===10?['ممتازة!','كتبتِ جمل if كلها كتابة صحيحة.']
+          :score>=7?['أحسنتِ','راجعي طريقة الكتابة في الأسئلة التي أخطأتِ فيها.']
+          :score>=5?['جيد','راجعي قواعد الكتابة في الأسفل، ثم أعيدي الاختبار.']
+          :['تحتاجين إلى مراجعة','اقرئي قواعد كتابة if في الأسفل جيدًا، ثم أعيدي المحاولة.'];
+  const cats=Object.keys(CATS).map(k=>{
+    const idx=Q.map((q,i)=>i).filter(i=>Q[i].cat===k), got=idx.filter(right).length;
+    return `<div class="cat" style="--cat:${CATS[k].color}"><b>${CATS[k].name}</b><div class="bar"><i style="width:${got/idx.length*100}%"></i></div><span>${ar(got)} من ${ar(idx.length)}</span></div>`;
+  }).join('');
+  const rev=Q.map((q,i)=>`<li><span class="st ${right(i)?'ok':'bad'}">${right(i)?'✓':'✗'}</span><span>${ar(i+1)}. ${q.short}</span><button data-go="${i}">عرض</button></li>`).join('');
+  const rules=RULES.map(r=>`<tr><td>${r[0]}</td><td class="ok"><code>${esc(r[1])}</code></td><td class="bad"><code>${esc(r[2])}</code></td></tr>`).join('');
+  const sheet=SHEET.map(([k,name,rows])=>`<tr class="grp" style="--cat:${CATS[k].color}"><td colspan="3">المعاملات ${name}</td></tr>`+
+    rows.map(r=>`<tr><td><code>${esc(r[0])}</code></td><td>${r[1]}</td><td class="ex"><code>${esc(r[2])}</code></td></tr>`).join('')).join('');
+  stage.innerHTML=`<section class="card">
+    <div class="score">
+      <svg class="ring" viewBox="0 0 120 120" role="img" aria-label="الدرجة ${score} من 10"><circle class="bgc" cx="60" cy="60" r="50"/>
+        <circle class="fgc" cx="60" cy="60" r="50" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct)}" transform="rotate(-90 60 60)"/>
+        <text x="60" y="70" text-anchor="middle">${ar(score)}/${ar(10)}</text></svg>
+      <div class="msg"><h2>${msg[0]}</h2><p>${msg[1]}</p></div>
+    </div>
+    <div class="cats">${cats}</div>
+    <ul class="review">${rev}</ul>
+    <h3>قواعد كتابة جملة if</h3>
+    <div class="sheet"><table><thead><tr><th>القاعدة</th><th>✓ صحيح</th><th>✗ خطأ</th></tr></thead><tbody>${rules}</tbody></table></div>
+    <h3>المعاملات داخل if</h3>
+    <div class="sheet"><table><thead><tr><th>المعامل</th><th>المعنى</th><th>مثال</th></tr></thead><tbody>${sheet}</tbody></table></div>
+    <div class="actions"><button class="btn" id="retry">إعادة الاختبار</button></div>
+  </section>`;
+  stage.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{st.done=false;st.i=+b.dataset.go;st.draft=freshDraft(st.i);render();});
+  document.getElementById('retry').onclick=()=>{st={i:0,ans:Array(Q.length).fill(null),done:false,draft:''};render();window.scrollTo({top:0});};
+}
+
+function render(){ drawDots(); st.done?drawResult():drawQuestion(); }
+
+document.addEventListener('keydown',e=>{
+  if(st.done||e.target.tagName==='INPUT'||Q[st.i].type!=='mcq')return;
+  const m={'1':0,'2':1,'3':2,'4':3}[e.key]; if(m!==undefined&&st.ans[st.i]===null)submit(m);
+});
+
+function start(data){ if(data&&data.st)st=data.st; render(); }
+window.claude?.hot?.snapshot?.(()=>({st}));
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+</script>
+
+</body></html>

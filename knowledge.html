@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الإنتاج المعرفي · المهارات الرقمية</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Noto+Naskh+Arabic:wght@500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><div class="wrap"><div class="brand">الإنتاج المعرفي<small>LESSONS · ASSESSMENTS</small></div><a class="back" href="index.html">→ منصتي</a></div></header>
+<section class="hero"><div class="wrap">
+  <h1>مكتبة الدروس والاختبارات</h1><div class="rule"></div>
+  <p>مرجع الطالبات في مادة المهارات الرقمية، المرحلة المتوسطة · أ. ابتسام الشهري</p>
+</div></section>
+
+<main class="wrap">
+  <div class="search"><input id="q" placeholder="ابحثي عن وحدة أو درس…" autocomplete="off"><span>بحث</span></div>
+  <div class="tabs" id="tabs"></div>
+  <div class="items" id="items"></div>
+</main>
+<footer>المتوسطة الحادية والعشرون · المهارات الرقمية</footer>
+
+<script src="palettes.js"></script>
+<script src="data.js"></script>
+<script>
+// الدروس والاختبارات تُضاف لاحقًا إلى LESSONS؛ حتى ذلك الحين تُعرض الوحدات
+let tab = -1;
+const order = ['الأولى', 'الثانية', 'الثالثة', 'الرابعة'];
+tabs.innerHTML = ['الكل', ...GRADES.map(g => g.name)].map((t, i) => `<button data-i="${i - 1}"${i ? '' : ' class="on"'}>${t}</button>`).join('');
+tabs.onclick = e => { const b = e.target.closest('button'); if (!b) return;
+  tab = +b.dataset.i; tabs.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); draw(); };
+q.oninput = draw;
+function draw() {
+  const v = q.value.trim();
+  const cards = GRADES.flatMap((g, gi) => g.units.map((u, k) => ({gi, g, u: u[0], k,
+      ls: LESSONS.filter(l => l.g === gi && l.u === k)})))
+    .filter(x => (tab < 0 || x.gi === tab) && (!v || x.u.includes(v) || x.g.name.includes(v) || x.ls.some(l => l.title.includes(v))));
+  items.innerHTML = cards.length ? cards.map(x => `<div class="it" style="--c:var(--c${x.gi + 1})">
+      <span class="k">${x.g.name} · الوحدة ${order[x.k]}</span><h4>${x.u}</h4>
+      ${x.ls.length ? `<ul class="ls">${x.ls.map(l => `<li><a href="${l.url}" target="_blank" rel="noopener">${l.title}</a><em>${l.kind}</em></li>`).join('')}</ul>`
+        : '<div class="foot">الدروس قيد الإعداد</div>'}</div>`).join('') : '<p class="mut">لا توجد نتائج</p>';
+}
+draw();
+</script>
+</body>
+</html>

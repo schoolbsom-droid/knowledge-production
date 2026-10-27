@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>اختبار المعاملات في بايثون</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: one centered question card at a time, progress strip of 10 category-coloured dots above it, results screen replaces the card */
+:root{
+  --bg:#F3F6F5; --surface:#FFFFFF; --ink:#16302C; --muted:#5B706B; --line:#D5E0DC;
+  --accent:#0B7A66; --accent-soft:#DCEFEA; --hl:#FFD54A;
+  --ok:#1F8A4C; --ok-soft:#E1F3E7; --bad:#C2413A; --bad-soft:#FBE5E3;
+  --code-bg:#10231F; --code-fg:#E7F2EE;
+  --tk-fn:#7FD3FF; --tk-kw:#FF9EC7; --tk-num:#FFD27A; --tk-bool:#9EF0B8; --tk-op:#FFFFFF;
+  --bulb-off:#C9D3D0; --glow:#FFC83D; --wire:#16302C;
+  --c-math:#3D6FD8; --c-cmp:#B4590E; --c-logic:#8A3FC0;
+  --f-display:"Readex Pro","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --f-body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",Consolas,"Courier New",monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1917; --surface:#15231F; --ink:#E3EEEA; --muted:#93A8A2; --line:#26403A;
+  --accent:#3CC3A6; --accent-soft:#163A33; --hl:#FFD54A;
+  --ok:#4CC27E; --ok-soft:#143525; --bad:#F07A72; --bad-soft:#3E1D1B;
+  --code-bg:#0A1311; --bulb-off:#3A4B47; --glow:#FFD25A; --wire:#C9DAD5;
+  --c-math:#7FA4FF; --c-cmp:#F0A35C; --c-logic:#C38AF0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1917; --surface:#15231F; --ink:#E3EEEA; --muted:#93A8A2; --line:#26403A;
+  --accent:#3CC3A6; --accent-soft:#163A33; --hl:#FFD54A;
+  --ok:#4CC27E; --ok-soft:#143525; --bad:#F07A72; --bad-soft:#3E1D1B;
+  --code-bg:#0A1311; --bulb-off:#3A4B47; --glow:#FFD25A; --wire:#C9DAD5;
+  --c-math:#7FA4FF; --c-cmp:#F0A35C; --c-logic:#C38AF0; color-scheme:dark}
+
+*{box-sizing:border-box}
+img{max-width:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.7;direction:rtl;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+
+header{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-size:13px;color:var(--muted);letter-spacing:.02em}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,5vw,34px);line-height:1.3;margin:0;text-wrap:balance}
+h1 .op{font-family:var(--f-mono);background:linear-gradient(transparent 60%,var(--hl) 60%);padding:0 4px;color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:14px;color:var(--muted);margin-top:4px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+.dots{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
+.dot{height:8px;border-radius:4px;background:var(--line);position:relative;overflow:hidden}
+.dot::after{content:"";position:absolute;inset:0;background:var(--cat);opacity:.35}
+.dot.cur{outline:2px solid var(--cat);outline-offset:2px}
+.dot.ok::after{background:var(--ok);opacity:1}
+.dot.bad::after{background:var(--bad);opacity:1}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px clamp(16px,4vw,28px);display:flex;flex-direction:column;gap:16px}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.tag{font-size:13px;font-weight:700;color:var(--cat);border:1.5px solid var(--cat);border-radius:999px;padding:2px 12px}
+.count{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.qtext{font-family:var(--f-display);font-weight:500;font-size:clamp(18px,3.6vw,21px);line-height:1.6;margin:0;text-wrap:pretty}
+.qtext code{font-family:var(--f-mono);font-size:.9em;background:var(--accent-soft);padding:1px 6px;border-radius:5px;direction:ltr;unicode-bidi:isolate}
+
+pre.code{margin:0;direction:ltr;text-align:left;background:var(--code-bg);color:var(--code-fg);border-radius:12px;padding:14px 18px;font-family:var(--f-mono);font-size:16px;line-height:1.75;overflow-x:auto}
+.code .ln{color:#5E7A73;user-select:none;margin-right:14px}
+.tk-fn{color:var(--tk-fn)} .tk-kw{color:var(--tk-kw);font-weight:700} .tk-num{color:var(--tk-num)} .tk-bool{color:var(--tk-bool)} .tk-op{color:var(--tk-op);font-weight:700}
+
+figure{margin:0;border:1px dashed var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px}
+figure svg{width:100%;max-width:380px;height:auto;display:block}
+figcaption{font-size:14px;color:var(--muted);text-align:center}
+.w{stroke:var(--wire);stroke-width:3;fill:none;stroke-linecap:round}
+.term{fill:var(--surface);stroke:var(--wire);stroke-width:2.5}
+.lever{stroke:var(--accent);stroke-width:4;stroke-linecap:round}
+.lbl{fill:var(--ink);font-family:var(--f-mono);font-weight:700;font-size:15px}
+.sub{fill:var(--muted);font-family:var(--f-body);font-size:12px}
+.bulb{fill:var(--bulb-off);stroke:var(--wire);stroke-width:2.5;transition:fill .4s}
+.rays{stroke:var(--glow);stroke-width:3;stroke-linecap:round;opacity:0;transition:opacity .4s}
+.lit .bulb,.revealed.on .bulb.q{fill:var(--glow)}
+.lit .rays,.revealed.on .rays.q{opacity:1}
+.qmark{fill:var(--ink);font-family:var(--f-display);font-weight:700;font-size:18px;transition:opacity .3s}
+.revealed .qmark{opacity:0}
+.door{fill:var(--accent-soft);stroke:var(--wire);stroke-width:2.5;transition:transform .5s;transform-box:fill-box;transform-origin:right center}
+.revealed.on .door{transform:scaleX(.25)}
+.res-txt{opacity:0;transition:opacity .4s}
+.revealed .res-txt{opacity:1}
+.fill-ink{fill:var(--ink)} .fill-surf{fill:var(--surface);stroke:var(--wire);stroke-width:2.5}
+.fill-acc{fill:var(--accent)} .stroke-ok{stroke:var(--ok);stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:480px){.opts{grid-template-columns:1fr}}
+.opt{display:flex;align-items:center;gap:12px;text-align:right;background:var(--bg);color:var(--ink);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font:inherit;font-size:17px;cursor:pointer;transition:border-color .15s,background .15s;min-width:0}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.opt:disabled{cursor:default}
+.opt .k{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--surface);border:1.5px solid var(--line);font-weight:700;font-size:15px}
+.opt .v{min-width:0;overflow-wrap:anywhere}
+.opt .v.mono{font-family:var(--f-mono);direction:ltr;unicode-bidi:isolate;font-weight:700}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.right .k{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.wrong .k{background:var(--bad);border-color:var(--bad);color:var(--surface)}
+.opt.dim{opacity:.55}
+
+.fb{border-radius:12px;padding:12px 16px;display:flex;flex-direction:column;gap:4px}
+.fb.ok{background:var(--ok-soft)} .fb.bad{background:var(--bad-soft)}
+.fb strong{font-family:var(--f-display);font-size:17px}
+.fb.ok strong{color:var(--ok)} .fb.bad strong{color:var(--bad)}
+.fb p{margin:0}
+.fb code{font-family:var(--f-mono);direction:ltr;unicode-bidi:isolate;font-weight:700}
+
+.actions{display:flex;justify-content:flex-start;gap:10px;flex-wrap:wrap}
+.btn{font:inherit;font-family:var(--f-display);font-weight:500;font-size:16px;border-radius:10px;padding:10px 22px;cursor:pointer;border:1.5px solid var(--accent);background:var(--accent);color:var(--surface)}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+
+.score{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.ring{width:120px;height:120px;flex:none}
+.ring circle{fill:none;stroke-width:12}
+.ring .bgc{stroke:var(--line)} .ring .fgc{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .8s}
+.ring text{fill:var(--ink);font-family:var(--f-display);font-weight:700;font-size:26px}
+.msg h2{font-family:var(--f-display);margin:0;font-size:24px}
+.msg p{margin:0;color:var(--muted)}
+.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:480px){.cats{grid-template-columns:1fr}}
+.cat{border:1px solid var(--line);border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;gap:6px}
+.cat b{color:var(--cat);font-size:14px}
+.bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--cat)}
+.cat span{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.review{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.review li{display:flex;align-items:center;gap:10px;font-size:15px;padding:8px 12px;border-radius:10px;background:var(--bg)}
+.review .st{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:var(--surface);font-size:13px;font-weight:700}
+.review .st.ok{background:var(--ok)} .review .st.bad{background:var(--bad)}
+.review button{margin-inline-start:auto;font:inherit;font-size:14px;background:none;border:none;color:var(--accent);cursor:pointer;text-decoration:underline}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">المهارات الرقمية · الصف الثاني المتوسط · بايثون</div>
+    <h1>اختبار المعاملات <span class="op">+ == and</span></h1>
+    <div class="legend">
+      <span><i style="background:var(--c-math)"></i>رياضية (٣)</span>
+      <span><i style="background:var(--c-cmp)"></i>شرطية (٣)</span>
+      <span><i style="background:var(--c-logic)"></i>منطقية (٤)</span>
+    </div>
+  </header>
+  <div class="dots" id="dots" aria-hidden="true"></div>
+  <main id="stage"></main>
+</div>
+
+<script>
+const CATS={
+  math:{name:'معاملات رياضية',color:'var(--c-math)'},
+  cmp:{name:'معاملات شرطية',color:'var(--c-cmp)'},
+  logic:{name:'معاملات منطقية',color:'var(--c-logic)'}
+};
+
+/* ---------- figures (SVG) ---------- */
+function bulb(cx,cy,cls){
+  return `<g class="${cls||''}">
+    <g class="rays ${cls?'q':''}"><line x1="${cx}" y1="${cy-26}" x2="${cx}" y2="${cy-34}"/><line x1="${cx+20}" y1="${cy-18}" x2="${cx+26}" y2="${cy-24}"/><line x1="${cx-20}" y1="${cy-18}" x2="${cx-26}" y2="${cy-24}"/><line x1="${cx+26}" y1="${cy}" x2="${cx+34}" y2="${cy}"/><line x1="${cx-26}" y1="${cy}" x2="${cx-34}" y2="${cy}"/></g>
+    <circle class="bulb ${cls?'q':''}" cx="${cx}" cy="${cy}" r="16"/>
+    <path class="w" style="stroke-width:2" d="M${cx-6} ${cy+4} l3 -7 l3 7 l3 -7 l3 7"/>
+  </g>`;
+}
+function sw(x1,y,x2,on){
+  const lev=on?`<line class="lever" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}"/>`
+             :`<line class="lever" x1="${x1}" y1="${y}" x2="${x2-6}" y2="${y-22}"/>`;
+  return `${lev}<circle class="term" cx="${x1}" cy="${y}" r="4.5"/><circle class="term" cx="${x2}" cy="${y}" r="4.5"/>`;
+}
+function battery(x,cy){
+  return `<line class="w" x1="${x-16}" y1="${cy-6}" x2="${x+16}" y2="${cy-6}"/><line class="w" style="stroke-width:5" x1="${x-8}" y1="${cy+6}" x2="${x+8}" y2="${cy+6}"/>`;
+}
+const FIG={
+  series:`<svg viewBox="0 0 340 170" role="img" aria-label="دائرة كهربائية فيها مفتاحان متتاليان A مُشغَّل و B مُطفأ ومصباح">
+    <line class="w" x1="40" y1="40" x2="90" y2="40"/>${sw(90,40,135,true)}<line class="w" x1="135" y1="40" x2="175" y2="40"/>${sw(175,40,220,false)}<line class="w" x1="220" y1="40" x2="280" y2="40"/>
+    <line class="w" x1="280" y1="40" x2="280" y2="69"/>${bulb(280,85,'q')}<line class="w" x1="280" y1="101" x2="280" y2="140"/>
+    <line class="w" x1="280" y1="140" x2="40" y2="140"/><line class="w" x1="40" y1="140" x2="40" y2="96"/>${battery(40,90)}<line class="w" x1="40" y1="84" x2="40" y2="40"/>
+    <text class="lbl" x="112" y="68" text-anchor="middle">A</text><text class="sub" x="112" y="84" text-anchor="middle">مُشغَّل</text>
+    <text class="lbl" x="197" y="68" text-anchor="middle">B</text><text class="sub" x="197" y="84" text-anchor="middle">مُطفأ</text>
+    <text class="qmark" x="314" y="91" text-anchor="middle">؟</text>
+  </svg>`,
+  parallel:`<svg viewBox="0 0 340 170" role="img" aria-label="دائرة كهربائية فيها مفتاحان على فرعين متوازيين A مُطفأ و B مُشغَّل ومصباح">
+    <line class="w" x1="40" y1="30" x2="140" y2="30"/>${sw(140,30,185,false)}<line class="w" x1="185" y1="30" x2="280" y2="30"/>
+    <line class="w" x1="110" y1="30" x2="110" y2="95"/><line class="w" x1="215" y1="30" x2="215" y2="95"/>
+    <line class="w" x1="110" y1="95" x2="140" y2="95"/>${sw(140,95,185,true)}<line class="w" x1="185" y1="95" x2="215" y2="95"/>
+    <line class="w" x1="280" y1="30" x2="280" y2="69"/>${bulb(280,85,'q')}<line class="w" x1="280" y1="101" x2="280" y2="145"/>
+    <line class="w" x1="280" y1="145" x2="40" y2="145"/><line class="w" x1="40" y1="145" x2="40" y2="96"/>${battery(40,90)}<line class="w" x1="40" y1="84" x2="40" y2="30"/>
+    <text class="lbl" x="162" y="56" text-anchor="middle">A</text><text class="sub" x="162" y="72" text-anchor="middle">مُطفأ</text>
+    <text class="lbl" x="162" y="121" text-anchor="middle">B</text><text class="sub" x="162" y="137" text-anchor="middle">مُشغَّل</text>
+    <text class="qmark" x="314" y="91" text-anchor="middle">؟</text>
+  </svg>`,
+  not:`<svg viewBox="0 0 340 160" role="img" aria-label="مصباح مضيء قيمته light = True ومصباح ثانٍ مجهول يمثل not light">
+    <g class="lit">${bulb(90,70)}</g>
+    <text class="lbl" x="90" y="120" text-anchor="middle">light</text><text class="sub" x="90" y="140" text-anchor="middle">True</text>
+    <path class="w" d="M150 70 h40 m-10 -9 l10 9 l-10 9"/><text class="lbl" x="170" y="56" text-anchor="middle" style="fill:var(--c-logic)">not</text>
+    ${bulb(250,70,'q')}
+    <text class="lbl" x="250" y="120" text-anchor="middle">not light</text><text class="sub res-txt" x="250" y="140" text-anchor="middle">False</text>
+    <text class="qmark" x="250" y="76" text-anchor="middle">؟</text>
+  </svg>`,
+  lab:`<svg viewBox="0 0 340 180" role="img" aria-label="طالبة عمرها 11 سنة معها ورقة إذن من المعلمة أمام باب معمل الحاسب">
+    <circle class="fill-ink" cx="60" cy="52" r="20"/><path class="fill-ink" d="M28 150 q0 -64 32 -64 q32 0 32 64 z"/>
+    <rect class="fill-surf" x="22" y="154" width="76" height="22" rx="11"/><text class="lbl" x="60" y="170" text-anchor="middle" style="font-size:12px">age = 11</text>
+    <g transform="rotate(-6 150 100)"><rect class="fill-surf" x="112" y="62" width="76" height="86" rx="6"/>
+      <text class="sub" x="150" y="82" text-anchor="middle" style="fill:var(--ink);font-weight:700">إذن المعلمة</text>
+      <line class="w" style="stroke-width:2;stroke:var(--line)" x1="124" y1="96" x2="176" y2="96"/><line class="w" style="stroke-width:2;stroke:var(--line)" x1="124" y1="106" x2="168" y2="106"/>
+      <path class="stroke-ok" d="M134 124 l10 10 l20 -22"/></g>
+    <text class="lbl" x="150" y="172" text-anchor="middle" style="font-size:12px">has_permit = True</text>
+    <rect class="fill-surf" x="232" y="20" width="96" height="22" rx="4"/><text class="sub" x="280" y="36" text-anchor="middle" style="fill:var(--ink);font-weight:700">معمل الحاسب</text>
+    <rect class="fill-ink" x="236" y="48" width="88" height="128" rx="3" style="opacity:.15"/>
+    <rect class="door" x="240" y="52" width="80" height="124" rx="3"/>
+    <text class="qmark" x="280" y="120" text-anchor="middle">؟</text>
+  </svg>`
+};
+
+/* ---------- questions ---------- */
+const Q=[
+ {cat:'math',text:'ما الذي سيظهر عند تنفيذ هذا السطر؟',code:'print(7 + 3 * 2)',opts:['20','13','17','12'],mono:true,a:1,
+  why:'الضرب يُنفَّذ قبل الجمع: <code>3 * 2 = 6</code> ثم <code>7 + 6 = 13</code>.',short:'أولوية الضرب على الجمع'},
+ {cat:'math',text:'ما ناتج تنفيذ البرنامج؟ (لاحظي الفرق بين <code>//</code> و <code>%</code>)',code:'print(17 // 5, 17 % 5)',opts:['3 2','2 3','3.4 2','3 3.4'],mono:true,a:0,
+  why:'<code>//</code> تعطي ناتج القسمة الصحيح بدون كسور (3)، و <code>%</code> تعطي باقي القسمة (2)، لأن ‎17 = 5 × 3 + 2‎.',short:'القسمة الصحيحة وباقي القسمة'},
+ {cat:'math',text:'ما الذي سيظهر عند تنفيذ هذا السطر؟',code:'print(2 ** 3)',opts:['6','5','8','9'],mono:true,a:2,
+  why:'<code>**</code> هو معامل الأس: ‎2 × 2 × 2 = 8‎. أما <code>2 * 3</code> فناتجها 6.',short:'معامل الأس **'},
+ {cat:'cmp',text:'أي رمز يعني «لا يساوي» في بايثون؟',opts:['<>','=!','=/=','!='],mono:true,a:3,
+  why:'معامل «لا يساوي» هو <code>!=</code>، وتكون علامة التعجب قبل علامة يساوي.',short:'رمز لا يساوي'},
+ {cat:'cmp',text:'ما الذي سيظهر عند تنفيذ البرنامج؟',code:'x = 8\nprint(x >= 8)',opts:['True','False','8','خطأ في البرنامج'],mono:[1,1,1,0],a:0,
+  why:'<code>&gt;=</code> تعني «أكبر من أو يساوي»، والقيمة 8 تساوي 8، فالنتيجة <code>True</code>.',short:'أكبر من أو يساوي'},
+ {cat:'cmp',text:'أي تعبير من التالية ناتجه <code>True</code>؟',opts:['3 > 7','4 != 4','6 <= 6','2 == 5'],mono:true,a:2,
+  why:'<code>6 &lt;= 6</code> صحيح لأن 6 تساوي 6. وتذكّري أن <code>=</code> للإسناد، أما <code>==</code> فللمقارنة.',short:'أي مقارنة صحيحة'},
+ {cat:'logic',fig:'series',on:false,caption:'المصباح لا يضيء إلا إذا كان المفتاحان A و B مُشغَّلين معًا.',
+  text:'في الدائرة يكون المفتاح A مُشغَّلًا والمفتاح B مُطفأً. ما ناتج البرنامج؟',code:'A = True\nB = False\nprint(A and B)',opts:['True','False','A','خطأ في البرنامج'],mono:[1,1,1,0],a:1,
+  why:'<code>and</code> تعطي <code>True</code> فقط إذا كان الطرفان <code>True</code>. هنا <code>B = False</code>، لذلك لا يضيء المصباح.',short:'المعامل and'},
+ {cat:'logic',fig:'parallel',on:true,caption:'في هذه الدائرة يضيء المصباح إذا شُغِّل أي مفتاح من المفتاحين.',
+  text:'أي معامل منطقي يصف عمل هذه الدائرة؟',opts:['and','not','or','=='],mono:true,a:2,
+  why:'<code>or</code> يكفيه أن يكون طرف واحد <code>True</code>. المفتاح B مُشغَّل، فيضيء المصباح حتى لو كان A مُطفأً.',short:'المعامل or'},
+ {cat:'logic',fig:'not',on:false,caption:'المعامل not يعكس القيمة.',
+  text:'المصباح الأول مضيء. ما ناتج البرنامج؟',code:'light = True\nprint(not light)',opts:['True','not True','False','light'],mono:true,a:2,
+  why:'<code>not</code> يعكس القيمة: عكس <code>True</code> هو <code>False</code>، فالمصباح الثاني مطفأ.',short:'المعامل not'},
+ {cat:'logic',fig:'lab',on:true,caption:'تدخل الطالبة معمل الحاسب إذا كان عمرها 12 سنة أو أكثر، أو كان معها إذن من المعلمة.',
+  text:'عمر الطالبة 11 سنة ومعها إذن من المعلمة. ما ناتج البرنامج؟',code:'age = 11\nhas_permit = True\nprint(age >= 12 or has_permit)',opts:['False','True','11','خطأ في البرنامج'],mono:[1,1,1,0],a:1,
+  why:'<code>age &gt;= 12</code> ناتجها <code>False</code> لأن 11 أصغر من 12، لكن <code>has_permit = True</code>، و <code>or</code> يكفيه طرف واحد صحيح، فالناتج <code>True</code> ويُفتح الباب.',short:'دمج مقارنة مع or'}
+];
+
+/* ---------- helpers ---------- */
+const AR='٠١٢٣٤٥٦٧٨٩', KEYS=['أ','ب','ج','د'];
+const ar=n=>String(n).replace(/\d/g,d=>AR[d]);
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function hl(line){
+  return esc(line).replace(/(\bprint\b)|(\b(?:and|or|not)\b)|(\b(?:True|False)\b)|(\b\d+(?:\.\d+)?\b)|(\*\*|\/\/|&gt;=|&lt;=|==|!=|[+\-*%])/g,
+    (m,fn,kw,bo,num,op)=>fn?`<span class="tk-fn">${m}</span>`:kw?`<span class="tk-kw">${m}</span>`:bo?`<span class="tk-bool">${m}</span>`:num?`<span class="tk-num">${m}</span>`:`<span class="tk-op">${m}</span>`);
+}
+const codeBlock=c=>`<pre class="code">${c.split('\n').map((l,i)=>`<span class="ln">${i+1}</span>${hl(l)}`).join('\n')}</pre>`;
+const isMono=(q,i)=>Array.isArray(q.mono)?!!q.mono[i]:!!q.mono;
+
+let st={i:0,ans:Array(Q.length).fill(null),done:false};
+const stage=document.getElementById('stage'), dotsEl=document.getElementById('dots');
+
+function drawDots(){
+  dotsEl.innerHTML=Q.map((q,i)=>{
+    const a=st.ans[i], c=a===null?'':(a===q.a?'ok':'bad');
+    return `<div class="dot ${c} ${!st.done&&i===st.i?'cur':''}" style="--cat:${CATS[q.cat].color}"></div>`;
+  }).join('');
+}
+
+function drawQuestion(){
+  const q=Q[st.i], a=st.ans[st.i], answered=a!==null;
+  const fig=q.fig?`<figure class="${answered?'revealed':''} ${q.on?'on':''}">${FIG[q.fig]}<figcaption>${q.caption}</figcaption></figure>`:'';
+  const opts=q.opts.map((o,i)=>{
+    let cls='';
+    if(answered){ if(i===q.a)cls='right'; else if(i===a)cls='wrong'; else cls='dim'; }
+    return `<button class="opt ${cls}" id="opt-${i}" data-i="${i}" ${answered?'disabled':''}><span class="k">${KEYS[i]}</span><span class="v ${isMono(q,i)?'mono':''}">${esc(o)}</span></button>`;
+  }).join('');
+  const ok=a===q.a;
+  const fb=answered?`<div class="fb ${ok?'ok':'bad'}" role="status"><strong>${ok?'إجابة صحيحة':'إجابة غير صحيحة، والصحيحة: '+`<code>${esc(q.opts[q.a])}</code>`}</strong><p>${q.why}</p></div>`:'';
+  const last=st.i===Q.length-1;
+  stage.innerHTML=`<section class="card" style="--cat:${CATS[q.cat].color}">
+    <div class="qhead"><span class="tag">${CATS[q.cat].name}</span><span class="count">السؤال ${ar(st.i+1)} من ${ar(Q.length)}</span></div>
+    ${fig}
+    <p class="qtext">${q.text}</p>
+    ${q.code?codeBlock(q.code):''}
+    <div class="opts">${opts}</div>
+    ${fb}
+    <div class="actions">
+      ${answered?`<button class="btn" id="next">${last?'عرض النتيجة':'السؤال التالي'}</button>`:''}
+      ${st.i>0?`<button class="btn ghost" id="prev">السابق</button>`:''}
+    </div>
+  </section>`;
+  stage.querySelectorAll('.opt').forEach(b=>b.onclick=()=>choose(+b.dataset.i));
+  const n=document.getElementById('next'); if(n){n.onclick=()=>{ if(last){st.done=true;render();} else {st.i++;render();} }; }
+  const p=document.getElementById('prev'); if(p)p.onclick=()=>{st.i--;render();};
+}
+
+function choose(i){
+  if(st.ans[st.i]!==null)return;
+  st.ans[st.i]=i; render();
+  const n=document.getElementById('next'); if(n)n.focus({preventScroll:true});
+}
+
+function drawResult(){
+  const score=Q.reduce((s,q,i)=>s+(st.ans[i]===q.a?1:0),0);
+  const pct=score/Q.length, C=2*Math.PI*50;
+  const msg=score===10?['ممتازة!','أتقنتِ المعاملات الرياضية والشرطية والمنطقية.']
+          :score>=7?['أحسنتِ','راجعي الأسئلة التي أخطأتِ فيها لتصلي إلى الدرجة الكاملة.']
+          :score>=5?['جيد','راجعي الأسئلة الخاطئة، ثم أعيدي الاختبار.']
+          :['تحتاجين إلى مراجعة','راجعي درس المعاملات، ثم أعيدي المحاولة.'];
+  const cats=Object.keys(CATS).map(k=>{
+    const idx=Q.map((q,i)=>i).filter(i=>Q[i].cat===k), got=idx.filter(i=>st.ans[i]===Q[i].a).length;
+    return `<div class="cat" style="--cat:${CATS[k].color}"><b>${CATS[k].name}</b><div class="bar"><i style="width:${got/idx.length*100}%"></i></div><span>${ar(got)} من ${ar(idx.length)}</span></div>`;
+  }).join('');
+  const rev=Q.map((q,i)=>{const ok=st.ans[i]===q.a;
+    return `<li><span class="st ${ok?'ok':'bad'}">${ok?'✓':'✗'}</span><span>${ar(i+1)}. ${q.short}</span><button data-go="${i}">عرض</button></li>`}).join('');
+  stage.innerHTML=`<section class="card">
+    <div class="score">
+      <svg class="ring" viewBox="0 0 120 120" role="img" aria-label="الدرجة ${score} من 10"><circle class="bgc" cx="60" cy="60" r="50"/>
+        <circle class="fgc" cx="60" cy="60" r="50" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct)}" transform="rotate(-90 60 60)"/>
+        <text x="60" y="70" text-anchor="middle">${ar(score)}/${ar(10)}</text></svg>
+      <div class="msg"><h2>${msg[0]}</h2><p>${msg[1]}</p></div>
+    </div>
+    <div class="cats">${cats}</div>
+    <ul class="review">${rev}</ul>
+    <div class="actions"><button class="btn" id="retry">إعادة الاختبار</button></div>
+  </section>`;
+  stage.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{st.done=false;st.i=+b.dataset.go;render();});
+  document.getElementById('retry').onclick=()=>{st={i:0,ans:Array(Q.length).fill(null),done:false};render();};
+}
+
+function render(){ drawDots(); st.done?drawResult():drawQuestion(); }
+
+document.addEventListener('keydown',e=>{
+  if(st.done||e.target.tagName==='INPUT')return;
+  const m={'1':0,'2':1,'3':2,'4':3}[e.key]; if(m!==undefined&&st.ans[st.i]===null)choose(m);
+});
+
+render();
+</script>
+
+</body>
+</html>
