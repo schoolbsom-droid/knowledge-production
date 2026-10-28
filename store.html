@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مشاريع المتجر الإلكتروني</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Noto+Naskh+Arabic:wght@500;600&display=swap">
+<style>
+:root{--bg:#F3FAFA;--paper:#fff;--ink:#0E5E63;--ink2:#2f5457;--mut:#6a8486;--line:#D3ECEC;--soft:#E6F6F5;--acc:#40C4C0;--label:#16878A;--ok:#1f7a5a;--warn:#a8743a;--gold:#c9a14a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"IBM Plex Sans Arabic",sans-serif;background:var(--bg);color:var(--ink2);line-height:1.7}
+.wrap{max-width:980px;margin:auto;padding:0 16px}
+.demo{background:#fff6e6;color:var(--warn);font-size:12px;text-align:center;padding:4px 16px}
+.demo button{font:inherit;border:0;background:none;color:var(--warn);text-decoration:underline;cursor:pointer}
+header{background:linear-gradient(135deg,#0E5E63,#1FA7A3);color:#fff}
+header .wrap{display:flex;justify-content:space-between;align-items:center;min-height:64px;gap:10px}
+.brand{font-family:"Noto Naskh Arabic",serif;font-size:20px}
+.brand small{display:block;font-family:inherit;font-size:11px;color:#cdeeed;letter-spacing:1px}
+.back{color:#fff;border:1px solid rgba(255,255,255,.45);border-radius:999px;padding:3px 14px;font-size:13px;text-decoration:none;white-space:nowrap}
+nav{background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav .wrap{display:flex;gap:4px;overflow-x:auto}
+nav button{font:inherit;font-size:14px;border:0;background:none;padding:12px 14px;color:var(--mut);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+nav button.on{color:var(--ink);border-color:var(--acc);font-weight:500}
+nav .tch{margin-right:auto;font-size:12px}
+main{padding:22px 0 50px}
+.pg{display:none}.pg.on{display:block}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:20px;max-width:560px;margin:auto;box-shadow:0 18px 40px -30px rgba(14,94,99,.5)}
+.card.wide{max-width:none}
+h2{font-family:"Noto Naskh Arabic",serif;font-weight:500;font-size:21px;color:var(--ink)}
+.sub{font-size:13px;color:var(--mut);margin-bottom:10px}
+label.f{display:block;font-size:13px;color:var(--ink2);margin:12px 0 4px}
+.in{width:100%;font:inherit;font-size:15px;border:1px solid var(--line);border-radius:8px;padding:9px 12px;background:var(--bg);color:var(--ink)}
+.in:focus{outline:2px solid var(--acc);border-color:transparent}
+.btn{display:block;width:100%;font:inherit;font-size:15px;background:var(--ink);color:#fff;border:0;border-radius:8px;padding:11px;margin-top:16px;cursor:pointer}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.msg{border-radius:8px;padding:9px 12px;font-size:13px;margin-top:12px}
+.msg.w{background:#fbf3e8;border:1px solid #ecd7b8;color:var(--warn)}
+.msg.e{background:#fbeeee;border:1px solid #efcfcf;color:#9a3b3b}
+.msg.o{background:#eef5ef;border:1px solid #cfe2d3;color:var(--ok);text-align:center}
+.code{display:block;font-size:30px;font-weight:600;letter-spacing:4px;color:var(--ink);direction:ltr;margin:4px 0}
+.sum{background:var(--soft);border-radius:8px;padding:8px 10px;font-size:13px;color:var(--ink);margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:4px 12px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.chip.me{background:var(--acc);color:#fff;border-color:var(--acc);cursor:default}
+.chip[disabled]{cursor:not-allowed;color:var(--mut);background:var(--soft);text-decoration:line-through}
+.picker .in{margin-bottom:8px}
+.pk{max-height:210px;overflow:auto;padding:2px}
+.stars{color:var(--gold);letter-spacing:1px;white-space:nowrap}
+.crit div{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--soft);font-size:14px}
+.big{text-align:center;padding:6px 0 12px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.big small{display:block;color:var(--mut);font-size:12px}
+.big b{font-family:"Noto Naskh Arabic",serif;font-size:44px;color:var(--ink);line-height:1.2}
+.lv{display:inline-block;font-size:11px;border-radius:999px;padding:1px 10px;color:#fff;white-space:nowrap}
+.l1{background:#0E5E63}.l2{background:#1FA7A3}.l3{background:#7fd3cf;color:#0E5E63}.l4{background:#c9d9d9;color:#2f5457}
+.note{background:var(--soft);border-radius:8px;padding:10px 12px;font-size:14px;margin-top:12px}
+.note b{display:block;font-size:12px;color:var(--label)}
+.chk{list-style:none;margin:10px 0}
+.chk li{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.chk .y{color:var(--ok)}.chk .n{color:var(--warn)}
+.prog{height:8px;background:var(--line);border-radius:4px;overflow:hidden}.prog i{display:block;height:100%;background:var(--acc)}
+.filt{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.filt button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:3px 13px;cursor:pointer;color:var(--ink2)}
+.filt button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.sc{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px;position:relative}
+.rank{position:absolute;right:-1px;top:-1px;background:var(--ink);color:#fff;font-size:12px;font-weight:600;border-radius:12px 0 10px 0;padding:1px 10px}
+.hd{display:flex;gap:10px;align-items:center;margin:12px 0 8px}
+.logo{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:600;flex:none}
+.hd b{color:var(--ink)}.hd small{display:block;color:var(--mut);font-size:12px;line-height:1.4}
+.ring{position:absolute;left:12px;top:12px;width:48px;height:48px;border-radius:50%;display:grid;place-items:center}
+.ring span{background:#fff;border-radius:50%;width:38px;height:38px;display:grid;place-items:center;font-size:14px;font-weight:600;color:var(--ink);line-height:1}
+.ring span small{font-size:9px;color:var(--mut);font-weight:400}
+.sc .crit div{font-size:13px;padding:3px 0;border:0}
+.visit{display:block;text-align:center;margin-top:10px;font-size:13px;border:1px solid var(--line);border-radius:6px;padding:5px;color:var(--ink);text-decoration:none}
+.visit.dis{color:var(--mut);pointer-events:none}
+.tt{width:100%;border-collapse:collapse;font-size:14px}
+.tt th{font-size:12px;color:var(--label);font-weight:500;text-align:right;padding:8px 6px;border-bottom:2px solid var(--line)}
+.tt td{padding:8px 6px;border-bottom:1px solid var(--soft);vertical-align:middle}
+.tt select{font:inherit;border:1px solid var(--line);border-radius:6px;padding:2px 4px;background:var(--bg)}
+.tt input[type=text]{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:6px;padding:3px 6px;width:100%;min-width:140px}
+.tw{overflow-x:auto}
+.duebar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--paper);border:1px solid var(--line);border-right:4px solid var(--acc);border-radius:10px;padding:10px 16px;margin-bottom:18px;font-size:14px}
+.duebar b{color:var(--ink)}
+.duebar .left{font-weight:600;color:var(--ink);background:var(--soft);border-radius:999px;padding:2px 14px}
+.duebar.late{border-right-color:#c0392b}.duebar.late .left{background:#fbeeee;color:#9a3b3b}
+.empty{text-align:center;color:var(--mut);padding:30px}
+</style></head><body>
+</head><body>
+<header><div class="wrap"><div class="brand">مشاريع المتجر الإلكتروني<small>ثالث متوسط · المهارات الرقمية</small></div><a class="back" href="index.html">→ الرئيسية</a></div></header>
+<nav><div class="wrap">
+  <button data-p="learn" class="on">الشرح</button><button data-p="reg">سجّلي فريقك</button><button data-p="done">أكملي مشروعك</button><button data-p="res">نتيجتنا</button><button data-p="board">لوحة المتاجر</button><button data-p="tch" class="tch" id="tchbtn" hidden>صفحة المعلمة</button>
+</div></nav>
+<main class="wrap">
+<div id="due"></div>
+<div id="boot" class="empty">جارٍ التحميل…</div>
+
+<section class="pg" id="learn"><div class="card" style="max-width:760px">
+  <h2>شرح مشروع المتجر الإلكتروني</h2><div class="sub">اقرئي الخطوات بالترتيب، ثم سجّلي فريقكِ</div>
+  <div id="lbody"></div>
+  <button class="btn" onclick="go('reg')">ابدئي: سجّلي فريقكِ ←</button>
+</div></section>
+
+<section class="pg" id="reg"><div class="card">
+  <h2>سجّلي فريقك</h2><div class="sub">تكفي طالبة واحدة من الفريق</div>
+  <label class="f">الفصل</label><select class="in" id="rc"></select>
+  <label class="f">اسمكِ</label><select class="in" id="rn" disabled></select>
+  <div id="rmw" hidden>
+    <label class="f">عضوات مجموعتكِ</label>
+    <div class="picker"><div class="sum" id="rsum"></div><input class="in" id="rq" placeholder="ابحثي عن اسم زميلتكِ…"><div class="pk chips" id="rpk"></div></div>
+  </div>
+  <div class="row"><div><label class="f">اسم الفريق</label><input class="in" id="rt" maxlength="40" placeholder="مثال: فريق الإبداع"></div><div><label class="f">اسم المتجر</label><input class="in" id="rs" maxlength="40" placeholder="مثال: متجر لمسة"></div></div>
+  <label class="f">رابط المتجر <small style="color:var(--mut)">(يمكن إضافته لاحقًا)</small></label><input class="in" id="rl" dir="ltr" placeholder="https://">
+  <div id="rmsg"></div>
+  <button class="btn" id="rsave">حفظ</button>
+</div></section>
+
+<section class="pg" id="done"><div class="card">
+  <h2>أكملي مشروعك</h2><div class="sub">أدخلي رمز فريقكِ</div>
+  <div class="row"><input class="in" id="dc" dir="ltr" placeholder="مثال: 2-4831"><button class="btn" style="margin:0;flex:0 0 90px" id="dgo">دخول</button></div>
+  <div id="dbody"></div>
+</div></section>
+
+<section class="pg" id="res"><div class="card">
+  <h2>نتيجتنا</h2><div class="sub">أدخلي رمز فريقكِ لتري التقييم</div>
+  <div class="row"><input class="in" id="xc" dir="ltr" placeholder="مثال: 2-4831"><button class="btn" style="margin:0;flex:0 0 90px" id="xgo">عرض</button></div>
+  <div id="xbody"></div>
+</div></section>
+
+<section class="pg" id="board">
+  <div class="filt" id="bf"></div>
+  <div class="cards" id="bc"></div>
+</section>
+
+<section class="pg" id="tch">
+<div class="card" id="tlogin">
+  <h2>صفحة المعلمة</h2><div class="sub">أدخلي كلمة المرور</div>
+  <div class="row"><input class="in" id="tpw" type="password" dir="ltr"><button class="btn" style="margin:0;flex:0 0 90px" id="tgo">دخول</button></div>
+  <div id="tmsg"></div>
+</div>
+<div id="tmain" hidden>
+<div class="card wide" style="margin-bottom:18px">
+  <h2>تقييم المتاجر</h2><div class="sub">٥ معايير × ٤ = ٢٠ · نقاط التفرّد والتميّز (حتى +٢) تُضاف والحد الأعلى ٢٠، وتفيد في الترتيب · لا تظهر الدرجة للطالبات إلا بعد «نشر» · كل تغيير يُحفظ تلقائيًا</div>
+  <div id="tsave" class="sub"></div>
+  <div class="tw"><table class="tt" id="tt"></table></div>
+</div>
+<div class="card wide">
+  <h2>إدراج الشرح</h2><div class="sub">كل خطوة تظهر للطالبات في تبويب «الشرح» بالترتيب · الرابط اختياري: فيديو يوتيوب أو ملف من مجلد المشروع على Drive</div>
+  <div class="row"><div><label class="f">عنوان الخطوة</label><input class="in" id="ea" placeholder="مثال: اختيار فكرة المتجر"></div><div><label class="f">موعد التسليم (اختياري)</label><input class="in" id="ed" placeholder="مثال: الخميس ٢٥/٥/١٤٤٨هـ"></div></div>
+  <label class="f">الشرح</label><textarea class="in" id="eb" rows="3" placeholder="اكتبي الشرح للطالبات…"></textarea>
+  <label class="f">رابط فيديو أو ملف (اختياري)</label><input class="in" id="el" dir="ltr" placeholder="https://youtu.be/…  أو  https://drive.google.com/file/d/…">
+  <div id="em"></div><button class="btn" id="eadd" style="max-width:220px">+ إضافة الخطوة</button>
+  <div id="elist" style="margin-top:14px"></div>
+</div>
+</div>
+</section>
+</main>
+<footer style="text-align:center;color:var(--mut);font-size:12px;padding:20px">المتوسطة الحادية والعشرون · المهارات الرقمية</footer>
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbyzEUpSfCpGix-gNzxg11hyVXnMIH3nQvQsjwggaNeof1OY1ojpfc8sXzmjbS3qD8Zmeg/exec';
+const CR = ['القالب', 'الشعار', 'التصنيفات', 'الصور', 'المواءمة'];
+const COL = ['#40C4C0', '#0E5E63', '#c9a14a', '#7a9a84', '#8FA3B8', '#b8794a', '#1FA7A3'];
+const PLAT = [
+  ['سلة', 'إنشاء متجر بصفحات منتجات وصور وأسعار، مع رابط خاص للمتجر. مناسبة للسوق السعودي.', 'https://salla.sa', 'عربية · باقة مجانية', 1, 'uMuidzuaNcQ'],
+  ['زد', 'متجر إلكتروني متكامل لعرض المنتجات وإدارتها.', 'https://zid.sa', 'عربية', 0, 'bjDbnfDAp_U'],
+  ['Shopify', 'إنشاء صفحة متجر بتصميم احترافي، مع إدارة المنتجات والطلبات.', 'https://www.shopify.com', 'تجربة قصيرة', 0, 'xW3LQVF7xqk'],
+  ['Ecwid', 'إنشاء واجهة لعرض المنتجات وإضافتها إلى موقع أو صفحة متجر.', 'https://www.ecwid.com', 'عربية', 0, 'pRp-p3JUieA'],
+  ['Big Cartel', 'خيار بسيط لعرض المنتجات في متجر صغير.', 'https://www.bigcartel.com', 'مجانية · إنجليزي', 0, 'IeFhxIXg0EI'],
+];
+const ar = x => String(x).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+const en = x => String(x).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).trim();
+const norm = s => s.trim().replace(/^(فريق|متجر)\s+/, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+/g, '');
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+const stars = n => '★'.repeat(n) + '☆'.repeat(4 - n);
+const sum5 = sc => sc.reduce((a, b) => a + b, 0);
+const total = t => t.sc ? Math.min(20, sum5(t.sc) + (t.bx || 0)) : null;
+const level = s => s == null ? ['بانتظار التقييم', 'l4'] : s >= 18 ? ['متميز', 'l1'] : s >= 14 ? ['متقدم', 'l2'] : s >= 10 ? ['جيد', 'l3'] : ['قيد التطوير', 'l4'];
+const logo = (t, i) => `<div class="logo" style="background:${COL[i % 7]}">${esc(String(t.store).replace(/^متجر\s+/, '')[0] || '؟')}</div>`;
+const ss = {get: k => { try { return sessionStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) {} }};
+
+async function call(a, body = {}) {
+  try {
+    const r = await fetch(API, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify(Object.assign({a}, body))});
+    return await r.json();
+  } catch (e) { return {err: 'تعذّر الاتصال، تأكدي من الإنترنت وحاولي مرة أخرى.'}; }
+}
+const busy = (b, on, txt) => { b.disabled = on; if (txt) b.textContent = on ? 'جارٍ…' : txt; };
+
+let D = {classes: {}, taken: {}, learn: [], max: 2};
+
+// ---------- nav ----------
+function go(p) {
+  document.querySelectorAll('nav button,.pg').forEach(x => x.classList.remove('on'));
+  document.querySelector(`nav [data-p=${p}]`).classList.add('on'); document.getElementById(p).classList.add('on');
+  if (p === 'board') board();
+  if (p === 'tch' && ss.get('tpw')) tlist();
+}
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => go(b.dataset.p));
+if (location.hash === '#teacher') tchbtn.hidden = false;
+
+// ---------- boot ----------
+(async () => {
+  const r = await call('init');
+  if (r.err) return boot.innerHTML = `<div class="msg e">${esc(r.err)}</div>`;
+  D = r; boot.remove();
+  due_(new Date(r.due));
+  rc.innerHTML = '<option value="">اختاري الفصل</option>' + Object.keys(D.classes).map(k => `<option>${esc(k)}</option>`).join('');
+  learn();
+  go(location.hash === '#teacher' ? 'tch' : 'learn');
+})();
+
+function due_(DUE) {
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {day: 'numeric', month: 'numeric', year: 'numeric'}).formatToParts(DUE).map(x => [x.type, x.value]));
+  const ds = `‏${ar(p.day)}/${ar(p.month)}/${ar(p.year.replace(/\D/g, ''))}هـ`;
+  const left = Math.ceil((DUE - new Date()) / 864e5);
+  const txt = left > 1 ? `باقي ${ar(left)} أيام` : left === 1 ? 'آخر يوم!' : 'انتهى موعد التسليم';
+  due.innerHTML = `<div class="duebar ${left < 1 ? 'late' : ''}"><span>📅 موعد تسليم رابط المتجر: <b>الخميس ${ds}</b></span><span class="left">${txt}</span></div>`;
+}
+
+// ---------- learn ----------
+const plats = () => `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:10px">${PLAT.map((p, i) => `
+  <div style="border:1px solid ${p[4] ? 'var(--acc)' : 'var(--line)'};border-radius:10px;padding:12px;display:flex;flex-direction:column;${p[4] ? 'background:#f2fcfb' : ''}">
+    <div style="display:flex;justify-content:space-between;align-items:center"><b style="color:var(--ink)">${ar(i + 1)}. ${p[0]}</b>${p[4] ? '<span class="lv l2">المقترحة ⭐</span>' : ''}</div>
+    <div style="font-size:13px;flex:1;margin:4px 0 6px">${p[1]}</div>
+    <span style="font-size:11px;color:var(--label)">${p[3]}</span>
+    <a class="visit" href="${p[2]}" target="_blank" rel="noopener">زيارة المنصة ↗</a>
+    <button class="visit" style="background:var(--ink);color:#fff;border:0;font:inherit;font-size:13px;cursor:pointer;width:100%" data-vid="${p[5]}" data-vn="${p[0]}">▶ فيديو الشرح</button></div>`).join('')}</div>
+  <div class="vbox" hidden></div>`;
+const yt = id => `<div style="position:relative;padding-top:56%;margin-top:6px"><iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0" style="position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:8px" allowfullscreen></iframe></div>`;
+function media(l) {
+  if (!l) return '';
+  let m = l.match(/(?:youtu\.be\/|v=|shorts\/)([\w-]{11})/);
+  if (m) return yt(m[1]);
+  m = l.match(/drive\.google\.com\/file\/d\/([\w-]+)/) || l.match(/docs\.google\.com\/(?:presentation|document)\/d\/([\w-]+)/);
+  if (m) return `<div style="position:relative;padding-top:60%;margin-top:10px"><iframe src="https://drive.google.com/file/d/${m[1]}/preview" style="position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:8px" allow="autoplay"></iframe></div>`;
+  return /^https?:\/\//.test(l) ? `<a class="visit" style="max-width:220px" href="${esc(l)}" target="_blank" rel="noopener">فتح الملف ↗</a>` : '';
+}
+function learn() {
+  lbody.innerHTML = D.learn.length ? D.learn.map((s, i) => `<div style="display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--soft)">
+    <div style="flex:none;width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:600">${ar(i + 1)}</div>
+    <div class="stepb" style="flex:1;min-width:0"><b style="color:var(--ink);font-size:16px">${esc(s.t)}</b>${s.d ? ` <span class="lv l3">التسليم: ${esc(s.d)}</span>` : ''}
+    <div style="font-size:14px;white-space:pre-line">${esc(s.b)}</div>${s.p ? plats() : ''}${media(s.l)}</div></div>`).join('') : '<div class="empty">لم يُضف شرح بعد</div>';
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-vid]'); if (!b) return;
+  const box = b.closest('.stepb').querySelector('.vbox');
+  if (!box.hidden && box.dataset.v === b.dataset.vid) { box.hidden = true; box.innerHTML = ''; return; }
+  box.dataset.v = b.dataset.vid; box.hidden = false;
+  box.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px"><b style="color:var(--ink)">شرح منصة ${esc(b.dataset.vn)}</b><button class="chip" onclick="this.closest('.vbox').hidden=true;this.closest('.vbox').innerHTML=''">إغلاق ✕</button></div>` + yt(b.dataset.vid);
+  box.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+});
+
+// ---------- register ----------
+let sel = new Set();
+rc.onchange = () => {
+  const L = D.classes[rc.value] || [];
+  rn.disabled = !L.length;
+  rn.innerHTML = '<option value="">اختاري اسمكِ</option>' + L.map(n => `<option>${esc(n)}</option>`).join('');
+  rmw.hidden = true; rmsg.innerHTML = ''; rsave.disabled = false;
+};
+rn.onchange = () => {
+  sel.clear(); rq.value = ''; rmsg.innerHTML = ''; rsave.disabled = false;
+  const t = D.taken[rn.value];
+  if (t) { rmsg.innerHTML = `<div class="msg w">أنتِ مسجّلة في «${esc(t)}».<br>لإضافة الرابط أو تعديله استخدمي «أكملي مشروعك» برمز فريقكِ، وإن نسيتِ الرمز فاسألي المعلمة.</div>`; rsave.disabled = true; rmw.hidden = true; return; }
+  rmw.hidden = !rn.value; pick();
+};
+function pick() {
+  const others = (D.classes[rc.value] || []).filter(x => x !== rn.value), q = norm(rq.value), full = sel.size + 1 >= D.max;
+  rsum.innerHTML = `عدد عضوات المجموعة: <b>${ar(sel.size + 1)} من ${ar(D.max)}</b>` + (full ? ' · <span style="color:var(--ok)">✓ اكتملت المجموعة</span>' : ' · اختاري زميلة واحدة، أو سجّلي وحدكِ');
+  rpk.innerHTML = `<span class="chip me">${esc(rn.value)} · أنتِ</span>` + others.filter(x => !q || norm(x).includes(q)).map(x =>
+    D.taken[x] ? `<button class="chip" disabled title="في ${esc(D.taken[x])}">${esc(x)}</button>`
+    : full && !sel.has(x) ? `<button class="chip" disabled style="text-decoration:none">${esc(x)}</button>`
+    : `<button class="chip ${sel.has(x) ? 'on' : ''}" data-n="${esc(x)}">${sel.has(x) ? '✓ ' : ''}${esc(x)}</button>`).join('');
+}
+rq.oninput = pick;
+rpk.onclick = e => { const b = e.target.closest('[data-n]'); if (!b) return; const n = b.dataset.n; if (sel.has(n)) sel.delete(n); else if (sel.size + 1 < D.max) sel.add(n); pick(); };
+rsave.onclick = async () => {
+  const err = m => rmsg.innerHTML = `<div class="msg e">${esc(m)}</div>`;
+  if (!rc.value || !rn.value) return err('اختاري الفصل واسمكِ.');
+  if (!rt.value.trim() || !rs.value.trim()) return err('اكتبي اسم الفريق واسم المتجر.');
+  const link = rl.value.trim();
+  if (link && !/^https?:\/\/\S+\.\S+/.test(link)) return err('الرابط غير صحيح، يجب أن يبدأ بـ https://');
+  busy(rsave, true, 'حفظ');
+  const r = await call('register', {cls: rc.value, name: rn.value, mem: [...sel], team: rt.value, store: rs.value, link});
+  busy(rsave, false, 'حفظ');
+  if (r.err) return rmsg.innerHTML = `<div class="msg ${r.dup ? 'w' : 'e'}">${r.dup ? '⚠ ' : ''}${esc(r.err)}</div>`;
+  [rn.value, ...sel].forEach(m => D.taken[m] = rt.value.trim());
+  rmw.hidden = true; rsave.disabled = true;
+  rmsg.innerHTML = `<div class="msg o">✓ تم تسجيل فريقكم<br>رمز الفريق<span class="code">${esc(r.code)}</span>احفظنه واكتبنه في الدفتر، تحتجنه لإكمال المشروع ورؤية التقييم</div>`;
+};
+
+// ---------- complete ----------
+dgo.onclick = async () => {
+  busy(dgo, true, 'دخول');
+  const r = await call('get', {code: en(dc.value)});
+  busy(dgo, false, 'دخول');
+  if (r.err) return dbody.innerHTML = `<div class="msg e">${esc(r.err)}</div>`;
+  const t = r.team, items = [['اسم الفريق والمتجر', 1], ['رابط المتجر', t.link], ['وصف قصير', t.desc]];
+  const pc = Math.round(items.filter(i => i[1]).length / items.length * 100);
+  dbody.innerHTML = `<div class="hd">${logo(t, 0)}<div><b>${esc(t.store)}</b><small>${esc(t.team)} · ${esc(t.cls)} · ${t.mem.map(esc).join('، ')}</small></div></div>
+    <div style="font-size:13px;color:var(--mut)">اكتمال المشروع ${ar(pc)}٪</div><div class="prog"><i style="width:${pc}%"></i></div>
+    <ul class="chk">${items.map(i => `<li>${i[0]}<span class="${i[1] ? 'y' : 'n'}">${i[1] ? '✓' : 'ناقص'}</span></li>`).join('')}</ul>
+    <label class="f">رابط المتجر</label><input class="in" id="dl" dir="ltr" value="${esc(t.link)}" placeholder="https://">
+    <label class="f">وصف قصير للمتجر</label><input class="in" id="dd" maxlength="200" value="${esc(t.desc)}" placeholder="ماذا يبيع متجركن؟">
+    <div id="dm"></div><button class="btn" id="dsave">حفظ</button>`;
+  dsave.onclick = async () => {
+    const l = dl.value.trim();
+    if (l && !/^https?:\/\/\S+\.\S+/.test(l)) return dm.innerHTML = '<div class="msg e">الرابط غير صحيح، يجب أن يبدأ بـ https://</div>';
+    busy(dsave, true, 'حفظ');
+    const u = await call('update', {code: en(dc.value), link: l, desc: dd.value});
+    busy(dsave, false, 'حفظ');
+    dm.innerHTML = u.err ? `<div class="msg e">${esc(u.err)}</div>` : '<div class="msg o">✓ تم الحفظ</div>';
+  };
+};
+
+// ---------- result ----------
+xgo.onclick = async () => {
+  busy(xgo, true, 'عرض');
+  const r = await call('get', {code: en(xc.value)});
+  busy(xgo, false, 'عرض');
+  if (r.err) return xbody.innerHTML = `<div class="msg e">${esc(r.err)}</div>`;
+  const t = r.team, head = `<div class="hd">${logo(t, 0)}<div><b>${esc(t.store)}</b><small>${esc(t.team)} · ${esc(t.cls)}</small></div></div>`;
+  if (!t.pub || !t.sc) return xbody.innerHTML = head + '<div class="msg w">لم يُنشر تقييم فريقكم بعد. تأكدن من إضافة رابط المتجر.</div>';
+  const s = total(t), [ln, lc] = level(s), weak = CR[t.sc.indexOf(Math.min(...t.sc))];
+  xbody.innerHTML = head + `<div class="big"><small>درجة المشروع</small><b>${ar(s)}</b> من ٢٠<br><span class="lv ${lc}">${ln}</span></div>
+    <div class="crit">${CR.map((c, i) => `<div>${c}<span><span class="stars">${stars(t.sc[i])}</span> ${ar(t.sc[i])}/٤</span></div>`).join('')}${t.bx ? `<div>✨ التفرّد والتميّز<span style="color:var(--ok);font-weight:600">+${ar(t.bx)}</span></div>` : ''}</div>
+    ${t.note ? `<div class="note"><b>ملاحظة المعلمة</b>${esc(t.note)}</div>` : ''}
+    ${Math.min(...t.sc) < 4 ? `<div class="msg o" style="text-align:right">💡 أكثر معيار يحتاج تحسينًا: <b>${weak}</b></div>` : ''}`;
+};
+
+// ---------- board ----------
+let bfil = 'الكل', BT = null;
+async function board() {
+  if (!BT) { bc.innerHTML = '<div class="empty">جارٍ التحميل…</div>'; const r = await call('board'); if (r.err) return bc.innerHTML = `<div class="msg e">${esc(r.err)}</div>`; BT = r.teams; setTimeout(() => BT = null, 60000); }
+  bf.innerHTML = ['الكل', ...Object.keys(D.classes)].map(o => `<button class="${o === bfil ? 'on' : ''}" data-f="${esc(o)}">${esc(o)}</button>`).join('');
+  bf.onclick = e => { const b = e.target.closest('[data-f]'); if (b) { bfil = b.dataset.f; board(); } };
+  const ranked = BT.map((t, i) => Object.assign(t, {_i: i})).sort((a, b) => (b.raw ?? -1) - (a.raw ?? -1));
+  let r = 0, prev = null;
+  ranked.forEach((t, i) => { if (t.raw == null) { t._r = null; return; } if (t.raw !== prev) r = i + 1; prev = t.raw; t._r = r; });
+  const list = ranked.filter(t => bfil === 'الكل' || t.cls === bfil);
+  bc.innerHTML = list.length ? list.map(t => {
+    const s = total(t), [ln, lc] = level(s), pct = s == null ? 0 : s * 5;
+    const rk = t._r == null ? '' : `<span class="rank" style="${t._r === 1 ? 'background:var(--gold)' : t._r === 2 ? 'background:#9aa7ad' : t._r === 3 ? 'background:#b8794a' : ''}">${ar(t._r)}${t._r === 1 ? ' 🏆' : ''}</span>`;
+    return `<div class="sc">${rk}<div class="ring" style="background:conic-gradient(var(--acc) ${pct}%,var(--soft) 0)"><span>${s == null ? '–' : ar(s)}<small>من ٢٠</small></span></div>
+      <div class="hd">${logo(t, t._i)}<div><b>${esc(t.store)}</b><small>${esc(t.team)} · ${esc(t.cls)}</small></div></div>
+      <span class="lv ${lc}">${ln}</span>
+      ${s == null ? '' : `<div class="crit" style="margin-top:8px">${CR.map((c, k) => `<div>${c}<span class="stars">${stars(t.sc[k])}</span></div>`).join('')}${t.bx ? `<div>✨ تميّز<span style="color:var(--ok)">+${ar(t.bx)}</span></div>` : ''}</div>`}
+      <a class="visit ${/^https?:\/\//.test(t.link) ? '' : 'dis'}" href="${/^https?:\/\//.test(t.link) ? esc(t.link) : '#'}" target="_blank" rel="noopener">${t.link ? 'زيارة المتجر ↗' : 'لم يُضف الرابط بعد'}</a></div>`;
+  }).join('') : '<div class="empty">لا توجد متاجر بعد</div>';
+}
+
+// ---------- teacher ----------
+let TT = [];
+tgo.onclick = async () => { ss.set('tpw', tpw.value); await tlist(); };
+tpw.onkeydown = e => { if (e.key === 'Enter') tgo.onclick(); };
+const tcall = (a, b = {}) => call(a, Object.assign({pw: ss.get('tpw')}, b));
+async function tlist() {
+  const r = await tcall('t_list');
+  if (r.err) { tmsg.innerHTML = `<div class="msg e">${esc(r.err)}</div>`; tmain.hidden = true; tlogin.hidden = false; return; }
+  tlogin.hidden = true; tmain.hidden = false; TT = r.teams; D.learn = r.learn; table(); edit();
+}
+function table() {
+  const opt = (v, m) => Array.from({length: m + 1}, (_, i) => `<option value="${i}" ${i === v ? 'selected' : ''}>${ar(i)}</option>`).join('');
+  tt.innerHTML = `<tr><th>الفريق والمتجر</th>${CR.map(c => `<th>${c}</th>`).join('')}<th>✨ تميّز</th><th>المجموع</th><th>ملاحظة</th><th>نشر</th><th></th></tr>` +
+    (TT.length ? TT.map((t, i) => `<tr data-i="${i}"><td><b style="color:var(--ink)">${esc(t.store)}</b> <small dir="ltr" style="color:var(--label)">${esc(t.code)}</small><br><small style="color:var(--mut)">${esc(t.team)} · ${esc(t.cls)} · ${t.mem.map(esc).join('، ')}<br>${/^https?:\/\//.test(t.link) ? `<a href="${esc(t.link)}" target="_blank" rel="noopener">فتح المتجر ↗</a>` : 'بلا رابط'}</small></td>
+      ${CR.map((c, k) => `<td><select data-k="${k}"><option value="" ${t.sc ? '' : 'selected'}>–</option>${opt(t.sc ? t.sc[k] : -1, 4)}</select></td>`).join('')}
+      <td><select data-bx>${opt(t.bx || 0, 2).replace(/>(\S)</g, '>+$1<')}</select></td>
+      <td><b>${t.sc ? ar(total(t)) : '–'}</b>/٢٠</td><td><input type="text" data-note maxlength="300" value="${esc(t.note)}"></td>
+      <td><input type="checkbox" data-pub ${t.pub ? 'checked' : ''} ${t.sc ? '' : 'disabled'}></td>
+      <td><button class="chip" data-del>حذف</button></td></tr>`).join('') : `<tr><td colspan="11" class="empty">لم يسجّل أي فريق بعد</td></tr>`);
+}
+tt.onchange = async e => {
+  const tr = e.target.closest('tr'), t = TT[tr.dataset.i];
+  const v = [...tr.querySelectorAll('[data-k]')].map(s => s.value);
+  t.sc = v.every(x => x !== '') ? v.map(Number) : null;
+  t.bx = +tr.querySelector('[data-bx]').value;
+  t.note = tr.querySelector('[data-note]').value.trim();
+  t.pub = !!(tr.querySelector('[data-pub]').checked && t.sc);
+  tsave.textContent = 'جارٍ الحفظ…';
+  const r = await tcall('t_score', {code: t.code, sc: t.sc, bx: t.bx, note: t.note, pub: t.pub});
+  tsave.innerHTML = r.err ? `<span style="color:#9a3b3b">${esc(r.err)}</span>` : '<span style="color:var(--ok)">✓ حُفظ</span>';
+  BT = null; table();
+};
+tt.onclick = async e => {
+  if (!e.target.hasAttribute('data-del')) return;
+  const t = TT[e.target.closest('tr').dataset.i];
+  if (!confirm(`حذف فريق «${t.team}» نهائيًا؟`)) return;
+  const r = await tcall('t_delete', {code: t.code});
+  if (r.err) return alert(r.err);
+  tlist(); D = Object.assign(D, (await call('init')));
+};
+function edit() {
+  elist.innerHTML = D.learn.map((s, i) => `<div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px">
+    <b style="color:var(--ink)">${ar(i + 1)}.</b><span style="flex:1">${esc(s.t)}${s.l ? ' 🎬' : ''}${s.p ? ' (بطاقات المنصات)' : ''}</span>
+    <button class="chip" data-up="${i}" ${i ? '' : 'disabled'}>↑</button><button class="chip" data-del="${i}">حذف</button></div>`).join('');
+}
+async function lsave(msg) {
+  const r = await tcall('t_learn', {steps: D.learn});
+  em.innerHTML = r.err ? `<div class="msg e">${esc(r.err)}</div>` : `<div class="msg o">✓ ${msg}</div>`;
+  learn(); edit();
+}
+eadd.onclick = () => {
+  if (!ea.value.trim() || !eb.value.trim()) return em.innerHTML = '<div class="msg e">اكتبي العنوان والشرح.</div>';
+  D.learn.push({t: ea.value.trim(), d: ed.value.trim(), b: eb.value.trim(), l: el.value.trim()});
+  ea.value = ed.value = eb.value = el.value = '';
+  lsave('أُضيفت الخطوة، وتظهر الآن في تبويب «الشرح»');
+};
+elist.onclick = e => {
+  const u = e.target.dataset.up, d = e.target.dataset.del;
+  if (u) { const i = +u; [D.learn[i - 1], D.learn[i]] = [D.learn[i], D.learn[i - 1]]; lsave('تم الترتيب'); }
+  if (d && confirm('حذف هذه الخطوة؟')) { D.learn.splice(+d, 1); lsave('تم الحذف'); }
+};
+</script></body></html>
