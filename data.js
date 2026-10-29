@@ -20,7 +20,8 @@ const GRADES = [
 // الإنتاج المعرفي: g = رقم المرحلة (0 أول، 1 ثاني، 2 ثالث)، u = رقم الوحدة، kind = درس أو اختبار
 const LESSONS = [
   {g: 1, u: 2, kind: 'اختبار', title: 'اختبار المعاملات في بايثون', url: 'lessons/python-operators-quiz.html'},
-  {g: 1, u: 2, kind: 'اختبار', title: 'كيف أكتب جملة if؟', url: 'lessons/if-statement.html'},];
+  {g: 1, u: 2, kind: 'اختبار', title: 'كيف أكتب جملة if؟', url: 'lessons/if-statement.html'},
+  {g: 1, u: 2, kind: 'درس', title: 'الجمل الشرطية الثلاث والمسافة البادئة', url: 'lessons/conditional-statements.html'},];
 
 // TT[0] = الأحد … TT[4] = الخميس؛ p = أرقام الحصص
 const TT = [
