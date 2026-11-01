@@ -240,10 +240,10 @@ footer{text-align:center;color:var(--on-sv);font-size:12px;padding:20px}
   </div>
   <div id="rform">
     <label class="f">عنوان الفيديو</label><input class="in" id="rs" maxlength="60" placeholder="مثال: كيف أحافظ على جهازي؟">
-    <label class="f">رابط الفيديو <small style="color:var(--on-sv)">(يمكن إضافته لاحقًا)</small></label><input class="in" id="rl" dir="ltr" placeholder="https://">
+    <div id="rvbox"></div>
   </div>
   <div id="rmsg"></div>
-  <button class="btn" id="rsave">حفظ</button>
+  <button class="btn" id="rsave">حفظ ورفع الفيديو</button>
 </div></section>
 
 <!-- ═════ صفحة فريقنا ═════ -->
@@ -305,7 +305,8 @@ footer{text-align:center;color:var(--on-sv);font-size:12px;padding:20px}
 const SB = 'https://uautjfgslrfhceciqwyn.supabase.co/rest/v1/rpc/';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhdXRqZmdzbHJmaGNlY2lxd3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNjI3NzMsImV4cCI6MjEwODgzODc3M30.Dj1dYWNMwhp02hJEko8XnDD23Mi-gK-Q82BkICdrj_Q';   // مفتاح عام: الجداول مقفلة، والوصول عبر الدوال فقط
 const SLUG = 'video-1448';
-const UPLOAD = 'https://asrgirls-my.sharepoint.com/:f:/g/personal/t763621_asrg_moe_gov_sa/IgAj4wQYnMBqT7jTO_BVyDZrAVwiFTclzARNhXFHqIuH54M?e=3nKifN';   // رابط مجلد ون درايف لرفع الفيديوهات (من المعلمة)
+const UP = 'https://script.google.com/macros/s/AKfycbwCS5Bxv2hgOQAMreo78vsNml4HYkaufgUW9Vle9hwl2gUYV8CIMCQoz_9s9t6j8nS7/exec';   // رفع الفيديو مباشرة إلى Drive (actschool28)
+const UPMAX = 4 * 1024 ** 3;
 const PLAT = [
   ['CapCut', 'https://www.capcut.com', '', 1], ['Canva', 'https://www.canva.com/ar_sa/', ''],
   ['Clipchamp', 'https://clipchamp.com', ''], ['InShot (للجوال)', 'https://inshot.com', ''],
@@ -370,6 +371,7 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = () => go(b.data
     $('due').innerHTML = `<div class="duebar"><span>آخر موعد لتسليم الفيديو: <b>${dayName(P.due_at)} ${hijri(P.due_at)}</b></span><span class="left">${txt}</span></div>`;
   }
   $('rsub').textContent = 'مشروع فردي · تسجّل كل طالبة مشروعها بنفسها';
+  $('rvbox').innerHTML = vbox('rv', '', ' — ويمكن رفعه لاحقًا من «صفحتي»');
   $('rc').innerHTML = '<option value="">اختاري الفصل</option>' + P.classes.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
   learn();
   go(location.hash === '#teacher' ? 'tch' : 'learn');
@@ -422,7 +424,7 @@ $('rn').onchange = () => {
   sel.clear(); $('rq').value = ''; msg($('rmsg')); $('rsave').disabled = false; $('rform').hidden = false;
   const me = ST.find(s => s.id === +$('rn').value);
   if (me && me.taken) {
-    msg($('rmsg'), 'w', 'سجّلتِ مشروعكِ من قبل.<br>لإضافة رابط الفيديو أو رؤية النتيجة ادخلي «صفحتي» برمزكِ، وإن نسيتِ الرمز فاسألي المعلمة.');
+    msg($('rmsg'), 'w', 'سجّلتِ مشروعكِ من قبل.<br>لرفع الفيديو أو رؤية النتيجة ادخلي «صفحتي» برمزكِ، وإن نسيتِ الرمز فاسألي المعلمة.');
     $('rsave').disabled = true; $('rmw').hidden = true; $('rform').hidden = true; return;
   }
   $('rmw').hidden = !me || P.max_team_size < 2; pick();
@@ -442,15 +444,21 @@ $('rsave').onclick = async () => {
   const err = m => msg($('rmsg'), 'e', esc(m));
   if (!$('rc').value || !$('rn').value) return err('اختاري الفصل واسمكِ.');
   if (!$('rs').value.trim()) return err('اكتبي عنوان الفيديو.');
-  const link = $('rl').value.trim();
-  if (link && !url(link)) return err('الرابط غير صحيح، يجب أن يبدأ بـ https://');
+  const f = $('rv').files[0], bad = f && vbad(f);
+  if (bad) return err(bad);
   busy($('rsave'), true);
   const r = await rpc('api_register_team', {p_slug: SLUG, p_class: +$('rc').value, p_team_name: ST.find(s => s.id === +$('rn').value).name, p_store_name: $('rs').value.trim(), p_members: [+$('rn').value, ...sel]});
   if (r.error) { busy($('rsave'), false); return msg($('rmsg'), 'w', '⚠ ' + esc(r.error) + ''); }
-  if (link) await rpc('api_team_update', {p_slug: SLUG, p_code: r.code, p_store_name: '', p_store_url: link});
   ss.set('code', r.code);
-  $('rmw').hidden = true; $('rform').hidden = true;
-  msg($('rmsg'), 'o', `تم تسجيل مشروعكِ ✓<br>رمزكِ<br><span class="code">${ar(r.code)}</span><br>احفظيه واكتبيه في الدفتر، تحتاجينه لإضافة رابط الفيديو ورؤية النتيجة.`);
+  $('rmw').hidden = true;
+  let up = '';
+  if (f) {
+    msg($('rmsg')); $('rv').disabled = true;
+    try { await sendVideo(r.code, $('rs').value.trim(), f, 'rv'); up = '<br>ورُفع الفيديو وسُلِّم ✓'; }
+    catch (e) { up = `<br>⚠ ${esc(e)}<br>ارفعي الفيديو من «صفحتي» برمزكِ.`; }
+  }
+  $('rform').hidden = true;
+  msg($('rmsg'), 'o', `تم تسجيل مشروعكِ ✓${up}<br>رمزكِ<br><span class="code">${ar(r.code)}</span><br>احفظيه واكتبيه في الدفتر، تحتاجينه لرفع الفيديو ورؤية النتيجة.`);
   $('rmsg').insertAdjacentHTML('beforeend', `<button class="btn" onclick="$('tc').value='${ar(r.code)}';go('team');tview()">اذهبي إلى صفحتي ←</button>`);
 };
 
@@ -469,20 +477,25 @@ async function tview() {
   const peer = t.peer_count ? `<div class="peer"><span>تقييم الزميلات (منفصل عن الدرجة)</span><span class="stars">${stars(Math.round(t.peer_avg), 5)} ${ar(t.peer_avg)} من ${ar(t.peer_count)} ${t.peer_count > 2 && t.peer_count < 11 ? 'تقييمات' : 'تقييم'}</span></div>` : '';
   if (!t.published) {
     $('tbody').innerHTML = head + `
-      ${UPLOAD ? `<a class="btn" style="display:block;text-align:center;text-decoration:none" href="${esc(UPLOAD)}" target="_blank" rel="noopener">⬆ رفع الفيديو في مجلد ون درايف</a>` : '<div class="note"><b>رفع الفيديو</b>سيُضاف هنا زر مجلد ون درايف قريبًا.</div>'}
       <label class="f">عنوان الفيديو</label><input class="in" id="ts" maxlength="60" value="${esc(t.store_name)}">
-      <label class="f">رابط الفيديو <small style="color:var(--on-sv)">(بعد الرفع: اضغطي على ملفكِ ← مشاركة ← نسخ الرابط)</small></label><input class="in" id="tl" dir="ltr" placeholder="https://" value="${esc(t.store_url)}">
-      <div id="tm"></div><button class="btn" id="tsave">حفظ</button>
+      ${vbox('tv', t.submitted_at ? 'استبدال الفيديو' : '')}
+      <div id="tm"></div><button class="btn" id="tsave">⬆ حفظ ورفع الفيديو</button>
       ${t.submitted_at ? `<div class="msg o">سُلِّم الفيديو ✓ — ${dayName(t.submitted_at)} ${hijri(t.submitted_at)}</div>` : ''}
       <div class="note"><b>النتيجة</b>لم تُنشر بعد. ستظهر هنا بعد أن تقيّم المعلمة فيديوكِ.</div>${peer}`;
     $('tsave').onclick = async () => {
-      const l = $('tl').value.trim();
-      if (l && !url(l)) return msg($('tm'), 'e', 'الرابط غير صحيح، يجب أن يبدأ بـ https://');
-      busy($('tsave'), true);
-      const u = await rpc('api_team_update', {p_slug: SLUG, p_code: code, p_store_name: $('ts').value.trim(), p_store_url: l});
-      busy($('tsave'), false);
-      if (u.error) return msg($('tm'), 'e', esc(u.error));
-      msg($('tm'), 'o', 'تم الحفظ ✓'); setTimeout(tview, 900);
+      const f = $('tv').files[0], title = $('ts').value.trim();
+      if (!title) return msg($('tm'), 'e', 'اكتبي عنوان الفيديو.');
+      if (!f && !t.submitted_at) return msg($('tm'), 'e', 'اختاري الفيديو من جوالكِ أولًا.');
+      if (f && vbad(f)) return msg($('tm'), 'e', vbad(f));
+      msg($('tm')); busy($('tsave'), true);
+      try {
+        if (f) await sendVideo(code, title, f, 'tv');
+        else { const u = await rpc('api_team_update', {p_slug: SLUG, p_code: code, p_store_name: title, p_store_url: t.store_url || ''}); if (u.error) throw u.error; }
+        msg($('tm'), 'o', f ? 'تم رفع الفيديو وتسليمه ✓' : 'تم الحفظ ✓'); setTimeout(tview, 1500);
+      } catch (e) {
+        busy($('tsave'), false); $('tv').disabled = false;
+        msg($('tm'), 'e', esc(e));
+      }
     };
     return;
   }
@@ -495,6 +508,60 @@ async function tview() {
       <small style="display:inline;margin-right:6px">${RANKN[res.rank] ? 'الترتيب: ' + RANKN[res.rank] : 'الترتيب: ' + ar(res.rank)}${+res.bonus ? ' · نقاط التميّز +' + ar(+res.bonus) : ''}</small></div>
     <div class="crit">${groups.map(g => `<div><span>${esc(g.g)}</span><span class="stars">${stars(g.p, g.m)} <small>${ar(g.p)}/${ar(g.m)}</small></span></div>`).join('')}</div>
     ${res.note ? `<div class="note"><b>ملاحظة المعلمة</b>${esc(res.note)}</div>` : ''}${peer}`;
+}
+
+// ---------- رفع الفيديو من الجوال مباشرة ----------
+const vmime = f => /^video\//.test(f.type) ? f.type : /\.(mp4|mov|m4v|avi|mkv|webm|3gp|wmv)$/i.test(f.name) ? 'video/mp4' : '';
+const vbad = f => !vmime(f) ? 'الملف ليس فيديو.' : f.size > UPMAX ? 'حجم الفيديو أكبر من ٤ جيجا.' : '';
+const vbox = (id, lbl, note = '') => `<label class="f">${lbl || 'الفيديو'} <small style="color:var(--on-sv)">(من جوالكِ، حتى ٤ جيجا${note})</small></label>
+  <input class="in" id="${id}" type="file" accept="video/*" style="padding:8px">
+  <div id="${id}p" hidden style="margin:8px 0"><div style="height:10px;border-radius:6px;background:var(--sc-top);overflow:hidden"><div id="${id}b" style="height:100%;width:0;background:var(--primary);transition:width .3s"></div></div><small id="${id}t" style="color:var(--on-sv)"></small></div>`;
+// يرفع الفيديو ويحفظ رابطه للطالبة؛ عند الفشل يرمي رسالة عربية
+async function sendVideo(code, title, f, id) {
+  const mb = n => ar((n / 1048576).toFixed(n < 1048576 * 10 ? 1 : 0));
+  const show = n => { $(id + 'b').style.width = (n / f.size * 100) + '%'; $(id + 't').textContent = `جارٍ الرفع… ${mb(n)} من ${mb(f.size)} ميجا (${ar(Math.floor(n / f.size * 100))}٪) — لا تغلقي الصفحة`; };
+  $(id).disabled = true; $(id + 'p').hidden = false; show(0);
+  onbeforeunload = () => true;
+  try {
+    const fid = await upload(code, f, vmime(f), show);
+    const d = await (await fetch(UP + '?' + new URLSearchParams({a: 'done', code, id: fid}))).json();
+    if (d.error) throw d.error;
+    const u = await rpc('api_team_update', {p_slug: SLUG, p_code: code, p_store_name: title, p_store_url: d.link});
+    if (u.error) throw u.error;
+    $(id + 't').textContent = 'اكتمل الرفع ١٠٠٪';
+  } catch (e) {
+    $(id).disabled = false;
+    throw typeof e === 'string' ? e : 'انقطع الرفع، تأكدي من الإنترنت وحاولي مرة أخرى.';
+  } finally { onbeforeunload = null; }
+}
+
+// رفع على أجزاء (٨ ميجا) إلى جلسة Drive يفتحها الخادم؛ كل جزء يُعاد حتى ٤ مرات عند انقطاع النت
+async function upload(code, f, mime, show) {
+  const s = await (await fetch(UP + '?' + new URLSearchParams({a: 'start', code, name: f.name, size: f.size, mime, origin: location.origin}))).json();
+  if (s.error) throw s.error;
+  const CH = 8 * 1024 * 1024;
+  const put = (a, b) => new Promise((ok, no) => {
+    const x = new XMLHttpRequest();
+    x.open('PUT', s.url);
+    x.setRequestHeader('Content-Range', `bytes ${a}-${b - 1}/${f.size}`);
+    x.upload.onprogress = e => show(a + e.loaded);
+    x.onload = () => x.status === 308 || x.status < 300 ? ok(x) : no(x.status);
+    x.onerror = () => no(0);
+    x.send(f.slice(a, b));
+  });
+  for (let a = 0; a < f.size; a += CH) {
+    const b = Math.min(a + CH, f.size);
+    for (let i = 0; ; i++) {
+      try {
+        const x = await put(a, b);
+        if (b === f.size) return JSON.parse(x.responseText).id;
+        break;
+      } catch (e) {
+        if (i >= 3 || (e >= 400 && e < 500)) throw e;
+        await new Promise(r => setTimeout(r, 3000 * (i + 1)));
+      }
+    }
+  }
 }
 
 // ---------- لوحة المتاجر ----------
