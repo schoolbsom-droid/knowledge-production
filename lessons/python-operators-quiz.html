@@ -97,6 +97,7 @@ figcaption{font-size:14px;color:var(--muted);text-align:center}
 .opt .k{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--surface);border:1.5px solid var(--line);font-weight:700;font-size:15px}
 .opt .v{min-width:0;overflow-wrap:anywhere}
 .opt .v.mono{font-family:var(--f-mono);direction:ltr;unicode-bidi:isolate;font-weight:700}
+code,pre,.mono,.op,.lbl{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
 .opt.right{border-color:var(--ok);background:var(--ok-soft)}
 .opt.right .k{background:var(--ok);border-color:var(--ok);color:var(--surface)}
 .opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
@@ -226,7 +227,7 @@ const Q=[
   why:'<code>//</code> تعطي ناتج القسمة الصحيح بدون كسور (3)، و <code>%</code> تعطي باقي القسمة (2)، لأن ‎17 = 5 × 3 + 2‎.',short:'القسمة الصحيحة وباقي القسمة'},
  {cat:'math',text:'ما الذي سيظهر عند تنفيذ هذا السطر؟',code:'print(2 ** 3)',opts:['6','5','8','9'],mono:true,a:2,
   why:'<code>**</code> هو معامل الأس: ‎2 × 2 × 2 = 8‎. أما <code>2 * 3</code> فناتجها 6.',short:'معامل الأس **'},
- {cat:'cmp',text:'أي رمز يعني «لا يساوي» في بايثون؟',opts:['<>','=!','=/=','!='],mono:true,a:3,
+ {cat:'cmp',text:'أي رمز يعني «لا يساوي» في بايثون؟',opts:['<>','!=','=/=','=!'],mono:true,a:1,
   why:'معامل «لا يساوي» هو <code>!=</code>، وتكون علامة التعجب قبل علامة يساوي.',short:'رمز لا يساوي'},
  {cat:'cmp',text:'ما الذي سيظهر عند تنفيذ البرنامج؟',code:'x = 8\nprint(x >= 8)',opts:['True','False','8','خطأ في البرنامج'],mono:[1,1,1,0],a:0,
   why:'<code>&gt;=</code> تعني «أكبر من أو يساوي»، والقيمة 8 تساوي 8، فالنتيجة <code>True</code>.',short:'أكبر من أو يساوي'},

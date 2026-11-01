@@ -21,7 +21,11 @@ const GRADES = [
 const LESSONS = [
   {g: 1, u: 2, kind: 'اختبار', title: 'اختبار المعاملات في بايثون', url: 'lessons/python-operators-quiz.html'},
   {g: 1, u: 2, kind: 'اختبار', title: 'كيف أكتب جملة if؟', url: 'lessons/if-statement.html'},
-  {g: 1, u: 2, kind: 'درس', title: 'الجمل الشرطية الثلاث والمسافة البادئة', url: 'lessons/conditional-statements.html'},];
+  {g: 1, u: 2, kind: 'درس', title: 'الجمل الشرطية الثلاث والمسافة البادئة', url: 'lessons/conditional-statements.html'},
+  {g: 1, u: 2, kind: 'درس تفاعلي', title: 'جدول الحقيقة التفاعلي', url: 'lessons/truth-table.html'},
+  {g: 1, u: 2, kind: 'أداة', title: 'السبورة التفاعلية', url: 'lessons/whiteboard.html'},
+  {g: 1, u: 0, kind: 'مشروع', title: 'مشاريع تصميم الفيديو', url: 'video.html'},
+  {g: 2, u: 2, kind: 'مشروع', title: 'مشاريع المتجر الإلكتروني', url: 'store.html'},];
 
 // TT[0] = الأحد … TT[4] = الخميس؛ p = أرقام الحصص
 const TT = [

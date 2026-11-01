@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>السبورة التفاعلية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: toolbar on top (wraps on narrow screens), white board fills the rest; ink on a canvas, grid/lines are a CSS background so the eraser never removes them */
+:root{
+  --bg:#F3F6F5; --surface:#FFFFFF; --ink:#16302C; --muted:#5B706B; --line:#D5E0DC;
+  --accent:#0B7A66; --accent-soft:#DCEFEA; --board:#FFFFFF; --rule:#E3E9E7;
+  --f-display:"Readex Pro","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --f-body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1917; --surface:#15231F; --ink:#E3EEEA; --muted:#93A8A2; --line:#26403A;
+  --accent:#3CC3A6; --accent-soft:#163A33; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1917; --surface:#15231F; --ink:#E3EEEA; --muted:#93A8A2; --line:#26403A;
+  --accent:#3CC3A6; --accent-soft:#163A33; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);display:flex;flex-direction:column;overflow:hidden}
+.bar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;padding:8px max(16px,env(safe-area-inset-right,0px));background:var(--surface);border-bottom:1px solid var(--line)}
+.grp{display:flex;gap:4px;align-items:center}
+.grp+.grp{border-inline-start:1px solid var(--line);padding-inline-start:12px}
+.b{font:inherit;font-size:13px;font-family:var(--f-display);border:1.5px solid transparent;background:transparent;color:var(--ink);border-radius:10px;padding:5px 9px;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.b:hover{background:var(--accent-soft)}
+.b[aria-pressed="true"]{background:var(--accent);color:var(--surface)}
+.b svg{width:18px;height:18px;flex:none}
+.dot{width:24px;height:24px;border-radius:50%;border:2px solid var(--surface);outline:2px solid transparent;cursor:pointer;padding:0}
+.dot[aria-pressed="true"]{outline-color:var(--ink)}
+.sz{width:30px;height:30px;justify-content:center;padding:0}
+.sz i{display:block;border-radius:50%;background:currentColor}
+label.sm{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+input[type=range]{width:90px;accent-color:var(--accent)}
+.pg{font-size:13px;color:var(--muted);min-width:56px;text-align:center}
+.stage{position:relative;flex:1;margin:12px max(16px,env(safe-area-inset-right,0px)) 16px;border-radius:14px;overflow:hidden;background-color:var(--board);border:1px solid var(--line);box-shadow:0 2px 10px #0000000f}
+.stage.grid{background-image:linear-gradient(var(--rule) 1px,transparent 1px),linear-gradient(90deg,var(--rule) 1px,transparent 1px);background-size:32px 32px}
+.stage.lines{background-image:linear-gradient(transparent 39px,var(--rule) 40px);background-size:100% 40px}
+canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+#live{cursor:crosshair}
+#txt{position:absolute;display:none;border:1.5px dashed #0B7A66;background:#ffffffe6;outline:none;font-family:var(--f-body);padding:2px 6px;min-width:140px;direction:rtl;color:#16302C}
+.tip{position:absolute;bottom:10px;inset-inline-start:12px;font-size:12px;color:#5B706B;background:#ffffffd9;border-radius:8px;padding:3px 10px;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="bar" id="bar">
+  <div class="grp" id="tools"></div>
+  <div class="grp" id="colors"></div>
+  <div class="grp" id="sizes"></div>
+  <div class="grp"><label class="sm">تنعيم الخط <input type="range" id="smooth" min="0" max="40" value="14"></label></div>
+  <div class="grp">
+    <button class="b" id="undo" title="تراجع (Ctrl+Z)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg></button>
+    <button class="b" id="redo" title="إعادة (Ctrl+Y)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h3"/></svg></button>
+    <button class="b" id="clear">مسح الصفحة</button>
+  </div>
+  <div class="grp">
+    <button class="b" id="bgBtn">الخلفية: مربعات</button>
+    <button class="b" id="prev" title="الصفحة السابقة">‹</button><span class="pg" id="pg"></span><button class="b" id="next" title="الصفحة التالية">›</button>
+    <button class="b" id="add">+ صفحة</button>
+  </div>
+  <div class="grp">
+    <button class="b" id="save">حفظ صورة</button>
+    <button class="b" id="full">ملء الشاشة</button>
+  </div>
+</div>
+<div class="stage grid" id="stage">
+  <canvas id="base"></canvas><canvas id="live"></canvas>
+  <input id="txt" autocomplete="off">
+  <div class="tip" id="tip"></div>
+</div>
+
+<script>
+const ICON=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const TOOLS=[
+  {k:'pen',n:'قلم',key:'p',i:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',tip:'اكتبي بالفأرة، والتنعيم يجعل الخط ناعمًا تلقائيًا.'},
+  {k:'hl',n:'تظليل',key:'h',i:'<path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/>',tip:'ظلّلي فوق الكلمات المهمة بلون شفاف.'},
+  {k:'line',n:'خط',key:'l',i:'<path d="M5 19 19 5"/>',tip:'اسحبي لرسم خط مستقيم.'},
+  {k:'arrow',n:'سهم',key:'a',i:'<path d="M5 19 19 5"/><path d="M10 5h9v9"/>',tip:'اسحبي لرسم سهم.'},
+  {k:'rect',n:'مستطيل',key:'r',i:'<rect x="4" y="6" width="16" height="12" rx="1"/>',tip:'اسحبي لرسم مستطيل.'},
+  {k:'ellipse',n:'دائرة',key:'o',i:'<ellipse cx="12" cy="12" rx="8" ry="6"/>',tip:'اسحبي لرسم دائرة.'},
+  {k:'text',n:'نص',key:'t',i:'<path d="M4 7V5h16v2"/><path d="M12 5v14"/><path d="M9 19h6"/>',tip:'اضغطي مكان الكتابة واكتبي بلوحة المفاتيح، ثم Enter.'},
+  {k:'table',n:'جدول حقيقة',key:'j',i:'<rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9h18M9 4v16M15 4v16"/>',tip:'اضغطي مكان الجدول لإضافة جدول حقيقة فارغ (A ، B ، الناتج).'},
+  {k:'eraser',n:'ممحاة',key:'e',i:'<path d="m7 21-4.3-4.3a1 1 0 0 1 0-1.4l10-10a1 1 0 0 1 1.4 0l5.6 5.6a1 1 0 0 1 0 1.4L11 21"/><path d="M22 21H7"/>',tip:'امسحي بالسحب فوق الكتابة.'}
+];
+const COLORS=['#16302C','#1D5FD0','#C2413A','#1F8A4C','#8A3FC0','#E08A00'];
+const SIZES=[2,4,8];
+const S={tool:'pen',color:COLORS[0],size:4,smooth:14,pages:[[]],redo:[[]],p:0,bg:0};
+const BGS=[['grid','مربعات'],['lines','أسطر'],['','سادة']];
+const stage=document.getElementById('stage'),base=document.getElementById('base'),live=document.getElementById('live'),txt=document.getElementById('txt');
+const bx=base.getContext('2d'),lx=live.getContext('2d');
+let W=0,H=0,cur=null,brush=null;
+
+/* toolbar */
+document.getElementById('tools').innerHTML=TOOLS.map(t=>`<button class="b" data-tool="${t.k}" title="${t.n} (${t.key.toUpperCase()})">${ICON(t.i)}<span>${t.n}</span></button>`).join('');
+document.getElementById('colors').innerHTML=COLORS.map(c=>`<button class="dot" data-color="${c}" style="background:${c}" aria-label="لون"></button>`).join('');
+document.getElementById('sizes').innerHTML=SIZES.map(s=>`<button class="b sz" data-size="${s}" title="السُمك"><i style="width:${s+3}px;height:${s+3}px"></i></button>`).join('');
+function syncBar(){
+  document.querySelectorAll('[data-tool]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tool===S.tool));
+  document.querySelectorAll('[data-color]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.color===S.color));
+  document.querySelectorAll('[data-size]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.size===S.size));
+  document.getElementById('pg').textContent=`${S.p+1} / ${S.pages.length}`.replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+  document.getElementById('tip').textContent=TOOLS.find(t=>t.k===S.tool).tip;
+  live.style.cursor=S.tool==='text'?'text':S.tool==='eraser'?'cell':'crosshair';
+}
+document.getElementById('bar').addEventListener('click',e=>{
+  const t=e.target.closest('[data-tool]'),c=e.target.closest('[data-color]'),s=e.target.closest('[data-size]');
+  if(t)S.tool=t.dataset.tool; if(c){S.color=c.dataset.color;if(S.tool==='eraser')S.tool='pen'} if(s)S.size=+s.dataset.size;
+  if(t||c||s){commitText();syncBar()}
+});
+document.getElementById('smooth').oninput=e=>S.smooth=+e.target.value;
+
+/* sizing */
+function resize(){
+  const r=stage.getBoundingClientRect(),d=window.devicePixelRatio||1;W=r.width;H=r.height;
+  for(const c of [base,live]){c.width=W*d;c.height=H*d;c.getContext('2d').setTransform(d,0,0,d,0,0)}
+  redraw();
+}
+new ResizeObserver(resize).observe(stage);
+
+/* drawing */
+const objs=()=>S.pages[S.p];
+function strokePath(ctx,pts){
+  ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);
+  if(pts.length===1){ctx.lineTo(pts[0].x+.1,pts[0].y);return}
+  for(let i=1;i<pts.length-1;i++){const m={x:(pts[i].x+pts[i+1].x)/2,y:(pts[i].y+pts[i+1].y)/2};ctx.quadraticCurveTo(pts[i].x,pts[i].y,m.x,m.y)}
+  const l=pts[pts.length-1];ctx.lineTo(l.x,l.y);
+}
+function draw(ctx,o){
+  ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=o.color;ctx.fillStyle=o.color;ctx.lineWidth=o.size;
+  if(o.type==='pen'){strokePath(ctx,o.pts);ctx.stroke()}
+  else if(o.type==='hl'){ctx.globalAlpha=.32;ctx.lineWidth=o.size*5+8;ctx.lineCap='butt';strokePath(ctx,o.pts);ctx.stroke()}
+  else if(o.type==='eraser'){ctx.globalCompositeOperation='destination-out';ctx.lineWidth=o.size*5+14;strokePath(ctx,o.pts);ctx.stroke()}
+  else if(o.type==='line'||o.type==='arrow'){ctx.beginPath();ctx.moveTo(o.a.x,o.a.y);ctx.lineTo(o.b.x,o.b.y);ctx.stroke();
+    if(o.type==='arrow'){const an=Math.atan2(o.b.y-o.a.y,o.b.x-o.a.x),h=10+o.size*2.5;ctx.beginPath();
+      ctx.moveTo(o.b.x-h*Math.cos(an-.45),o.b.y-h*Math.sin(an-.45));ctx.lineTo(o.b.x,o.b.y);ctx.lineTo(o.b.x-h*Math.cos(an+.45),o.b.y-h*Math.sin(an+.45));ctx.stroke()}}
+  else if(o.type==='rect'){ctx.strokeRect(Math.min(o.a.x,o.b.x),Math.min(o.a.y,o.b.y),Math.abs(o.b.x-o.a.x),Math.abs(o.b.y-o.a.y))}
+  else if(o.type==='ellipse'){ctx.beginPath();ctx.ellipse((o.a.x+o.b.x)/2,(o.a.y+o.b.y)/2,Math.abs(o.b.x-o.a.x)/2,Math.abs(o.b.y-o.a.y)/2,0,0,Math.PI*2);ctx.stroke()}
+  else if(o.type==='text'){ctx.direction='rtl';ctx.textAlign='right';ctx.textBaseline='top';ctx.font=`500 ${o.fs}px "IBM Plex Sans Arabic",Tahoma,sans-serif`;ctx.fillText(o.s,o.x,o.y)}
+  else if(o.type==='table'){
+    const cw=110,rh=40,rows=[['A','B','الناتج'],['True','True',''],['True','False',''],['False','True',''],['False','False','']];
+    ctx.lineWidth=2;ctx.textAlign='center';ctx.textBaseline='middle';
+    rows.forEach((r,i)=>r.forEach((v,j)=>{const x=o.x-(j+1)*cw,y=o.y+i*rh;
+      if(i===0){ctx.save();ctx.globalAlpha=.1;ctx.fillRect(x,y,cw,rh);ctx.restore()}
+      ctx.strokeRect(x,y,cw,rh);
+      ctx.font=`${i===0?700:500} 16px ${j<2||i>0?'"JetBrains Mono",Consolas,monospace':'"IBM Plex Sans Arabic",sans-serif'}`;
+      ctx.fillStyle=i===0?o.color:v==='True'?'#1F8A4C':'#C2413A';ctx.fillText(v,x+cw/2,y+rh/2)}));
+  }
+  ctx.restore();
+}
+function redraw(){bx.clearRect(0,0,W,H);objs().forEach(o=>draw(bx,o));lx.clearRect(0,0,W,H)}
+function push(o){objs().push(o);S.redo[S.p]=[];draw(bx,o)}
+const pt=e=>{const r=live.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top}};
+
+live.addEventListener('pointerdown',e=>{
+  if(e.button!==0)return;const p=pt(e);
+  if(S.tool==='text'){commitText();openText(p);e.preventDefault();return}
+  commitText();
+  if(S.tool==='table'){push({type:'table',x:Math.min(W-10,p.x+165),y:p.y,color:S.color});return}
+  live.setPointerCapture(e.pointerId);
+  if(['pen','hl','eraser'].includes(S.tool)){cur={type:S.tool,color:S.color,size:S.size,pts:[p]};brush={...p}}
+  else cur={type:S.tool,color:S.color,size:S.size,a:p,b:p};
+});
+live.addEventListener('pointermove',e=>{
+  if(!cur)return;
+  const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e];
+  if(cur.pts){
+    for(const ev of evs){const p=pt(ev),dx=p.x-brush.x,dy=p.y-brush.y,d=Math.hypot(dx,dy),R=S.smooth*(cur.type==='eraser'?0:1);
+      if(d>R){const k=(d-R)/d;brush.x+=dx*k;brush.y+=dy*k;const l=cur.pts[cur.pts.length-1];if(Math.hypot(brush.x-l.x,brush.y-l.y)>1.5)cur.pts.push({x:brush.x,y:brush.y})}}
+  }else cur.b=pt(e);
+  lx.clearRect(0,0,W,H);
+  if(cur.type==='eraser'){draw(bx,{...cur,pts:cur.pts.slice(-3)})}else draw(lx,cur);
+  if(cur.pts&&S.smooth>0&&cur.type!=='eraser'){const p=pt(e);lx.save();lx.setLineDash([3,4]);lx.strokeStyle='#5B706B';lx.beginPath();lx.moveTo(brush.x,brush.y);lx.lineTo(p.x,p.y);lx.stroke();lx.restore()}
+});
+const end=()=>{if(!cur)return;const o=cur;cur=null;lx.clearRect(0,0,W,H);
+  if(o.type==='eraser'){objs().push(o);S.redo[S.p]=[];redraw()}else push(o)};
+live.addEventListener('pointerup',end);live.addEventListener('pointercancel',end);
+
+/* text */
+let tpos=null;
+function openText(p){const fs=S.size*4+16;tpos={x:p.x,y:p.y,fs};Object.assign(txt.style,{display:'block',right:(W-p.x)+'px',top:(p.y-4)+'px',fontSize:fs+'px',color:S.color});txt.value='';setTimeout(()=>txt.focus())}
+function commitText(){if(!tpos)return;const s=txt.value.trim();if(s)push({type:'text',x:tpos.x,y:tpos.y,fs:tpos.fs,s,color:S.color});tpos=null;txt.style.display='none'}
+txt.addEventListener('keydown',e=>{if(e.key==='Enter'){commitText();e.preventDefault()}if(e.key==='Escape'){tpos=null;txt.style.display='none'}e.stopPropagation()});
+txt.addEventListener('blur',()=>setTimeout(commitText,0));
+
+/* actions */
+function undo(){const o=objs().pop();if(o){S.redo[S.p].push(o);redraw()}}
+function redo(){const o=S.redo[S.p].pop();if(o){objs().push(o);redraw()}}
+document.getElementById('undo').onclick=undo;document.getElementById('redo').onclick=redo;
+document.getElementById('clear').onclick=()=>{if(objs().length&&confirm('مسح كل ما في هذه الصفحة؟')){S.pages[S.p]=[];S.redo[S.p]=[];redraw()}};
+document.getElementById('bgBtn').onclick=e=>{S.bg=(S.bg+1)%BGS.length;stage.className='stage '+BGS[S.bg][0];e.currentTarget.textContent='الخلفية: '+BGS[S.bg][1]};
+const goto=i=>{commitText();S.p=i;redraw();syncBar()};
+document.getElementById('prev').onclick=()=>S.p>0&&goto(S.p-1);
+document.getElementById('next').onclick=()=>S.p<S.pages.length-1&&goto(S.p+1);
+document.getElementById('add').onclick=()=>{S.pages.splice(S.p+1,0,[]);S.redo.splice(S.p+1,0,[]);goto(S.p+1)};
+document.getElementById('save').onclick=()=>{
+  const c=document.createElement('canvas');c.width=base.width;c.height=base.height;const x=c.getContext('2d');
+  x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(base,0,0);
+  const a=document.createElement('a');a.download=`سبورة-صفحة-${S.p+1}.png`;a.href=c.toDataURL('image/png');a.click();
+};
+document.getElementById('full').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();
+document.addEventListener('keydown',e=>{
+  if(e.ctrlKey||e.metaKey){const k=e.key.toLowerCase();if(k==='z'){e.preventDefault();e.shiftKey?redo():undo()}if(k==='y'){e.preventDefault();redo()}return}
+  const t=TOOLS.find(t=>t.key===e.key.toLowerCase());if(t){S.tool=t.k;syncBar()}
+});
+window.addEventListener('beforeunload',e=>{if(S.pages.some(p=>p.length)){e.preventDefault();e.returnValue=''}});
+syncBar();
+</script>
+</body>
+</html>
