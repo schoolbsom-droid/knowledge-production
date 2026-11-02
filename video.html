@@ -73,6 +73,8 @@ label.f{display:block;font-size:13px;color:var(--on-sv);margin:14px 0 4px;font-w
 .big b{font-size:52px;font-weight:600;color:var(--primary);line-height:1.2}
 .lv{display:inline-block;font-size:12px;font-weight:500;border-radius:8px;padding:2px 12px;color:var(--on-yel);background:var(--yel)}
 .note{background:var(--tc);color:var(--on-tc);border-radius:16px;padding:12px 16px;font-size:14px;margin-top:12px}
+.notice{background:#FFF4D6;color:#4A2E00;border:2px solid #FFCB7D;border-radius:20px;padding:12px 20px;margin-bottom:18px;font-size:15px;white-space:pre-line}
+.notice b{display:block;font-weight:600;margin-bottom:2px}.notice small{display:block;opacity:.7;margin-top:4px;font-size:12px}
 .note b{display:block;font-size:12px;font-weight:500}
 .duebar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--sc-low);border-radius:20px;padding:12px 20px;margin-bottom:18px;font-size:14px}
 .duebar b{color:var(--on-surf);font-weight:500}
@@ -216,6 +218,7 @@ footer{text-align:center;color:var(--on-sv);font-size:12px;padding:20px}
 </div></nav>
 <main class="wrap">
 <div id="due"></div>
+<div id="notice"></div>
 <div id="boot" class="empty">جارٍ التحميل…</div>
 
 <!-- ═════ الشرح ═════ -->
@@ -271,10 +274,17 @@ footer{text-align:center;color:var(--on-sv);font-size:12px;padding:20px}
   </div>
   <div id="tmain" hidden>
     <div class="stats" id="tstats"></div>
+    <div class="card wide" style="margin-bottom:20px">
+      <h3 style="margin-top:0">تنبيه للطالبات <small style="font-weight:400;color:var(--on-sv)">(يظهر أعلى صفحة الطالبات حتى تخفيه)</small></h3>
+      <textarea class="in" id="tnt" rows="3" maxlength="500" placeholder="مثال: آخر موعد لرفع الفيديو الخميس، تأكدن من رفعه قبلها"></textarea>
+      <div id="tnm"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="tngo">📢 إرسال التنبيه</button><button class="btn ghost" id="tnx">إخفاء التنبيه</button></div>
+    </div>
     <div class="card wide">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h2>تقييم المشاريع</h2><button class="btn sm ghost" id="tout">خروج</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h2>تقييم المشاريع</h2><span style="display:flex;gap:8px"><button class="btn sm" id="txls">⬇ تقرير Excel</button><button class="btn sm ghost" id="tout">خروج</button></span></div>
       <div class="sub">اختاري الدرجات، ثم ضعي علامة «نشر» لتظهر النتيجة للطالبة. يُحفظ كل تغيير تلقائيًا.</div>
       <div class="filt" id="tf" style="justify-content:flex-start"></div>
+      <div id="tplay" hidden style="margin:10px 0 16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><b id="tpn"></b><button class="btn sm ghost" id="tpx">إغلاق ✕</button></div><div class="vframe" style="padding-top:56.25%;margin-top:8px"><iframe id="tpf" allow="autoplay; fullscreen" allowfullscreen></iframe></div></div>
       <div class="tw"><table class="tt" id="tt"></table></div>
       <div class="saved" id="tsaved"></div>
     </div>
@@ -284,6 +294,11 @@ footer{text-align:center;color:var(--on-sv);font-size:12px;padding:20px}
         <div id="tmod"></div>
         <h3>لم يسجّلن مشروعًا</h3>
         <div class="chips" id="tun"></div>
+        <h3>تغيير الرقم السري <small style="font-weight:400;color:var(--on-sv)">(مشترك مع صفحة المتاجر)</small></h3>
+        <label class="f">الرقم الحالي</label><input class="in" id="tp0" type="password" inputmode="numeric" dir="ltr">
+        <label class="f">الرقم الجديد <small style="color:var(--on-sv)">(٤ أرقام أو أكثر)</small></label><input class="in" id="tp1" type="password" inputmode="numeric" dir="ltr">
+        <label class="f">أعيدي الرقم الجديد</label><input class="in" id="tp2" type="password" inputmode="numeric" dir="ltr">
+        <div id="tpm"></div><button class="btn" id="tpgo">تغيير الرقم السري</button>
       </div>
       <div class="card wide">
         <h3 style="margin-top:0">تحرير الشرح</h3>
@@ -307,6 +322,7 @@ const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZi
 const SLUG = 'video-1448';
 const UP = 'https://script.google.com/macros/s/AKfycbwCS5Bxv2hgOQAMreo78vsNml4HYkaufgUW9Vle9hwl2gUYV8CIMCQoz_9s9t6j8nS7/exec';   // رفع الفيديو مباشرة إلى Drive (actschool28)
 const UPMAX = 4 * 1024 ** 3;
+const TMODE = document.body.dataset.mode === 'teacher';
 const PLAT = [
   ['CapCut', 'https://www.capcut.com', '', 1], ['Canva', 'https://www.canva.com/ar_sa/', ''],
   ['Clipchamp', 'https://clipchamp.com', ''], ['InShot (للجوال)', 'https://inshot.com', ''],
@@ -373,9 +389,28 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = () => go(b.data
   $('rsub').textContent = 'مشروع فردي · تسجّل كل طالبة مشروعها بنفسها';
   $('rvbox').innerHTML = vbox('rv', '', ' — ويمكن رفعه لاحقًا من «صفحتي»');
   $('rc').innerHTML = '<option value="">اختاري الفصل</option>' + P.classes.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
-  learn();
-  go(location.hash === '#teacher' ? 'tch' : 'learn');
+  learn(); notice();
+  // صفحة المعلمة ملف مستقل (video-teacher.html نسخة من هذا الملف بـ data-mode="teacher")، وتُحذف من صفحة الطالبات
+  if (TMODE) { document.querySelector('nav').hidden = true; go('tch'); }
+  else { $('tch').remove(); document.querySelector('nav .tch').remove(); go('learn'); }
 })();
+
+// ---------- تنبيه المعلمة ----------
+let NT = {};
+async function notice() {
+  const r = await rpc('api_notice', {p_slug: SLUG});
+  NT = r.error ? {} : r;
+  $('notice').innerHTML = NT.text && !TMODE ? `<div class="notice"><b>📢 تنبيه من المعلمة</b>${esc(NT.text)}<small>${dayName(NT.at)} ${hijri(NT.at)}</small></div>` : '';
+  if (TMODE && $('tnt')) $('tnt').value = NT.text || '';
+}
+async function setNotice(text) {
+  const r = await tcall('api_t_set_notice', {p_slug: SLUG, p_text: text});
+  if (r.error) return msg($('tnm'), 'e', esc(r.error));
+  await notice();
+  msg($('tnm'), 'o', text ? 'تم إرسال التنبيه ✓ يظهر الآن في صفحة الطالبات.' : 'تم إخفاء التنبيه ✓');
+}
+$('tngo').onclick = () => $('tnt').value.trim() ? setNotice($('tnt').value.trim()) : msg($('tnm'), 'e', 'اكتبي نص التنبيه.');
+$('tnx').onclick = () => { $('tnt').value = ''; setNotice(''); };
 
 // ---------- الشرح ----------
 const yt = id => `<div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0" allowfullscreen></iframe></div>`;
@@ -646,7 +681,7 @@ function table() {
   $('tt').innerHTML = `<tr><th>الطالبة</th><th>الرمز</th><th>الفيديو</th>${crit.map(c => `<th title="${esc(c.title)}">${c.bonus ? '✨ ' : ''}${esc(c.title.length > 14 ? c.group : c.title)} /${ar(c.max)}</th>`).join('')}<th>المجموع</th><th>ملاحظة</th><th>نشر</th><th></th></tr>` +
     (T.length ? T.map(t => `<tr data-id="${t.id}"><td><b>${esc(t.name)}</b><br><small>${esc(t.class)}</small></td>
       <td><code>${ar(t.code)}</code></td>
-      <td>${url(t.store_url) ? `<a href="${esc(t.store_url)}" target="_blank" rel="noopener" style="color:var(--primary)">${esc(t.store_name || 'فتح')} ↗</a>` : '<small style="color:var(--warn)">لم يُسلَّم</small>'}</td>
+      <td>${url(t.store_url) ? `<small>${esc(t.store_name || '')}</small><br><button class="chip" data-play>▶ مشاهدة</button> <button class="chip" data-vdel title="حذف الفيديو فقط، وتعود الطالبة لترفعه من جديد">حذف الفيديو</button>` : '<small style="color:var(--warn)">لم يُسلَّم</small>'}</td>
       ${crit.map(c => `<td><select data-c="${c.id}">${opt(t.scores[c.id], c.max)}</select></td>`).join('')}
       <td class="tot">${t.grade != null && Object.keys(t.scores).length ? ar(+t.grade) : '—'}</td>
       <td><input type="text" data-note maxlength="300" value="${esc(t.note)}" placeholder="ملاحظة للطالبة"></td>
@@ -664,10 +699,70 @@ $('tt').onchange = async e => {
   if (r.error) return $('tsaved').innerHTML = `<span style="color:#9a3b3b">${esc(r.error)}</span>`;
   $('tsaved').innerHTML = '<span style="color:var(--ok)">✓ حُفظ</span>'; BT = null; tload();
 };
+// تقرير Excel: ورقة المشاريع (كل الفصول) + ورقة من لم يسجّلن
+$('txls').onclick = async () => {
+  if (!window.XLSX) await new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onload = ok; s.onerror = no; document.head.append(s); }).catch(() => {});
+  if (!window.XLSX) return alert('تعذّر تحميل أداة Excel، تأكدي من الإنترنت.');
+  const crit = CR(), b = BONUS(), num = v => v == null || v === '' ? '' : +v;
+  const rows = TD.teams.map((t, i) => {
+    const o = {'م': i + 1, 'الفصل': t.class, 'الطالبة': t.name, 'الرمز': t.code, 'عنوان الفيديو': t.store_name || '',
+               'سلّمت الفيديو': t.store_url ? 'نعم' : 'لا', 'تاريخ التسليم': t.submitted_at ? hijri(t.submitted_at) : ''};
+    crit.forEach(c => o[`${c.title} /${c.max}`] = num(t.scores[c.id]));
+    o[`المجموع /${P.max_grade}`] = Object.keys(t.scores).length ? num(t.grade) : '';
+    if (b) o[`${b.title} /${b.max}`] = num(t.scores[b.id]);
+    Object.assign(o, {'الترتيب': num(t.rank), 'تقييم الزميلات /٥': num(t.peer_avg), 'نُشرت النتيجة': t.published ? 'نعم' : 'لا',
+                      'ملاحظة المعلمة': t.note || '', 'رابط الفيديو': t.store_url || ''});
+    return o;
+  });
+  const sheet = (data, empty) => {
+    const ws = XLSX.utils.json_to_sheet(data.length ? data : [empty]);
+    const keys = Object.keys(data[0] || empty);
+    ws['!cols'] = keys.map(k => ({wch: Math.min(45, Math.max(k.length + 2, ...data.map(r => String(r[k] ?? '').length + 2)))}));
+    return ws;
+  };
+  const wb = XLSX.utils.book_new();
+  wb.Workbook = {Views: [{RTL: true}]};
+  XLSX.utils.book_append_sheet(wb, sheet(rows, {'المشاريع': 'لم تسجّل أي طالبة بعد'}), 'المشاريع');
+  XLSX.utils.book_append_sheet(wb, sheet(TD.unregistered.map((s, i) => ({'م': i + 1, 'الفصل': s.class, 'الطالبة': s.name})), {'الطالبة': 'سجّلت كل الطالبات'}), 'لم يسجّلن');
+  XLSX.writeFile(wb, `تقرير مشاريع الفيديو ${hijri(new Date()).replace(/[‏/]/g, (c) => c === '/' ? '-' : '')}.xlsx`);
+};
+const driveId = u => (String(u || '').match(/drive\.google\.com\/file\/d\/([\w-]+)/) || [])[1];
+$('tpx').onclick = () => { $('tplay').hidden = true; $('tpf').src = 'about:blank'; };
+$('tpgo').onclick = async () => {
+  const [a, b, c] = ['tp0', 'tp1', 'tp2'].map(id => en($(id).value));
+  if (!a || !b) return msg($('tpm'), 'e', 'اكتبي الرقم الحالي والجديد.');
+  if (b !== c) return msg($('tpm'), 'e', 'الرقم الجديد غير متطابق.');
+  busy($('tpgo'), true);
+  const r = await tcall('api_t_change_pin', {p_old: a, p_new: b});
+  busy($('tpgo'), false);
+  if (r.error) return msg($('tpm'), 'e', esc(r.error));
+  ['tp0', 'tp1', 'tp2'].forEach(id => $(id).value = '');
+  msg($('tpm'), 'o', 'تم تغيير الرقم السري ✓ استخدميه في الدخول القادم.');
+};
 $('tt').onclick = async e => {
+  const tr = e.target.closest('tr[data-id]'), t = tr && TD.teams.find(x => x.id === +tr.dataset.id);
+  if (t && e.target.hasAttribute('data-play')) {
+    const id = driveId(t.store_url);
+    if (!id) return open(t.store_url, '_blank', 'noopener');
+    $('tpn').textContent = `${t.name} · ${t.class}${t.store_name ? ' · ' + t.store_name : ''}`;
+    $('tpf').src = `https://drive.google.com/file/d/${id}/preview`; $('tplay').hidden = false;
+    return $('tplay').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+  }
+  if (t && e.target.hasAttribute('data-vdel')) {
+    if (!confirm(`حذف فيديو «${t.name}»؟ تعود «لم تسلّم» وتقدر ترفع فيديو جديدًا.`)) return;
+    e.target.disabled = true;
+    const id = driveId(t.store_url);
+    if (id) {
+      const d = await (await fetch(UP + '?' + new URLSearchParams({a: 'tdel', tok: ss.get('ttok'), id}))).json().catch(() => ({error: 'تعذّر الاتصال'}));
+      if (d.error && !/not found|لم يُعثر|No item/i.test(d.error)) { e.target.disabled = false; return alert(d.error); }
+    }
+    const r = await tcall('api_t_clear_video', {p_team: t.id});
+    if (r.error) { e.target.disabled = false; return alert(r.error); }
+    $('tpx').onclick(); BT = null; return tload();
+  }
   if (!e.target.hasAttribute('data-del')) return;
-  const tr = e.target.closest('tr[data-id]'), t = TD.teams.find(x => x.id === +tr.dataset.id);
   if (!confirm(`حذف مشروع «${t.name}» نهائيًا؟ ستعود غير مسجّلة.`)) return;
+  if (driveId(t.store_url)) await fetch(UP + '?' + new URLSearchParams({a: 'tdel', tok: ss.get('ttok'), id: driveId(t.store_url)})).catch(() => {});
   const r = await tcall('api_t_delete_team', {p_team: t.id});
   if (r.error) return alert(r.error);
   BT = null; tload();
