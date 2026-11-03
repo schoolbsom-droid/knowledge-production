@@ -398,7 +398,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
   <p>شكرًا <b id="bName"></b>! أضفتِ قطعتك الذهبية في درع الوطن</p>
   <div class="num grad" id="bNum"></div>
   <p style="margin-top:0">رقمك في الدرع</p>
-  <button class="btn" id="bQuiz" type="button" style="display:flex;margin:16px auto 0;background:linear-gradient(90deg,#b8860b,#e0b84a);box-shadow:0 12px 28px rgba(184,134,11,.3);line-height:1.5">🎯 تحدّي ١٠ أسئلة = نجمة إضافية<br>وتحصلين على شهادة درع الوطن 📜</button>
+  <button class="btn" id="bQuiz" type="button" style="display:flex;margin:16px auto 0;background:linear-gradient(90deg,#b8860b,#e0b84a);box-shadow:0 12px 28px rgba(184,134,11,.3);line-height:1.5">🎯 حلّي الاستبانة = نقطتين في الدرع<br>وتحصلين على شهادة درع الوطن 📜</button>
   <div style="display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap"><button class="btn ghost" id="bSave">حفظ الوسام صورة</button><button class="btn ghost" id="bClose">متابعة</button></div>
 </div></div>
 <audio id="bgm" src="nasheed.mp3" loop preload="auto"></audio>
@@ -628,7 +628,7 @@ function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=
 function shuf(a,seed){return a.map((x,i)=>[x,Math.abs(Math.sin((i+1)*seed*9.73))%1]).sort((x,y)=>x[1]-y[1]).map(x=>x[0])}
 function burst(x,y){['🎉','⭐','💚','✨','🛡️'].forEach((s,i)=>{const b=el('span','burst',s);const a=i/5*Math.PI*2;b.style.left=x+'px';b.style.top=y+'px';b.style.setProperty('--x',Math.cos(a)*90+'px');b.style.setProperty('--y',Math.sin(a)*90-40+'px');document.body.append(b);setTimeout(()=>b.remove(),950)})}
 function qStart(){const c=$('#qcard');c.innerHTML='';const h=el('div');h.style.textAlign='center';
- h.innerHTML='<div class="topics">'+TOP.map((t,i)=>'<div><b>'+AR(i+1)+'</b>'+t+'</div>').join('')+'</div><p class="sub">'+AR(QN)+' تحديًا: صح وخطأ، مواقف، مطابقة، ترتيب، وتحدّي كلمة المرور 🔐<br>وفي النهاية تحصلين على <b>شهادة درع الوطن 📜</b><br>كل إجابة صحيحة ⭐ ١٠ نقاط، وسلسلة الإجابات الصحيحة 🔥 تعطيك نقاطًا إضافية</p>';
+ h.innerHTML='<div class="topics">'+TOP.map((t,i)=>'<div><b>'+AR(i+1)+'</b>'+t+'</div>').join('')+'</div><p class="sub">'+AR(QN)+' تحديًا: صح وخطأ، مواقف، مطابقة، ترتيب، وتحدّي كلمة المرور 🔐<br>وفي النهاية تضيئين <b>قطعتين في الدرع</b> وتحصلين على <b>شهادة درع الوطن 📜</b><br>كل إجابة صحيحة ⭐ ١٠ نقاط، وسلسلة الإجابات الصحيحة 🔥 تعطيك نقاطًا إضافية</p>';
  const done=store.get('quizScore',null);if(done!==null){const p=el('p','sub','درجتك السابقة: '+AR(done)+' من '+AR(QN));h.append(p)}
  const b=el('button','btn',done!==null?'أعيدي التحدّي':'ابدئي التحدّي 🚀');b.style.marginTop='14px';b.onclick=()=>{qi=0;qs=0;qa=[];qpts=0;qstreak=0;qShow()};h.append(b);c.append(h)}
 function qShow(){const c=$('#qcard');const Qq=Q[qi];c.innerHTML='';c.classList.remove('qcard-in');void c.offsetWidth;c.classList.add('qcard-in');
@@ -721,8 +721,8 @@ async function qEnd(){const c=$('#qcard');store.set('quizScore',qs);
  cb.append(ci,cbtn);c.firstChild.append(cb);
  const b=el('button','btn ghost','أعيدي التحدّي');b.style.cssText='display:flex;margin:18px auto 0';b.onclick=qStart;c.firstChild.append(b);
  try{await api('survey',{name:$('#nm').value.trim()||store.get('name',''),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),score:qs,answers:qa.join('')})}catch(e){}
- if(!store.get('quizLit',false)){store.set('quizLit',true);try{const n=await lightPiece({name:who(),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),type:'quiz',text:'🏆 أكملت تحدّي درع الوطن'},false);
-  const s=el('p','sub','🛡️ نجمتك الإضافية: أضأتِ القطعة #'+AR(n)+' في الدرع');s.style.fontWeight='800';c.querySelector('.tbars').before(s)}catch(e){store.set('quizLit',false)}}}
+ if(!store.get('quizLit',false)){store.set('quizLit',true);try{const n=await lightPiece({name:who(),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),type:'quiz',text:'🏆 أكملت تحدّي درع الوطن'},false);const n2=await lightPiece({name:who(),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),type:'bonus',text:'🏆 أكملت تحدّي درع الوطن'},false);
+  const s=el('p','sub','🛡️ نقطتاكِ: أضأتِ القطعتين #'+AR(n)+' و#'+AR(n2)+' في الدرع');s.style.fontWeight='800';c.querySelector('.tbars').before(s)}catch(e){store.set('quizLit',false)}}}
 qStart();
 
 /* ---------- pages ---------- */
