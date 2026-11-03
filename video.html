@@ -248,6 +248,7 @@ footer{text-align:center;color:var(--on-sv);font-size:12px;padding:20px}
     <div class="pk chips" id="rpk"></div>
   </div>
   <div id="rform">
+    <label class="f">آخر ٤ أرقام من سجلكِ المدني</label><input class="in" id="rp" dir="ltr" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="٠٠٠٠">
     <label class="f">عنوان الفيديو</label><input class="in" id="rs" maxlength="60" placeholder="مثال: كيف أحافظ على جهازي؟">
     <div id="rvbox"></div>
   </div>
@@ -257,14 +258,17 @@ footer{text-align:center;color:var(--on-sv);font-size:12px;padding:20px}
 
 <!-- ═════ صفحة فريقنا ═════ -->
 <section class="pg" id="team"><div class="card">
-  <h2>صفحتي</h2><div class="sub">أدخلي رمزكِ</div>
-  <div class="row"><input class="in" id="tc" dir="ltr" placeholder="مثال: ١-٤٨٢٧"><button class="btn" id="tgo" style="margin:0;flex:0 0 100px;padding:10px">دخول</button></div>
+  <h2>صفحتي</h2><div class="sub">اختاري فصلكِ واسمكِ، واكتبي آخر ٤ أرقام من سجلكِ المدني</div>
+  <label class="f">الفصل</label><select class="in" id="lc"></select>
+  <label class="f">اسمكِ</label><select class="in" id="ln" disabled><option value="">اختاري الفصل أولًا</option></select>
+  <label class="f">آخر ٤ أرقام من سجلكِ المدني</label>
+  <div class="row"><input class="in" id="tc" dir="ltr" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="٠٠٠٠"><button class="btn" id="tgo" style="margin:0;flex:0 0 100px;padding:10px">دخول</button></div>
   <div id="tbody"></div>
 </div></section>
 
 <!-- ═════ لوحة المتاجر ═════ -->
 <section class="pg" id="board">
-  <div class="sub" style="text-align:center">شاهدي فيديوهات زميلاتكِ وقيّميها برمزكِ · لا يمكن تقييم فيديوكِ · تقييم واحد لكل فيديو</div>
+  <div class="sub" style="text-align:center">شاهدي فيديوهات زميلاتكِ وقيّميها بعد دخول «صفحتي» · لا يمكن تقييم فيديوكِ · تقييم واحد لكل فيديو</div>
   <div class="filt" id="bf"></div>
   <div class="cards" id="bc"></div>
 </section>
@@ -383,7 +387,7 @@ function go(p) {
   document.querySelectorAll('.pg').forEach(s => s.classList.toggle('on', s.id === p));
   if (p === 'board') board();
   if (p === 'tch' && ss.get('ttok')) tload();
-  if (p === 'team' && ss.get('code') && !$('tbody').innerHTML) { $('tc').value = ar(ss.get('code')); tview(); }
+  if (p === 'team' && ss.get('code') && !$('tbody').innerHTML) tview(ss.get('code'));
   scrollTo(0, 0);
 }
 document.querySelectorAll('nav button').forEach(b => b.onclick = () => go(b.dataset.p));
@@ -401,7 +405,7 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = () => go(b.data
   }
   $('rsub').textContent = 'مشروع فردي · تسجّل كل طالبة مشروعها بنفسها';
   $('rvbox').innerHTML = vbox('rv', '', ' — ويمكن رفعه لاحقًا من «صفحتي»');
-  $('rc').innerHTML = '<option value="">اختاري الفصل</option>' + P.classes.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  $('rc').innerHTML = $('lc').innerHTML = '<option value="">اختاري الفصل</option>' + P.classes.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
   learn(); notice();
   // صفحة المعلمة ملف مستقل (video-teacher.html نسخة من هذا الملف بـ data-mode="teacher")، وتُحذف من صفحة الطالبات
   if (TMODE) { document.querySelector('nav').hidden = true; go('tch'); }
@@ -472,7 +476,7 @@ $('rn').onchange = () => {
   sel.clear(); $('rq').value = ''; msg($('rmsg')); $('rsave').disabled = false; $('rform').hidden = false;
   const me = ST.find(s => s.id === +$('rn').value);
   if (me && me.taken) {
-    msg($('rmsg'), 'w', 'سجّلتِ مشروعكِ من قبل.<br>لرفع الفيديو أو رؤية النتيجة ادخلي «صفحتي» برمزكِ، وإن نسيتِ الرمز فاسألي المعلمة.');
+    msg($('rmsg'), 'w', 'سجّلتِ مشروعكِ من قبل.<br>لرفع الفيديو أو رؤية النتيجة ادخلي «صفحتي» باسمكِ وآخر ٤ أرقام من سجلكِ المدني.');
     $('rsave').disabled = true; $('rmw').hidden = true; $('rform').hidden = true; return;
   }
   $('rmw').hidden = !me || P.max_team_size < 2; pick();
@@ -491,11 +495,13 @@ $('rpk').onclick = e => { const b = e.target.closest('[data-s]'); if (!b) return
 $('rsave').onclick = async () => {
   const err = m => msg($('rmsg'), 'e', esc(m));
   if (!$('rc').value || !$('rn').value) return err('اختاري الفصل واسمكِ.');
+  if (!/^\d{4}$/.test(en($('rp').value))) return err('اكتبي آخر ٤ أرقام من سجلكِ المدني.');
   if (!$('rs').value.trim()) return err('اكتبي عنوان الفيديو.');
-  const f = $('rv').files[0], bad = f && vbad(f);
-  if (bad) return err(bad);
+  const f = $('rv').files[0];
+  if (!f) return err('أرفقي الفيديو أولًا، لا يتم التسجيل بدونه.');
+  if (vbad(f)) return err(vbad(f));
   busy($('rsave'), true);
-  const r = await rpc('api_register_team', {p_slug: SLUG, p_class: +$('rc').value, p_team_name: ST.find(s => s.id === +$('rn').value).name, p_store_name: $('rs').value.trim(), p_members: [+$('rn').value, ...sel]});
+  const r = await rpc('api_register4', {p_pin: en($('rp').value), p_slug: SLUG, p_class: +$('rc').value, p_team_name: ST.find(s => s.id === +$('rn').value).name, p_store_name: $('rs').value.trim(), p_members: [+$('rn').value, ...sel]});
   if (r.error) { busy($('rsave'), false); return msg($('rmsg'), 'w', '⚠ ' + esc(r.error) + ''); }
   ss.set('code', r.code);
   $('rmw').hidden = true;
@@ -503,19 +509,35 @@ $('rsave').onclick = async () => {
   if (f) {
     msg($('rmsg')); $('rv').disabled = true;
     try { await sendVideo(r.code, $('rs').value.trim(), f, 'rv'); up = '<br>ورُفع الفيديو وسُلِّم ✓'; }
-    catch (e) { up = `<br>⚠ ${esc(e)}<br>ارفعي الفيديو من «صفحتي» برمزكِ.`; }
+    catch (e) { up = `<br>⚠ ${esc(e)}<br>ارفعي الفيديو من «صفحتي» باسمكِ وآخر ٤ أرقام من سجلكِ المدني.`; }
   }
   $('rform').hidden = true;
-  msg($('rmsg'), 'o', `تم تسجيل مشروعكِ ✓${up}<br>رمزكِ<br><span class="code">${ar(r.code)}</span><br>احفظيه واكتبيه في الدفتر، تحتاجينه لرفع الفيديو ورؤية النتيجة.`);
-  $('rmsg').insertAdjacentHTML('beforeend', `<button class="btn" onclick="$('tc').value='${ar(r.code)}';go('team');tview()">اذهبي إلى صفحتي ←</button>`);
+  msg($('rmsg'), 'o', `تم تسجيل مشروعكِ ✓${up}<br>تدخلين «صفحتي» باسمكِ وآخر ٤ أرقام من سجلكِ المدني.`);
+  $('rmsg').insertAdjacentHTML('beforeend', `<button class="btn" onclick="go('team');tview(ss.get('code'))">اذهبي إلى صفحتي ←</button>`);
 };
 
 // ---------- صفحة فريقنا ----------
-$('tgo').onclick = tview;
+$('tgo').onclick = () => tview();
+$('lc').onchange = async () => {
+  $('ln').disabled = true; msg($('tbody'));
+  if (!$('lc').value) return $('ln').innerHTML = '<option value="">اختاري الفصل أولًا</option>';
+  $('ln').innerHTML = '<option>جارٍ التحميل…</option>';
+  const r = await rpc('api_class_students', {p_slug: SLUG, p_class: +$('lc').value});
+  if (r.error) return msg($('tbody'), 'e', esc(r.error));
+  $('ln').innerHTML = '<option value="">اختاري اسمكِ</option>' + r.map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
+  $('ln').disabled = false;
+};
 $('tc').onkeydown = e => { if (e.key === 'Enter') tview(); };
-async function tview() {
-  const code = en($('tc').value);
-  if (!code) return;
+async function tview(code) {
+  if (!code) {
+    const pin = en($('tc').value);
+    if (!$('ln').value) return msg($('tbody'), 'e', 'اختاري فصلكِ واسمكِ.');
+    if (!/^\d{4}$/.test(pin)) return msg($('tbody'), 'e', 'اكتبي آخر ٤ أرقام من سجلكِ المدني.');
+    busy($('tgo'), true);
+    const l = await rpc('api_login4', {p_slug: SLUG, p_student: +$('ln').value, p_pin: pin});
+    if (l.error) { busy($('tgo'), false); return msg($('tbody'), 'e', esc(l.error)); }
+    code = l.code;
+  }
   busy($('tgo'), true);
   const t = await rpc('api_team', {p_slug: SLUG, p_code: code});
   busy($('tgo'), false);
@@ -640,8 +662,8 @@ async function board() {
       ${url(t.store_url) ? `<a class="visit" href="${esc(t.store_url)}" target="_blank" rel="noopener">مشاهدة الفيديو ↗</a>` : '<div class="visit dis" style="color:var(--warn)">لم يُرفق الفيديو</div>'}
       ${mine ? '<div class="rate" style="color:var(--on-sv)">هذا فيديوكِ</div>'
         : done ? '<div class="rate" style="color:var(--ok)">✓ قيّمتِ هذا الفيديو</div>'
+        : !RATED ? '<div class="rate">لتقييم هذا الفيديو ادخلي <a href="#" onclick="go(&quot;team&quot;);return false" style="color:var(--primary)">«صفحتي»</a> أولًا</div>'
         : `<div class="rate" data-t="${t.id}">قيّمي هذا الفيديو:<div class="big-stars">${[1, 2, 3, 4, 5].map(n => `<button data-n="${n}">★</button>`).join('')}</div>
-            ${RATED ? '' : '<input class="in rc" dir="ltr" placeholder="رمزكِ" style="margin-bottom:6px">'}
             <input class="in rm" maxlength="500" placeholder="تعليق (اختياري) — يظهر بعد موافقة المعلمة"><div class="rmsg"></div><button class="btn sm rgo" style="margin-top:6px">إرسال</button></div>`}
     </div>`;
   }).join('') : '<div class="empty">لا توجد فيديوهات بعد</div>';
@@ -651,9 +673,9 @@ $('bc').onclick = async e => {
   const s = e.target.closest('[data-n]');
   if (s) { box.dataset.s = s.dataset.n; box.querySelectorAll('[data-n]').forEach(b => b.classList.toggle('on', +b.dataset.n <= +s.dataset.n)); return; }
   if (!e.target.classList.contains('rgo')) return;
-  const code = RATED ? ss.get('code') : en(box.querySelector('.rc').value), out = box.querySelector('.rmsg');
+  const code = ss.get('code'), out = box.querySelector('.rmsg');
   if (!box.dataset.s) return msg(out, 'e', 'اختاري عدد النجوم.');
-  if (!code) return msg(out, 'e', 'اكتبي رمزكِ.');
+  if (!code) return msg(out, 'e', 'ادخلي «صفحتي» أولًا.');
   e.target.disabled = true;
   const r = await rpc('api_peer_rate', {p_slug: SLUG, p_code: code, p_target: +box.dataset.t, p_stars: +box.dataset.s, p_comment: box.querySelector('.rm').value.trim()});
   e.target.disabled = false;
