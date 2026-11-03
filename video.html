@@ -405,7 +405,7 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = () => go(b.data
   learn(); notice();
   // صفحة المعلمة ملف مستقل (video-teacher.html نسخة من هذا الملف بـ data-mode="teacher")، وتُحذف من صفحة الطالبات
   if (TMODE) { document.querySelector('nav').hidden = true; go('tch'); }
-  else { $('tch').remove(); document.querySelector('nav .tch').remove(); go('learn'); }
+  else { $('tch').remove(); const b = document.querySelector('nav .tch'); b.hidden = false; b.onclick = () => location.href = 'video-teacher.html'; go('learn'); }
 })();
 
 // ---------- تنبيه المعلمة ----------
