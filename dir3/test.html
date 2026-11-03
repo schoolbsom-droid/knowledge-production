@@ -546,7 +546,7 @@ function renderWall(list){const w=$('#wallList');w.innerHTML='';
  if(!list||!list.length){w.innerHTML='<div class="empty">كوني أول من يضيء قطعة في الدرع 💚</div>';return}
  list.forEach(it=>{const d=document.createElement('div');d.className='wi'+(it.quiz?' qz':'');
   const who=document.createElement('div');who.className='who';const av=document.createElement('i');av.textContent=(it.name||'؟').trim()[0]||'؟';const nm=document.createElement('span');nm.textContent=it.name||'مشاركة';const sm=document.createElement('small');sm.textContent=ago(+new Date(it.time));if(it.quiz){const q=document.createElement('b');q.className='qzb';q.textContent='⭐ حلّت الاستبانة';nm.append(q)}who.append(av,nm,sm);d.append(who);
-  if(it.text){const tx=document.createElement('div');tx.className='tx';tx.textContent=it.text;d.append(tx)}
+  if(it.text){const tx=document.createElement('div');tx.className='tx';tx.textContent=it.text.replace(/\u{1F6E1}️?/gu,'💚');d.append(tx)}
   if(it.type==='draw'&&it.img&&/^data:image\/(jpeg|png);base64,/.test(it.img)){const im=document.createElement('img');im.src=it.img;im.alt='رسم';d.append(im)}
   if(it.type==='voice'){const tx=document.createElement('div');tx.className='tx';tx.textContent='🎙️ أرسلت رسالة صوتية لجنودنا';d.append(tx)}
   const tg=document.createElement('span');tg.className='tag';tg.textContent=TYPE[it.type]||'مشاركة';if(it.cls)tg.textContent+=' · '+it.cls+(it.sec?' / '+it.sec:'');d.append(tg);
