@@ -254,6 +254,11 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
 @media(min-width:641px){header .in{padding-inline-end:58px}}
 #bgmBtn.on::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid rgba(47,154,120,.35);animation:bgmRing 2s ease-out infinite}
 @keyframes bgmRing{from{transform:scale(.9);opacity:1}to{transform:scale(1.35);opacity:0}}
+.mbs{max-width:560px;margin:20px auto 4px;padding:14px 18px;border-radius:18px;background:rgba(255,255,255,.7);border-inline-start:5px solid var(--gold)}
+.mbs p{margin:0;font-size:clamp(18px,4.6vw,22px);font-weight:800;line-height:1.7;color:var(--ink)}
+.mbs cite{display:block;margin-top:6px;font-style:normal;font-size:15px;font-weight:700;color:var(--mut)}
+.qrbox{display:flex;flex-direction:column;align-items:center;gap:8px;margin:24px auto 0;font-weight:700;color:var(--mut);font-size:14px}
+.qrbox .qr{width:150px;height:150px;background:#fff;border-radius:16px;padding:6px;box-shadow:0 10px 26px rgba(18,60,52,.12)}
 </style>
 </head>
 <body>
@@ -318,7 +323,9 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
   <!-- JOIN -->
   <section class="page" id="pg-join" data-t="شاركي">
     <div class="head"><span class="chip">شاركي</span><div class="ttl">اكتبي اسمك… واختاري طريقة مشاركتك</div><div class="sub">يظهر اسمك مع مشاركتك في حائط الدرع</div></div>
-    <div class="card" style="max-width:760px;margin:auto">
+    <div class="card" id="joinDone" style="max-width:760px;margin:auto;text-align:center;display:none"><div style="font-size:54px;line-height:1">🛡️</div><div class="ttl grad" style="margin-top:10px">شاركتِ في الدرع، شكرًا لكِ</div><div class="sub" id="jdTxt" style="margin-top:6px"></div><div class="sub" style="margin-top:4px">لكل طالبة مشاركة واحدة في الدرع</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px"><button class="btn" id="jdQuiz" type="button">🎯 حلّي الاستبانة = نقطتين في الدرع</button><button class="btn ghost" id="jdBadge" type="button">عرض وسامي</button></div></div>
+    <div class="card" id="joinCard" style="max-width:760px;margin:auto">
       <div class="row2">
         <div><label class="f" for="nm">الاسم</label><input class="inp" id="nm" maxlength="40" placeholder="مثال: سارة محمد" autocomplete="name"></div>
         <div><label class="f" for="cls">الصف</label><select class="inp" id="cls"><option value="">اختاري</option><option>الأول المتوسط</option><option>الثاني المتوسط</option><option>الثالث المتوسط</option><option>منسوبة المدرسة</option></select></div>
@@ -380,13 +387,15 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
   <!-- OUTRO -->
   <section class="page outro" id="pg-end" data-t="الختام">
     <div class="pors"><img id="imK" alt="خادم الحرمين الشريفين"><img id="imC" alt="سمو ولي العهد"></div>
+    <blockquote class="mbs"><p>«المواطن السعودي أعظم شيء تملكه السعودية للنجاح»</p><cite>ولي العهد الأمير محمد بن سلمان بن عبدالعزيز</cite></blockquote>
     <div style="font-size:22px;font-weight:800;margin-top:18px">حفظ الله قيادتنا وجنودنا البواسل</div>
     <div class="grad" style="font-size:clamp(32px,8.5vw,54px);font-weight:800;margin-top:10px;line-height:1.2">معًا.. نحن درع الوطن</div>
     <div class="card credit" style="max-width:640px;margin:28px auto 0">
       <div><div class="k">قائدة المدرسة</div><div class="v">أ/ أمينة آل مشيط</div></div>
-      <img id="lg2" alt="وزارة التعليم">
       <div><div class="k">المعلمتان المنفذتان</div><div class="v">أ/ ابتسام الشهري<br>أ/ كرزية عسيري</div></div>
     </div>
+    <div class="qrbox"><svg class="qr" role="img" aria-label="رمز الدخول لصفحة درع الوطن" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 148 148" class="segno"><g transform="scale(4)"><path fill="#fff" d="M0 0h37v37h-37z"/><path class="qrline" stroke="#123c34" d="M2 2.5h7m1 0h1m1 0h1m2 0h2m1 0h5m2 0h1m2 0h7m-33 1h1m5 0h1m1 0h3m2 0h1m3 0h1m2 0h1m1 0h3m1 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m2 0h2m2 0h2m1 0h1m1 0h1m4 0h2m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h2m2 0h1m4 0h1m4 0h3m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m2 0h1m1 0h2m1 0h2m3 0h1m1 0h2m3 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m2 0h1m3 0h2m2 0h3m4 0h1m1 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-25 1h2m1 0h2m2 0h1m1 0h2m4 0h2m-25 1h1m1 0h2m1 0h3m2 0h2m2 0h1m1 0h6m4 0h1m2 0h1m1 0h2m-32 1h1m2 0h2m1 0h2m1 0h1m1 0h1m3 0h6m1 0h1m2 0h2m1 0h2m1 0h1m-31 1h2m1 0h3m2 0h2m2 0h1m3 0h1m1 0h1m2 0h7m1 0h2m-33 1h2m1 0h3m1 0h1m3 0h3m4 0h3m1 0h3m1 0h2m1 0h1m-30 1h1m1 0h1m2 0h2m2 0h1m2 0h1m2 0h3m2 0h1m1 0h4m2 0h2m2 0h1m-33 1h4m1 0h1m1 0h1m3 0h1m1 0h3m3 0h1m2 0h1m1 0h1m2 0h1m2 0h2m-30 1h1m1 0h6m6 0h1m2 0h4m1 0h1m1 0h2m1 0h2m-31 1h1m2 0h1m1 0h1m1 0h1m3 0h2m6 0h1m1 0h1m1 0h1m1 0h2m1 0h1m1 0h1m-28 1h4m2 0h1m2 0h1m3 0h1m1 0h1m1 0h4m1 0h2m1 0h3m-31 1h1m3 0h1m5 0h1m3 0h2m1 0h1m2 0h1m2 0h2m1 0h1m1 0h2m1 0h2m-31 1h5m1 0h1m1 0h1m2 0h5m2 0h1m3 0h5m1 0h2m-32 1h2m2 0h1m3 0h1m2 0h2m1 0h1m2 0h1m5 0h1m2 0h1m1 0h1m-28 1h1m2 0h5m2 0h5m1 0h1m3 0h1m1 0h1m5 0h2m1 0h1m-33 1h1m1 0h1m2 0h1m4 0h3m1 0h1m1 0h1m1 0h4m1 0h1m2 0h1m2 0h1m2 0h1m-29 1h1m1 0h1m1 0h1m1 0h5m1 0h3m2 0h1m1 0h1m2 0h1m1 0h1m1 0h3m-32 1h1m2 0h1m2 0h1m4 0h1m1 0h1m1 0h1m2 0h2m3 0h1m1 0h2m1 0h1m-30 1h1m1 0h5m1 0h2m1 0h4m2 0h2m3 0h1m1 0h5m2 0h2m-25 1h2m1 0h1m1 0h4m2 0h3m1 0h2m3 0h2m-30 1h7m1 0h1m1 0h1m1 0h1m1 0h1m2 0h5m1 0h2m1 0h1m1 0h1m2 0h1m-32 1h1m5 0h1m1 0h7m1 0h1m3 0h5m3 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m3 0h1m1 0h1m1 0h1m3 0h2m1 0h8m1 0h1m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h5m1 0h2m1 0h1m2 0h5m2 0h1m2 0h1m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m1 0h2m2 0h2m1 0h1m4 0h1m1 0h1m1 0h2m1 0h1m-30 1h1m5 0h1m2 0h1m1 0h3m2 0h2m4 0h7m3 0h1m-33 1h7m1 0h2m1 0h2m1 0h1m1 0h4m1 0h1m1 0h1m4 0h1m1 0h1"/></g></svg>
+<div>امسحي الرمز وشاركي في درع الوطن</div></div>
   </section>
 </div>
 
@@ -423,7 +432,7 @@ const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 const GOAL = 400;
 const AR = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
 const $ = s => document.querySelector(s);
-['lg0','lg1','lg2'].forEach(i => $('#'+i).src = IMG.logo); $('#imK').src = IMG.king; $('#imC').src = IMG.cp;
+['lg0','lg1'].forEach(i => $('#'+i).src = IMG.logo); $('#imK').src = IMG.king; $('#imC').src = IMG.cp;
 const MEM={};const store = { get(k,d){try{const v=JSON.parse(localStorage.getItem(k));if(v!==null&&v!==undefined)return v}catch(e){}return k in MEM?MEM[k]:d}, set(k,v){MEM[k]=v;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}} };
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2600)}
 
@@ -564,7 +573,13 @@ $('#recb').onclick=async()=>{
  }catch(e){$('#rech').textContent='تعذّر الوصول إلى الميكروفون — اسمحي للمتصفح باستخدامه أو اختاري طريقة أخرى'}};
 const blobB64=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});
 
-$('#send').onclick=async()=>{
+// البصمة مرتبطة بمشاركة واحدة: بعد أول مشاركة يُقفل النموذج على هذا الجهاز وتُوجَّه الطالبة للاستبانة
+function joinState(){const n=store.get('postNum',0);if(!n)return;$('#joinCard').style.display='none';$('#joinDone').style.display='';
+ $('#jdTxt').textContent='رقمك في الدرع #'+AR(n);$('#jdQuiz').style.display=store.get('quizLit',false)?'none':''}
+$('#jdBadge').onclick=()=>{$('#bName').textContent=store.get('name','');$('#bNum').textContent='#'+AR(store.get('postNum',0));openBadge()};
+$('#jdQuiz').onclick=()=>{go('quiz');qi=0;qs=0;qa=[];qpts=0;qstreak=0;qShow()};
+joinState();
+$('#send').onclick=async()=>{if(store.get('postNum',0)){joinState();return}
  const name=$('#nm').value.trim(),cls=$('#cls').value;const er=$('#jerr');er.textContent='';
  if(name.length<2){er.textContent='اكتبي اسمك أولاً';$('#nm').focus();return}
  if(!cls){er.textContent='اختاري صفك';return}
@@ -576,7 +591,7 @@ $('#send').onclick=async()=>{
  if(way==='voice'){if(!voiceBlob){er.textContent='سجّلي رسالتك الصوتية أولاً';return}if(voiceBlob.size>3e6){er.textContent='التسجيل طويل جدًا';return}data.audio=await blobB64(voiceBlob)}
  store.set('name',name);store.set('cls',cls);store.set('sec',sec);
  const b=$('#send');b.disabled=true;b.textContent='جاري الإرسال…';
- try{const s=await api('post',data);const num=+s.id||+s.count;const mine=store.get('myNums',[]);mine.push(num);store.set('myNums',mine);applyStats(s);
+ try{const s=await api('post',data);const num=+s.id||+s.count;const mine=store.get('myNums',[]);mine.push(num);store.set('myNums',mine);store.set('postNum',num);joinState();applyStats(s);
   $('#bName').textContent=name;$('#bNum').textContent='#'+AR(num);openBadge();
   $('#msg').value='';$('#msgc').textContent='0';phrase='';document.querySelectorAll('#phr button').forEach(x=>x.classList.remove('on'));clearCv();voiceBlob=null;$('#recplay').style.display='none';$('#rech').textContent='اضغطي لبدء التسجيل (حتى ٣٠ ثانية)';
  }catch(e){er.textContent='تعذّر الإرسال، تأكدي من الاتصال وحاولي مرة أخرى'}
@@ -721,7 +736,7 @@ async function qEnd(){const c=$('#qcard');store.set('quizScore',qs);
  cb.append(ci,cbtn);c.firstChild.append(cb);
  const b=el('button','btn ghost','أعيدي التحدّي');b.style.cssText='display:flex;margin:18px auto 0';b.onclick=qStart;c.firstChild.append(b);
  try{await api('survey',{name:$('#nm').value.trim()||store.get('name',''),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),score:qs,answers:qa.join('')})}catch(e){}
- if(!store.get('quizLit',false)){store.set('quizLit',true);try{const n=await lightPiece({name:who(),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),type:'quiz',text:'🏆 أكملت تحدّي درع الوطن'},false);const n2=await lightPiece({name:who(),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),type:'bonus',text:'🏆 أكملت تحدّي درع الوطن'},false);
+ if(!store.get('quizLit',false)){store.set('quizLit',true);joinState();try{const n=await lightPiece({name:who(),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),type:'quiz',text:'🏆 أكملت تحدّي درع الوطن'},false);const n2=await lightPiece({name:who(),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),type:'bonus',text:'🏆 أكملت تحدّي درع الوطن'},false);
   const s=el('p','sub','🛡️ نقطتاكِ: أضأتِ القطعتين #'+AR(n)+' و#'+AR(n2)+' في الدرع');s.style.fontWeight='800';c.querySelector('.tbars').before(s)}catch(e){store.set('quizLit',false)}}}
 qStart();
 
