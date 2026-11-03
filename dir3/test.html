@@ -47,7 +47,7 @@ header .sn{font-weight:800;font-size:18px}
 header nav{margin-inline-start:auto;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
 header nav a{white-space:nowrap;font-size:13px;font-weight:700;color:var(--mut);text-decoration:none;padding:6px 10px;border-radius:20px}
 header nav a:hover{background:var(--soft);color:var(--g1)}
-@media(max-width:640px){header .in{flex-wrap:wrap;row-gap:2px;padding-bottom:6px}header .sn{font-size:17px}header img{height:48px}header nav{order:3;width:100%;margin-inline-start:0;flex-wrap:wrap;justify-content:center;row-gap:2px;overflow:visible}header nav a{font-size:13px;padding:5px 10px}}
+@media(max-width:640px){header nav{display:none}}
 .wrap{max-width:980px;margin:auto;padding:0 16px}
 section{padding:40px 0}
 .chip{display:inline-block;background:linear-gradient(90deg,var(--g1),var(--g2));color:#fff;font-weight:800;font-size:14px;padding:6px 16px;border-radius:30px;margin-bottom:12px}
@@ -75,6 +75,7 @@ section{padding:40px 0}
 #shield polygon.g2g{transition:none;animation:mineGreen 2.4s ease-in-out .3s both}
 @keyframes mineGreen{from{fill:var(--gold)}to{fill:#2a8f7f}}
 #shield polygon.mine.done{fill:url(#hx)}
+#shield polygon.qz,#shield polygon.mine.done.qz{fill:#f2d98a}
 #shield polygon.grow{animation:mineGrow 1.2s ease-in-out 3}
 @keyframes mineGrow{0%,100%{transform:scale(1);filter:none}50%{transform:scale(1.9);filter:drop-shadow(0 0 3px rgba(43,196,125,.95))}}
 #shield{transform-origin:50% 50%}
@@ -197,7 +198,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
 .tabbar a.on{color:var(--g1)}
 .tabbar a.on svg{stroke-width:2.2;transform:translateY(-2px)}
 #topnav a.on{background:var(--soft);color:var(--g1)}
-@media(max-width:640px){.page{padding-bottom:calc(90px + env(safe-area-inset-bottom))}.page{padding-top:12px}.hero h1{font-size:50px}.hero{padding-top:6px;gap:16px}.ttl{font-size:26px}}
+@media(max-width:640px){.tabbar{display:flex}.page{padding-bottom:calc(96px + env(safe-area-inset-bottom))}.toast{bottom:calc(90px + env(safe-area-inset-bottom))}.page{padding-top:12px}.hero h1{font-size:50px}.hero{padding-top:6px;gap:16px}.ttl{font-size:26px}}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:30px;font-weight:700;z-index:70;transition:transform .35s}
 .toast.on{transform:translateX(-50%)}
 
@@ -250,9 +251,9 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
 .burst{position:fixed;pointer-events:none;font-size:26px;z-index:80;animation:burst .9s ease-out forwards}
 @keyframes burst{to{transform:translate(var(--x),var(--y)) scale(.6);opacity:0}}
 @media(max-width:480px){.qq{font-size:19px}.tfrow .opt{font-size:19px;padding:18px 8px}.tbars .r{grid-template-columns:96px 1fr 40px}}
-#bgmBtn{position:fixed;right:16px;top:calc(var(--hh,76px) + 14px);z-index:45;width:42px;height:42px;border-radius:50%;border:1px solid rgba(31,122,92,.25);background:rgba(255,255,255,.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#1f7a5c;font-size:18px;line-height:40px;text-align:center;cursor:pointer;opacity:.9;box-shadow:0 4px 12px rgba(31,122,92,.15);transition:opacity .2s;display:none;padding:0}
+#bgmBtn{position:fixed;left:12px;top:max(12px,env(safe-area-inset-top));z-index:45;width:38px;height:38px;border-radius:50%;border:1px solid rgba(31,122,92,.25);background:rgba(255,255,255,.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#1f7a5c;font-size:16px;line-height:36px;text-align:center;cursor:pointer;opacity:.9;box-shadow:0 4px 12px rgba(31,122,92,.15);transition:opacity .2s;display:none;padding:0}
 #bgmBtn:hover{opacity:1}
-
+@media(min-width:641px){header .in{padding-inline-end:58px}}
 #bgmBtn.on::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid rgba(47,154,120,.35);animation:bgmRing 2s ease-out infinite}
 @keyframes bgmRing{from{transform:scale(.9);opacity:1}to{transform:scale(1.35);opacity:0}}
 .mbs{max-width:560px;margin:20px auto 4px;padding:14px 18px;border-radius:18px;background:rgba(255,255,255,.7);border-inline-start:5px solid var(--gold)}
@@ -260,13 +261,12 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
 .mbs cite{display:block;margin-top:6px;font-style:normal;font-size:15px;font-weight:700;color:var(--mut)}
 .qrbox{display:flex;flex-direction:column;align-items:center;gap:8px;margin:24px auto 0;font-weight:700;color:var(--mut);font-size:14px}
 .qrbox .qr{width:150px;height:150px;background:#fff;border-radius:16px;padding:6px;box-shadow:0 10px 26px rgba(18,60,52,.12)}
-#hono{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px;background:rgba(240,250,246,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:opacity .8s;text-align:center}
-#hono.out{opacity:0;pointer-events:none}
-#hono h3{margin:0;font-size:clamp(22px,6vw,30px);font-weight:800}
-#hono p{margin:6px 0 14px;color:var(--mut);font-weight:700}
-#hono .nm{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:760px;max-height:60vh;overflow:hidden}
-#hono .nm span{background:#fff;border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-weight:800;color:var(--g1);box-shadow:0 6px 16px rgba(18,60,52,.08);animation:honoIn .5s backwards}
-@keyframes honoIn{from{opacity:0;transform:translateY(14px) scale(.8)}}
+.wi.qz{background:#fff8e6;border-color:#f0d48a}
+.wi .qzb{display:inline-block;margin-inline-start:6px;font-size:12px;font-weight:800;color:#8a6408;background:#fbe9b7;border-radius:10px;padding:2px 8px}
+.pager{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:18px 0 4px}
+.pager button{min-width:40px;height:40px;padding:0 8px;border-radius:12px;border:2px solid var(--line);background:#fff;font:inherit;font-weight:800;color:var(--g1);cursor:pointer}
+.pager button.on{background:linear-gradient(90deg,var(--g1),var(--t1));color:#fff;border-color:transparent}
+.pager span{align-self:center;color:var(--mut);font-weight:800}
 </style>
 </head>
 <body>
@@ -331,7 +331,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
   <!-- JOIN -->
   <section class="page" id="pg-join" data-t="شاركي">
     <div class="head"><span class="chip">شاركي</span><div class="ttl">اكتبي اسمك… واختاري طريقة مشاركتك</div><div class="sub">يظهر اسمك مع مشاركتك في حائط الدرع</div></div>
-    <div class="card" id="joinDone" style="max-width:760px;margin:auto;text-align:center;display:none"><div style="font-size:54px;line-height:1">🛡️</div><div class="ttl grad" style="margin-top:10px">شاركتِ في الدرع، شكرًا لكِ</div><div class="sub" id="jdTxt" style="margin-top:6px"></div><div class="sub" style="margin-top:4px">لكل طالبة مشاركة واحدة في الدرع</div>
+    <div class="card" id="joinDone" style="max-width:760px;margin:auto;text-align:center;display:none"><svg width="64" height="74" viewBox="0 0 120 140" aria-hidden="true"><defs><linearGradient id="gjd" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#2f9a78"/><stop offset="1" stop-color="#2a7f9e"/></linearGradient></defs><path d="M60 6 L110 24 V66 C110 100 88 122 60 134 C32 122 10 100 10 66 V24 Z" fill="url(#gjd)"/><path d="M60 40l8 17 18 2-13.5 12.5 3.5 18L60 80.5 44 89.5l3.5-18L34 59l18-2z" fill="#fff"/></svg><div class="ttl grad" style="margin-top:10px">شاركتِ في الدرع، شكرًا لكِ</div><div class="sub" id="jdTxt" style="margin-top:6px"></div><div class="sub" style="margin-top:4px">لكل طالبة مشاركة واحدة في الدرع</div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px"><button class="btn" id="jdQuiz" type="button">🎯 حلّي الاستبانة = نقطتين في الدرع</button><button class="btn ghost" id="jdBadge" type="button">عرض وسامي</button></div></div>
     <div class="card" id="joinCard" style="max-width:760px;margin:auto">
       <div class="row2">
@@ -353,7 +353,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
       <div class="pane" id="p-voice"><div class="rec"><button class="recbtn" id="recb" aria-label="تسجيل"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></button><div class="hint" id="rech">اضغطي لبدء التسجيل (حتى ٣٠ ثانية)</div><audio id="recplay" controls style="display:none;width:100%;max-width:340px"></audio></div></div>
 
       <div class="err" id="jerr"></div>
-      <div style="text-align:center;margin-top:10px"><button class="btn" id="send">أرسلي وأضيفي قطعتك 🛡️</button></div>
+      <div style="text-align:center;margin-top:10px"><button class="btn" id="send">أرسلي وأضيفي قطعتك 💚</button></div>
     </div>
   </section>
 
@@ -370,6 +370,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
   <section class="page" id="pg-wall" data-t="حائط الدرع">
     <div class="head"><span class="chip">حائط الدرع</span><div class="ttl">رسائلكن لحماة الوطن</div><div class="sub">أحدث المشاركات — تتحدّث تلقائيًا</div></div>
     <div class="wall" id="wallList"><div class="empty">جاري التحميل…</div></div>
+    <div class="pager" id="wallPager"></div>
   </section>
 
   <!-- PARENTS -->
@@ -502,7 +503,6 @@ $('#bgmBtn').onclick=()=>{const a=$('#bgm'),b=$('#bgmBtn');
 // إذا دخلت الصفحة دون البصمة (دخلت سابقًا)، تبدأ الأنشودة مع أول لمسة
 if($('#gate').classList.contains('hide'))$('#bgmBtn').style.display='block';
 document.addEventListener('pointerdown',e=>{if(e.target.closest&&e.target.closest('#bgmBtn'))return;if($('#gate').classList.contains('hide'))startBgm();else if(!window._bgmPrimed){window._bgmPrimed=1;const m=$('#bgm');m.muted=true;m.play().then(()=>{m.pause();m.currentTime=0;m.muted=false}).catch(()=>{m.muted=false})}},{capture:true});
-{const hh=()=>document.documentElement.style.setProperty('--hh',document.querySelector('header').offsetHeight+'px');hh();addEventListener('resize',hh)}
 let AC=null;document.addEventListener('pointerdown',()=>{try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}},{capture:true});
 function beatSound(){if(!AC||AC.state!=='running')return;const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(55,t+.25);
  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.6,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.35);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+.4);
@@ -520,7 +520,7 @@ function shieldShow(){showT.forEach(clearTimeout);showT=[];
  const tick=()=>ready()?run():later(tick,300);tick()}
 function setCount(n){const lit=Math.min(n,GOAL);const mine=store.get('myNums',[]);
  cells.forEach((p,i)=>{const on=i<lit;if(on&&!p.classList.contains('lit')&&!p.classList.contains('mine')){p.classList.add('pop')}
-  p.classList.toggle('lit',on&&!mine.includes(i+1));p.classList.toggle('mine',on&&mine.includes(i+1))});
+  p.classList.toggle('lit',on&&!mine.includes(i+1));p.classList.toggle('mine',on&&mine.includes(i+1));p.classList.toggle('qz',on&&goldSet.has(i+1))});
  const from=shown,t0=performance.now();(function an(t){const k=Math.max(0,Math.min(1,(t-t0)/900));const v=Math.round(from+(n-from)*(1-Math.pow(1-k,3)));$('#cN').textContent=AR(v);if(k<1)requestAnimationFrame(an)})(t0);shown=n;
  $('#cBar').style.width=Math.min(100,n/GOAL*100)+'%';
  // تسلسل الدرع: القطع ذهبية ← أخضر، ثم قطعة الطالبة تنبض وتكبر، ثم الدرع كله ينبض مع صوت ويتوقف
@@ -535,10 +535,17 @@ async function lightPiece(data,showBadge=true){const s=await api('post',{text:''
  const mine=store.get('myNums',[]);mine.push(num);store.set('myNums',mine);applyStats(s);
  if(showBadge){$('#bName').textContent=data.name;$('#bNum').textContent='#'+AR(num);openBadge()}return num}
 const who=()=>($('#nm').value.trim()||store.get('name','')||'حارسة الدرع');
+let goldSet=new Set(),wallPage=1,wallTotal=0;
+// أرقام صفحات الحائط (٣٠ مشاركة لكل صفحة)
+function drawPager(){const el=$('#wallPager'),pages=Math.max(1,Math.ceil(wallTotal/30));el.innerHTML='';if(pages<2)return;
+ const mk=n=>{const b=document.createElement('button');b.type='button';b.textContent=AR(n);if(n===wallPage)b.className='on';b.onclick=()=>goWall(n);el.append(b)};
+ const dots=()=>{const x=document.createElement('span');x.textContent='…';el.append(x)};
+ for(let n=1;n<=pages;n++){if(n===1||n===pages||Math.abs(n-wallPage)<=1)mk(n);else if(el.lastChild&&el.lastChild.tagName!=='SPAN')dots()}}
+async function goWall(n){wallPage=n;drawPager();try{const r=await api('wall',{page:n});wallTotal=+r.wallTotal||wallTotal;renderWall(r.wall);drawPager();$('#wallList').scrollIntoView({behavior:'smooth',block:'start'})}catch(e){}}
 function renderWall(list){const w=$('#wallList');w.innerHTML='';
- if(!list||!list.length){w.innerHTML='<div class="empty">كوني أول من يضيء قطعة في الدرع 🛡️</div>';return}
- list.forEach(it=>{const d=document.createElement('div');d.className='wi';
-  const who=document.createElement('div');who.className='who';const av=document.createElement('i');av.textContent=(it.name||'؟').trim()[0]||'؟';const nm=document.createElement('span');nm.textContent=it.name||'مشاركة';const sm=document.createElement('small');sm.textContent=ago(+new Date(it.time));who.append(av,nm,sm);d.append(who);
+ if(!list||!list.length){w.innerHTML='<div class="empty">كوني أول من يضيء قطعة في الدرع 💚</div>';return}
+ list.forEach(it=>{const d=document.createElement('div');d.className='wi'+(it.quiz?' qz':'');
+  const who=document.createElement('div');who.className='who';const av=document.createElement('i');av.textContent=(it.name||'؟').trim()[0]||'؟';const nm=document.createElement('span');nm.textContent=it.name||'مشاركة';const sm=document.createElement('small');sm.textContent=ago(+new Date(it.time));if(it.quiz){const q=document.createElement('b');q.className='qzb';q.textContent='⭐ حلّت الاستبانة';nm.append(q)}who.append(av,nm,sm);d.append(who);
   if(it.text){const tx=document.createElement('div');tx.className='tx';tx.textContent=it.text;d.append(tx)}
   if(it.type==='draw'&&it.img&&/^data:image\/(jpeg|png);base64,/.test(it.img)){const im=document.createElement('img');im.src=it.img;im.alt='رسم';d.append(im)}
   if(it.type==='voice'){const tx=document.createElement('div');tx.className='tx';tx.textContent='🎙️ أرسلت رسالة صوتية لجنودنا';d.append(tx)}
@@ -546,7 +553,7 @@ function renderWall(list){const w=$('#wallList');w.innerHTML='';
   w.append(d)})}
 
 let prayersServer=0,prayPending=0;
-function applyStats(s){setCount(+s.count||0);prayersServer=+s.prayers||0;$('#pN').textContent=AR(prayersServer+prayPending);renderWall(s.wall)}
+function applyStats(s){goldSet=new Set(s.gold||[]);wallTotal=+s.wallTotal||0;setCount(+s.count||0);prayersServer=+s.prayers||0;$('#pN').textContent=AR(prayersServer+prayPending);if(wallPage===1)renderWall(s.wall);drawPager()}
 async function refresh(){try{applyStats(await api('stats'))}catch(e){if($('#wallList').querySelector('.empty'))$('#wallList').innerHTML='<div class="empty">تعذّر تحميل المشاركات، حاولي التحديث لاحقًا</div>'}}
 refresh();setInterval(refresh,25000);
 
@@ -604,7 +611,7 @@ $('#send').onclick=async()=>{if(store.get('postNum',0)){joinState();return}
   $('#bName').textContent=name;$('#bNum').textContent='#'+AR(num);openBadge();
   $('#msg').value='';$('#msgc').textContent='0';phrase='';document.querySelectorAll('#phr button').forEach(x=>x.classList.remove('on'));clearCv();voiceBlob=null;$('#recplay').style.display='none';$('#rech').textContent='اضغطي لبدء التسجيل (حتى ٣٠ ثانية)';
  }catch(e){er.textContent='تعذّر الإرسال، تأكدي من الاتصال وحاولي مرة أخرى'}
- b.disabled=false;b.textContent='أرسلي وأضيفي قطعتك 🛡️'};
+ b.disabled=false;b.textContent='أرسلي وأضيفي قطعتك 💚'};
 function openBadge(){$('#bQuiz').style.display=store.get('quizLit',false)?'none':'';$('#badge').classList.add('on')}
 $('#bQuiz').onclick=()=>{$('#badge').classList.remove('on');go('quiz');qi=0;qs=0;qa=[];qpts=0;qstreak=0;qShow()};
 $('#bClose').onclick=()=>{$('#badge').classList.remove('on');go('home')};
@@ -650,7 +657,7 @@ const QN=Q.length;
 let qi=-1,qs=0,qa=[],qpts=0,qstreak=0;
 function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
 function shuf(a,seed){return a.map((x,i)=>[x,Math.abs(Math.sin((i+1)*seed*9.73))%1]).sort((x,y)=>x[1]-y[1]).map(x=>x[0])}
-function burst(x,y){['🎉','⭐','💚','✨','🛡️'].forEach((s,i)=>{const b=el('span','burst',s);const a=i/5*Math.PI*2;b.style.left=x+'px';b.style.top=y+'px';b.style.setProperty('--x',Math.cos(a)*90+'px');b.style.setProperty('--y',Math.sin(a)*90-40+'px');document.body.append(b);setTimeout(()=>b.remove(),950)})}
+function burst(x,y){['🎉','⭐','💚','✨','🌟'].forEach((s,i)=>{const b=el('span','burst',s);const a=i/5*Math.PI*2;b.style.left=x+'px';b.style.top=y+'px';b.style.setProperty('--x',Math.cos(a)*90+'px');b.style.setProperty('--y',Math.sin(a)*90-40+'px');document.body.append(b);setTimeout(()=>b.remove(),950)})}
 function qStart(){const c=$('#qcard');c.innerHTML='';const h=el('div');h.style.textAlign='center';
  h.innerHTML='<div class="topics">'+TOP.map((t,i)=>'<div><b>'+AR(i+1)+'</b>'+t+'</div>').join('')+'</div><p class="sub">'+AR(QN)+' تحديًا: صح وخطأ، مواقف، مطابقة، ترتيب، وتحدّي كلمة المرور 🔐<br>وفي النهاية تضيئين <b>قطعتين في الدرع</b> وتحصلين على <b>شهادة درع الوطن 📜</b><br>كل إجابة صحيحة ⭐ ١٠ نقاط، وسلسلة الإجابات الصحيحة 🔥 تعطيك نقاطًا إضافية</p>';
  const done=store.get('quizScore',null);if(done!==null){const p=el('p','sub','درجتك السابقة: '+AR(done)+' من '+AR(QN));h.append(p)}
@@ -732,15 +739,8 @@ function certificate(name,score,title,stars){const W=1754,H=1240,c=document.crea
   sig(900,'قائدة المدرسة',['أ/ أمينة آل مشيط']);sig(260,'المعلمتان المنفذتان',['أ/ ابتسام الشهري','أ/ كرزية عسيري']);
   const h=hijriToday();if(h){g.direction='ltr';g.textAlign='left';g.font='700 26px "Noto Kufi Arabic"';g.fillStyle='#5f7a74';const num=h.y+'/'+h.m+'/'+h.d,hw2=g.measureText('هـ').width,nw2=g.measureText(num).width,x0=580-(hw2+nw2)/2;g.fillText('هـ',x0,1080);g.fillText(num,x0+hw2,1080)}
   c.toBlob(bl=>{const a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='شهادة-درع-الوطن.png';document.body.append(a);a.click();a.remove()},'image/png')});lg.src=IMG.logo}
-// بعد الاستبانة: أسماء الطالبات المشاركات تحفيزًا لثوانٍ ثم تختفي
-async function showNames(){let names=[];try{names=(await api('names')).names||[]}catch(e){return}if(!names.length)return;
- const o=document.createElement('div');o.id='hono';const per=Math.max(25,Math.min(120,4500/names.length));
- o.innerHTML='<h3 class="grad">حارسات الدرع معكِ 💚</h3><p>'+AR(names.length)+' طالبة شاركن في درع الوطن</p><div class="nm"></div>';
- const box=o.querySelector('.nm');names.forEach((n,i)=>{const s=document.createElement('span');s.textContent=n;s.style.animationDelay=(i*per)+'ms';box.append(s)});
- const close=()=>{o.classList.add('out');setTimeout(()=>o.remove(),800)};o.onclick=close;document.body.append(o);
- setTimeout(close,Math.min(names.length*per,4500)+3500)}
 async function qEnd(){const c=$('#qcard');store.set('quizScore',qs);
- const st=qs>=9?3:qs>=6?2:1;const title=['','حارسة مبتدئة 🌱','حارسة واعية 🛡️','حارسة خبيرة 🏆'][st];
+ const st=qs>=9?3:qs>=6?2:1;const title=['','حارسة مبتدئة 🌱','حارسة واعية 💚','حارسة خبيرة 🏆'][st];
  const msg=st===3?'رائع! أنتِ درع واعٍ لوطنك':st===2?'أداء جميل! راجعي الإجابات لتصبحي أقوى':'بداية طيبة — أعيدي التحدّي لتتعلّمي أكثر';
  const per=TOP.map((_,t)=>{let a=0,n=0;Q.forEach((q,k)=>{if(q.t===t){n++;a+=qa[k]||0}});return [a,n]});
  c.innerHTML='<div style="text-align:center"><div class="stars">'+[1,2,3].map(k=>'<i style="animation-delay:'+(k*.25)+'s">'+(k<=st?'⭐':'☆')+'</i>').join('')+'</div><div class="ttl" style="font-size:24px">'+title+'</div><div class="score grad">'+AR(qs)+' من '+AR(QN)+'</div><div class="sub">⭐ '+AR(qpts)+' نقطة — '+msg+'</div>'
@@ -751,9 +751,9 @@ async function qEnd(){const c=$('#qcard');store.set('quizScore',qs);
  const cbtn=el('button','btn','📜 حفظ شهادة درع الوطن');cbtn.onclick=()=>{const nm=ci.value.trim();if(!nm){ci.focus();toast('اكتبي اسمك أولًا');return}store.set('name',nm);certificate(nm,qs,title,st)};
  cb.append(ci,cbtn);c.firstChild.append(cb);
  const b=el('button','btn ghost','أعيدي التحدّي');b.style.cssText='display:flex;margin:18px auto 0';b.onclick=qStart;c.firstChild.append(b);
- showNames();try{await api('survey',{name:$('#nm').value.trim()||store.get('name',''),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),score:qs,answers:qa.join('')})}catch(e){}
+ try{await api('survey',{name:$('#nm').value.trim()||store.get('name',''),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),score:qs,answers:qa.join('')})}catch(e){}
  if(!store.get('quizLit',false)){store.set('quizLit',true);joinState();try{const n=await lightPiece({name:who(),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),type:'quiz',text:'🏆 أكملت تحدّي درع الوطن'},false);const n2=await lightPiece({name:who(),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),type:'bonus',text:'🏆 أكملت تحدّي درع الوطن'},false);
-  const s=el('p','sub','🛡️ نقطتاكِ: أضأتِ القطعتين #'+AR(n)+' و#'+AR(n2)+' في الدرع');s.style.fontWeight='800';c.querySelector('.tbars').before(s)}catch(e){store.set('quizLit',false)}}}
+  const s=el('p','sub','💚 نقطتاكِ: أضأتِ القطعتين #'+AR(n)+' و#'+AR(n2)+' في الدرع');s.style.fontWeight='800';c.querySelector('.tbars').before(s)}catch(e){store.set('quizLit',false)}}}
 qStart();
 
 /* ---------- pages ---------- */
@@ -767,7 +767,7 @@ let cur=-1;
 function go(id,push){let i=PAGES.indexOf(id);if(i<0)i=0;if(i===cur)return;const back=i<cur;
  PAGES.forEach((p,k)=>{const e=$('#pg-'+p);e.classList.toggle('on',k===i);e.classList.toggle('back',back)});
  pd.querySelectorAll('i').forEach((d,k)=>{d.className=k===i?'on':k<i?'done':''});
- document.querySelectorAll('#tabbar a,#topnav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+PAGES[i]));{const t=document.querySelector('#topnav a.on');if(t)t.scrollIntoView({inline:'center',block:'nearest'})}
+ document.querySelectorAll('#tabbar a,#topnav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+PAGES[i]));
  cur=i;window.scrollTo({top:0,behavior:'instant'});
  if(PAGES[i]==='wall'||PAGES[i]==='home')refresh();
  try{if(location.hash!=='#'+PAGES[i])history.replaceState(null,'','#'+PAGES[i])}catch(e){}}
