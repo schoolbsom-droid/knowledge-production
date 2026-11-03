@@ -69,8 +69,12 @@ section{padding:40px 0}
 #shield{width:min(330px,80vw,42vh);height:auto;filter:drop-shadow(0 18px 30px rgba(31,122,92,.18))}
 #shield polygon{transition:fill .5s}
 #shield polygon.lit{fill:url(#hx)}
-#shield polygon.mine{fill:var(--gold)}
 #shield polygon.pop{animation:pop .9s}
+#shield polygon.mine{fill:var(--gold);transition:none;animation:mineGreen 2.4s ease-in-out .4s forwards}
+@keyframes mineGreen{to{fill:#2a8f7f}}
+#shield polygon.mine.done{fill:url(#hx);animation:none}
+#shield polygon.beat{animation:minePulse 1.4s ease-in-out 4}
+@keyframes minePulse{0%,100%{transform:scale(1);filter:none}50%{transform:scale(1.22);filter:drop-shadow(0 0 2.5px rgba(43,196,125,.95))}}
 @keyframes pop{0%{transform:scale(.2);opacity:.2}60%{transform:scale(1.25)}100%{transform:scale(1)}}
 .counter{font-size:44px;font-weight:800;margin-top:6px;direction:rtl}
 .bar{width:min(330px,80vw);height:12px;border-radius:8px;background:#dcefe8;overflow:hidden;margin-top:8px}
@@ -194,7 +198,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
 /* ---------- interactive quiz ---------- */
 .qhud{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .qpts{background:#fff7dc;color:#8a6a00;border-radius:14px;padding:3px 10px;font-size:13px;font-weight:800}
-.qfire{background:#ffe9e0;color:#c2410c;border-radius:14px;padding:3px 10px;font-size:13px;font-weight:800;animation:pop .4s}
+.qfire{background:#ffe9e0;color:#c2410c;border-radius:14px;padding:3px 10px;font-size:13px;font-weight:800;animation:qpop .4s}
 .qdots{display:flex;gap:4px;justify-content:center;margin:10px 0 4px;flex-wrap:wrap}
 .qdots i{width:13px;height:15px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:#dcefe8;transition:.3s}
 .qdots i.cur{background:var(--t1);transform:scale(1.2)}
@@ -203,7 +207,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
 .qkind{display:inline-block;font-size:12px;font-weight:800;color:var(--g1);background:var(--soft);border-radius:10px;padding:2px 10px;margin-top:8px}
 .qcard-in{animation:qin .35s ease}
 @keyframes qin{from{opacity:0;transform:translateX(-24px)}}
-@keyframes pop{from{transform:scale(.6);opacity:0}}
+@keyframes qpop{from{transform:scale(.6);opacity:0}}
 @keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
 .shake{animation:shake .4s}
 .opt.sel{border-color:var(--t1);background:#e6f2f7}
@@ -232,7 +236,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
 .qwarn{font-size:13px;color:var(--mut);margin-top:8px}
 .qnext{display:flex;margin:14px auto 0}
 .stars{font-size:44px;letter-spacing:6px;margin:6px 0}
-.stars i{font-style:normal;display:inline-block;animation:pop .5s backwards}
+.stars i{font-style:normal;display:inline-block;animation:qpop .5s backwards}
 .tbars{display:grid;gap:10px;margin:18px auto 0;max-width:420px;text-align:right}
 .tbars .r{display:grid;grid-template-columns:120px 1fr 44px;gap:8px;align-items:center;font-size:14px;font-weight:700}
 .tbars .b{height:10px;border-radius:6px;background:#e8efec;overflow:hidden}
@@ -273,7 +277,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
     <div>
       <span class="chip">مبادرة وطنية</span>
       <h1 class="grad">درع الوطن</h1>
-      <p class="lead">كل مشاركة منكِ تضيء قطعة في درع الوطن. اكتبي رسالة شكر لجنودنا البواسل، أو اختاري بطاقة، أو ارسمي، أو سجّلي صوتك — <b>وهدفنا ١٠٠ مشاركة</b>.</p>
+      <p class="lead">كل مشاركة منكِ تضيء قطعة في درع الوطن. اكتبي رسالة شكر لجنودنا البواسل، أو اختاري بطاقة، أو ارسمي، أو سجّلي صوتك — <b>وهدفنا ٤٠٠ مشاركة</b>.</p>
       <a class="btn" href="#join">ابدئي مشاركتك ←</a>
     </div>
     <div class="shieldbox">
@@ -285,7 +289,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
         <g clip-path="url(#cl)" id="hexes"></g>
         <path d="M60 6 L110 24 V66 C110 100 88 122 60 134 C32 122 10 100 10 66 V24 Z" fill="none" stroke="url(#gs)" stroke-width="3.5"/>
       </svg>
-      <div class="counter"><span class="grad" id="cN">٠</span> / ١٠٠</div>
+      <div class="counter"><span class="grad" id="cN">٠</span> / ٤٠٠</div>
       <div class="bar"><i id="cBar"></i></div>
       <div class="mini" id="cMsg">مشاركة في الدرع</div>
     </div>
@@ -308,6 +312,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
       <div class="row2">
         <div><label class="f" for="nm">الاسم</label><input class="inp" id="nm" maxlength="40" placeholder="مثال: سارة محمد" autocomplete="name"></div>
         <div><label class="f" for="cls">الصف</label><select class="inp" id="cls"><option value="">اختاري</option><option>الأول المتوسط</option><option>الثاني المتوسط</option><option>الثالث المتوسط</option><option>منسوبة المدرسة</option></select></div>
+        <div id="secw"><label class="f" for="sec">الفصل</label><select class="inp" id="sec"><option value="">اختاري</option><option>١</option><option>٢</option><option>٣</option></select></div>
       </div>
       <label class="f">طريقة المشاركة</label>
       <div class="ways" id="ways">
@@ -346,7 +351,8 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
   <section class="page" id="pg-parents" data-t="أولياء الأمور">
     <div class="head"><span class="chip">الخطوة ٧</span><div class="ttl">أولياء الأمور شركاؤنا</div><div class="sub">قسم خاص بكم في الصفحة نفسها</div></div>
     <form class="card" id="pform" style="max-width:760px;margin:auto">
-      <div class="row2"><div><label class="f" for="pnm">اسم ولي الأمر</label><input class="inp" id="pnm" maxlength="40" required></div><div><label class="f" for="pcls">صف الابنة</label><select class="inp" id="pcls" required><option value="">اختاري</option><option>الأول المتوسط</option><option>الثاني المتوسط</option><option>الثالث المتوسط</option></select></div></div>
+      <div class="row2"><div><label class="f" for="pnm">اسم ولي الأمر</label><input class="inp" id="pnm" maxlength="40" required></div><div><label class="f" for="pcls">صف الابنة</label><select class="inp" id="pcls" required><option value="">اختاري</option><option>الأول المتوسط</option><option>الثاني المتوسط</option><option>الثالث المتوسط</option></select></div>
+        <div><label class="f" for="psec">فصل الابنة</label><select class="inp" id="psec"><option value="">اختاري</option><option>١</option><option>٢</option><option>٣</option></select></div></div>
       <label class="f" for="pdn">اسم الابنة</label><input class="inp" id="pdn" maxlength="40" required>
       <label class="f" for="pmsg">كلمتكم لحماة الوطن</label><textarea class="inp" id="pmsg" maxlength="300" required placeholder="شاركونا كلمتكم لحماة الوطن…"></textarea>
       <div class="pledge" style="cursor:default"><span style="font-size:22px;line-height:1">💡</span><span><b>نصيحة لكم:</b> تابعوا استخدام أبنائكم الآمن للإنترنت، وعزّزوا لديهم قيم الانتماء للوطن والوعي الفكري.</span></div>
@@ -402,7 +408,7 @@ const IMG={logo:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAvgAAAJCCAYAAAC1c
 const SB = 'https://uautjfgslrfhceciqwyn.supabase.co/rest/v1/rpc/api_dir3';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhdXRqZmdzbHJmaGNlY2lxd3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNjI3NzMsImV4cCI6MjEwODgzODc3M30.Dj1dYWNMwhp02hJEko8XnDD23Mi-gK-Q82BkICdrj_Q';   // مفتاح عام: الجداول مقفلة، والوصول عبر api_dir3 فقط
 // ==================================================================
-const GOAL = 100;
+const GOAL = 400;
 const AR = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
 const $ = s => document.querySelector(s);
 ['lg0','lg1','lg2'].forEach(i => $('#'+i).src = IMG.logo); $('#imK').src = IMG.king; $('#imC').src = IMG.cp;
@@ -411,6 +417,7 @@ function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clea
 
 /* ---------- backend ---------- */
 const DEMO = !SB;
+$('#cls').addEventListener('change',()=>{$('#secw').style.display=$('#cls').value==='منسوبة المدرسة'?'none':''});
 if (DEMO) $('#demo').style.display = 'block';
 const demoDB = { get(){return store.get('demoDB',{posts:[],prayers:0,parents:0,surveys:0})}, save(d){store.set('demoDB',d)} };
 async function api(action, data){
@@ -445,8 +452,8 @@ async function api(action, data){
 
 /* ---------- shield ---------- */
 const cells=[];
-(function(){const g=$('#hexes');const r=4.5,dx=r*1.74,dy=r*1.5;const all=[];
- for(let row=0;row<22;row++)for(let c=0;c<16;c++){const cx=4+c*dx+(row%2?dx/2:0),cy=8+row*dy;if(cy>134||cx>118)continue;
+(function(){const g=$('#hexes');const r=2.75,dx=r*1.74,dy=r*1.5;const all=[];
+ for(let row=0;row<38;row++)for(let c=0;c<27;c++){const cx=4+c*dx+(row%2?dx/2:0),cy=8+row*dy;if(cy>134||cx>118)continue;
   const pts=[...Array(6)].map((_,j)=>{const a=Math.PI/3*j+Math.PI/6;return (cx+r*.88*Math.cos(a)).toFixed(2)+','+(cy+r*.88*Math.sin(a)).toFixed(2)}).join(' ');
   const p=document.createElementNS('http://www.w3.org/2000/svg','polygon');p.setAttribute('points',pts);p.setAttribute('fill','#dcefe8');p.style.transformOrigin=cx+'px '+cy+'px';g.appendChild(p);
   const inside=cy>10&&cy<128&&Math.abs(cx-60)<(cy<66?46:46*(1-Math.pow((cy-66)/64,1.6)));
@@ -461,8 +468,12 @@ let shown=0;
 function setCount(n){const lit=Math.min(n,GOAL);const mine=store.get('myNums',[]);
  cells.forEach((p,i)=>{const on=i<lit;if(on&&!p.classList.contains('lit')&&!p.classList.contains('mine')){p.classList.add('pop')}
   p.classList.toggle('lit',on&&!mine.includes(i+1));p.classList.toggle('mine',on&&mine.includes(i+1))});
- const from=shown,t0=performance.now();(function an(t){const k=Math.min(1,(t-t0)/900);const v=Math.round(from+(n-from)*(1-Math.pow(1-k,3)));$('#cN').textContent=AR(v);if(k<1)requestAnimationFrame(an)})(t0);shown=n;
+ const from=shown,t0=performance.now();(function an(t){const k=Math.max(0,Math.min(1,(t-t0)/900));const v=Math.round(from+(n-from)*(1-Math.pow(1-k,3)));$('#cN').textContent=AR(v);if(k<1)requestAnimationFrame(an)})(t0);shown=n;
  $('#cBar').style.width=Math.min(100,n/GOAL*100)+'%';
+ // قطعة الطالبة: ذهبي ← أخضر، ثم تنبض كل القطع المضيئة معًا ثوانيَ وتتوقف
+ if(lit>(window._beatN||0)){window._beatN=lit;clearTimeout(window._beatT);window._beatT=setTimeout(()=>{cells.forEach(p=>{if(p.classList.contains('mine'))p.classList.add('done')});
+  const on=cells.filter(p=>p.classList.contains('lit')||p.classList.contains('mine'));on.forEach(p=>{p.classList.remove('beat');void p.getBBox();p.classList.add('beat')});
+  setTimeout(()=>on.forEach(p=>p.classList.remove('beat')),5800)},2900)}
  $('#cMsg').textContent=n>=GOAL?'🎉 اكتمل الدرع! شكرًا لكل مشاركة':'مشاركة في الدرع — باقي '+AR(GOAL-n)+' للوصول إلى الهدف';}
 
 /* ---------- wall ---------- */
@@ -480,7 +491,7 @@ function renderWall(list){const w=$('#wallList');w.innerHTML='';
   if(it.text){const tx=document.createElement('div');tx.className='tx';tx.textContent=it.text;d.append(tx)}
   if(it.type==='draw'&&it.img&&/^data:image\/(jpeg|png);base64,/.test(it.img)){const im=document.createElement('img');im.src=it.img;im.alt='رسم';d.append(im)}
   if(it.type==='voice'){const tx=document.createElement('div');tx.className='tx';tx.textContent='🎙️ أرسلت رسالة صوتية لجنودنا';d.append(tx)}
-  const tg=document.createElement('span');tg.className='tag';tg.textContent=TYPE[it.type]||'مشاركة';if(it.cls)tg.textContent+=' · '+it.cls;d.append(tg);
+  const tg=document.createElement('span');tg.className='tag';tg.textContent=TYPE[it.type]||'مشاركة';if(it.cls)tg.textContent+=' · '+it.cls+(it.sec?' / '+it.sec:'');d.append(tg);
   w.append(d)})}
 
 let prayersServer=0,prayPending=0;
@@ -524,12 +535,13 @@ $('#send').onclick=async()=>{
  const name=$('#nm').value.trim(),cls=$('#cls').value;const er=$('#jerr');er.textContent='';
  if(name.length<2){er.textContent='اكتبي اسمك أولاً';$('#nm').focus();return}
  if(!cls){er.textContent='اختاري صفك';return}
- const data={name,cls,type:way,text:'',img:'',audio:''};
+ const sec=cls==='منسوبة المدرسة'?'':$('#sec').value;if(cls!=='منسوبة المدرسة'&&!sec){er.textContent='اختاري فصلك';return}
+ const data={name,cls,sec,type:way,text:'',img:'',audio:''};
  if(way==='msg'){data.text=$('#msg').value.trim();if(data.text.length<3){er.textContent='اكتبي رسالتك لجنودنا';return}}
  if(way==='card'){if(!phrase){er.textContent='اختاري عبارة من القائمة';return}data.text=phrase}
  if(way==='draw'){if(!drawn){er.textContent='ارسمي رسمتك أولاً';return}data.img=cvData()}
  if(way==='voice'){if(!voiceBlob){er.textContent='سجّلي رسالتك الصوتية أولاً';return}if(voiceBlob.size>3e6){er.textContent='التسجيل طويل جدًا';return}data.audio=await blobB64(voiceBlob)}
- store.set('name',name);store.set('cls',cls);
+ store.set('name',name);store.set('cls',cls);store.set('sec',sec);
  const b=$('#send');b.disabled=true;b.textContent='جاري الإرسال…';
  try{const s=await api('post',data);const num=+s.id||+s.count;const mine=store.get('myNums',[]);mine.push(num);store.set('myNums',mine);applyStats(s);
   $('#bName').textContent=name;$('#bNum').textContent='#'+AR(num);openBadge();
@@ -551,14 +563,14 @@ $('#bSave').onclick=()=>{const c=document.createElement('canvas');c.width=1080;c
 
 /* ---------- prayer ---------- */
 let prayFlush;
-$('#pb').onclick=()=>{prayPending++;if(!store.get('prayLit',false)){store.set('prayLit',true);lightPiece({name:who(),cls:$('#cls').value||store.get('cls',''),type:'pray',text:'🤲 اللهم احفظ جنودنا البواسل'}).catch(()=>store.set('prayLit',false))}$('#pN').textContent=AR(prayersServer+prayPending);
+$('#pb').onclick=()=>{prayPending++;if(!store.get('prayLit',false)){store.set('prayLit',true);lightPiece({name:who(),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),type:'pray',text:'🤲 اللهم احفظ جنودنا البواسل'}).catch(()=>store.set('prayLit',false))}$('#pN').textContent=AR(prayersServer+prayPending);
  const f=document.createElement('div');f.className='fly';f.textContent='اللهم احفظ جنودنا';f.style.left=(30+Math.random()*40)+'%';$('#prayBox').append(f);setTimeout(()=>f.remove(),1400);
  if(navigator.vibrate)navigator.vibrate(20);
  clearTimeout(prayFlush);prayFlush=setTimeout(async()=>{const n=prayPending;if(!n)return;try{const s=await api('pray',{n:Math.min(n,50)});prayPending-=n;prayersServer=+s.prayers||prayersServer+n;$('#pN').textContent=AR(prayersServer+prayPending)}catch(e){}},1500)};
 
 /* ---------- parents ---------- */
 $('#pform').addEventListener('submit',async e=>{e.preventDefault();const b=$('#psend');b.disabled=true;$('#perr').textContent='';
- try{await api('parent',{parent:$('#pnm').value.trim(),daughter:$('#pdn').value.trim(),cls:$('#pcls').value,text:$('#pmsg').value.trim()});
+ try{await api('parent',{parent:$('#pnm').value.trim(),daughter:$('#pdn').value.trim(),cls:$('#pcls').value,sec:$('#psec').value,text:$('#pmsg').value.trim()});
   await lightPiece({name:$('#pnm').value.trim()||'ولي أمر',cls:($('#pdn').value.trim()?'أسرة '+$('#pdn').value.trim():''),type:'parent',text:$('#pmsg').value.trim()||'💚 أسرة شريكة في حماية الوطن'},false);
   $('#pform').innerHTML='<div style="text-align:center;padding:20px"><div style="font-size:54px">🤝</div><div class="ttl grad" style="margin-top:8px">شكرًا لكم</div><div class="sub">وصلت مشاركتكم — أنتم شركاؤنا في حماية الوطن</div></div>';
  }catch(err){$('#perr').textContent='تعذّر الإرسال، حاولوا مرة أخرى';b.disabled=false}});
@@ -675,8 +687,8 @@ async function qEnd(){const c=$('#qcard');store.set('quizScore',qs);
  const cbtn=el('button','btn','📜 حفظ شهادة درع الوطن');cbtn.onclick=()=>{const nm=ci.value.trim();if(!nm){ci.focus();toast('اكتبي اسمك أولًا');return}store.set('name',nm);certificate(nm,qs,title,st)};
  cb.append(ci,cbtn);c.firstChild.append(cb);
  const b=el('button','btn ghost','أعيدي التحدّي');b.style.cssText='display:flex;margin:18px auto 0';b.onclick=qStart;c.firstChild.append(b);
- try{await api('survey',{name:$('#nm').value.trim()||store.get('name',''),cls:$('#cls').value||store.get('cls',''),score:qs,answers:qa.join('')})}catch(e){}
- if(!store.get('quizLit',false)){store.set('quizLit',true);try{const n=await lightPiece({name:who(),cls:$('#cls').value||store.get('cls',''),type:'quiz',text:'🏆 أكملت تحدّي درع الوطن'},false);
+ try{await api('survey',{name:$('#nm').value.trim()||store.get('name',''),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),score:qs,answers:qa.join('')})}catch(e){}
+ if(!store.get('quizLit',false)){store.set('quizLit',true);try{const n=await lightPiece({name:who(),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),type:'quiz',text:'🏆 أكملت تحدّي درع الوطن'},false);
   const s=el('p','sub','🛡️ نجمتك الإضافية: أضأتِ القطعة #'+AR(n)+' في الدرع');s.style.fontWeight='800';c.querySelector('.tbars').before(s)}catch(e){store.set('quizLit',false)}}}
 qStart();
 
