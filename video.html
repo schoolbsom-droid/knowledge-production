@@ -300,7 +300,8 @@ footer{text-align:center;color:var(--on-sv);font-size:12px;padding:20px}
     </div>
     <div class="grid2" style="margin-top:20px">
       <div class="card wide">
-        <h3 style="margin-top:0">تعليقات الزميلات بانتظار موافقتك</h3>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3 style="margin:0">تقييمات الزميلات بانتظار مراجعتك</h3><button class="btn sm" id="tmall" hidden style="margin:0">نشر الكل</button></div>
+        <div class="sub">لا يظهر أي تقييم أو تعليق للطالبات إلا بعد «نشر».</div>
         <div id="tmod"></div>
         <h3>لم يسجّلن مشروعًا</h3>
         <div class="chips" id="tun"></div>
@@ -528,6 +529,11 @@ $('lc').onchange = async () => {
   $('ln').disabled = false;
 };
 $('tc').onkeydown = e => { if (e.key === 'Enter') tview(); };
+async function mycm(code) {
+  const r = await rpc('api_team_comments', {p_slug: SLUG, p_code: code});
+  if (!Array.isArray(r) || !r.length || !$('mycm')) return;
+  $('mycm').innerHTML = '<label class="f">تعليقات الزميلات على فيديوكِ</label>' + r.map(c => `<div class="cm"><span class="stars">${'★'.repeat(c.stars)}</span>${c.comment ? ' «' + esc(c.comment) + '»' : ''}</div>`).join(' ');
+}
 async function tview(code) {
   if (!code) {
     const pin = en($('tc').value);
@@ -551,7 +557,7 @@ async function tview(code) {
       ${vbox('tv', t.submitted_at ? 'استبدال الفيديو' : '')}
       <div id="tm"></div><button class="btn" id="tsave">⬆ حفظ ورفع الفيديو</button>
       ${t.submitted_at ? `<div class="msg o">سُلِّم الفيديو ✓ — ${dayName(t.submitted_at)} ${hijri(t.submitted_at)}</div>` : ''}
-      <div class="note"><b>النتيجة</b>لم تُنشر بعد. ستظهر هنا بعد أن تقيّم المعلمة فيديوكِ.</div>${peer}`;
+      <div class="note"><b>النتيجة</b>لم تُنشر بعد. ستظهر هنا بعد أن تقيّم المعلمة فيديوكِ.</div>${peer}<div id="mycm"></div>`; mycm(code);
     $('tsave').onclick = async () => {
       const f = $('tv').files[0], title = $('ts').value.trim();
       if (!title) return msg($('tm'), 'e', 'اكتبي عنوان الفيديو.');
@@ -577,7 +583,7 @@ async function tview(code) {
     <div class="big"><small>درجة المشروع</small><b>${ar(+res.grade)} / ${ar(P.max_grade)}</b><br><span class="lv">${ln}</span>
       <small style="display:inline;margin-right:6px">${RANKN[res.rank] ? 'الترتيب: ' + RANKN[res.rank] : 'الترتيب: ' + ar(res.rank)}${+res.bonus ? ' · نقاط التميّز +' + ar(+res.bonus) : ''}</small></div>
     <div class="crit">${groups.map(g => `<div><span>${esc(g.g)}</span><span class="stars">${stars(g.p, g.m)} <small>${ar(g.p)}/${ar(g.m)}</small></span></div>`).join('')}</div>
-    ${res.note ? `<div class="note"><b>ملاحظة المعلمة</b>${esc(res.note)}</div>` : ''}${peer}`;
+    ${res.note ? `<div class="note"><b>ملاحظة المعلمة</b>${esc(res.note)}</div>` : ''}${peer}<div id="mycm"></div>`; mycm(code);
 }
 
 // ---------- رفع الفيديو من الجوال مباشرة ----------
@@ -661,10 +667,10 @@ async function board() {
       ${(t.comments || []).map(c => `<div class="cm">«${esc(c)}»</div>`).join(' ')}
       ${url(t.store_url) ? `<a class="visit" href="${esc(t.store_url)}" target="_blank" rel="noopener">مشاهدة الفيديو ↗</a>` : '<div class="visit dis" style="color:var(--warn)">لم يُرفق الفيديو</div>'}
       ${mine ? '<div class="rate" style="color:var(--on-sv)">هذا فيديوكِ</div>'
-        : done ? '<div class="rate" style="color:var(--ok)">✓ قيّمتِ هذا الفيديو</div>'
+        : done ? '<div class="rate" style="color:var(--ok)">✓ أرسلتِ تقييمكِ، يظهر بعد مراجعة المعلمة</div>'
         : !RATED ? '<div class="rate">لتقييم هذا الفيديو ادخلي <a href="#" onclick="go(&quot;team&quot;);return false" style="color:var(--primary)">«صفحتي»</a> أولًا</div>'
         : `<div class="rate" data-t="${t.id}">قيّمي هذا الفيديو:<div class="big-stars">${[1, 2, 3, 4, 5].map(n => `<button data-n="${n}">★</button>`).join('')}</div>
-            <input class="in rm" maxlength="500" placeholder="تعليق (اختياري) — يظهر بعد موافقة المعلمة"><div class="rmsg"></div><button class="btn sm rgo" style="margin-top:6px">إرسال</button></div>`}
+            <input class="in rm" maxlength="500" placeholder="تعليق (اختياري)"><small style="display:block;color:var(--on-sv);margin:4px 0">التقييم والتعليق يظهران بعد مراجعة المعلمة</small><div class="rmsg"></div><button class="btn sm rgo" style="margin-top:6px">إرسال</button></div>`}
     </div>`;
   }).join('') : '<div class="empty">لا توجد فيديوهات بعد</div>';
 }
@@ -705,8 +711,9 @@ async function tload() {
   $('tf').innerHTML = [{id: 0, name: 'كل الفصول'}, ...P.classes].map(c => `<button class="${c.id === tfil ? 'on' : ''}" data-f="${c.id}">${esc(c.name)}</button>`).join('');
   $('tf').onclick = e => { const b = e.target.closest('[data-f]'); if (b) { tfil = +b.dataset.f; tload(); } };
   table();
-  $('tmod').innerHTML = TD.pending_comments.length ? TD.pending_comments.map(c => `<div class="mod"><span>«${esc(c.comment)}» <small style="color:var(--on-sv)">← ${esc(c.to)} ${'★'.repeat(c.stars)} · من ${esc(c.from)}</small></span>
-      <span class="acts"><button class="btn sm" data-m="${c.id}" data-st="approved">إظهار</button><button class="btn sm ghost" data-m="${c.id}" data-st="hidden">إخفاء</button></span></div>`).join('') : '<div class="sub">لا توجد تعليقات جديدة</div>';
+  $('tmall').hidden = !TD.pending_comments.length;
+  $('tmod').innerHTML = TD.pending_comments.length ? TD.pending_comments.map(c => `<div class="mod"><span><span class="stars">${'★'.repeat(c.stars)}${'☆'.repeat(5 - c.stars)}</span> ${c.comment ? `«${esc(c.comment)}»` : '<small style="color:var(--on-sv)">(بدون تعليق)</small>'}<br><small style="color:var(--on-sv)">من ${esc(c.from)} ← إلى ${esc(c.to)}</small></span>
+      <span class="acts"><button class="btn sm" data-m="${c.id}" data-st="approved">نشر</button><button class="btn sm ghost" data-m="${c.id}" data-st="delete">حذف</button></span></div>`).join('') : '<div class="sub">لا توجد تقييمات جديدة</div>';
   $('tun').innerHTML = TD.unregistered.length ? TD.unregistered.map(s => `<span class="chip" style="cursor:default">${esc(s.name)} · ${esc(s.class)}</span>`).join('') : '<div class="sub">سجّلت كل الطالبات ✓</div>';
   edit();
 }
@@ -805,7 +812,15 @@ $('tt').onclick = async e => {
 };
 $('tmod').onclick = async e => {
   const b = e.target.closest('[data-m]'); if (!b) return;
+  if (b.dataset.st === 'delete' && !confirm('حذف هذا التقييم نهائيًا؟ تستطيع الطالبة التقييم من جديد.')) return;
+  b.disabled = true;
   await tcall('api_t_moderate', {p_rating: +b.dataset.m, p_status: b.dataset.st}); BT = null; tload();
+};
+$('tmall').onclick = async () => {
+  if (!confirm(`نشر ${ar(TD.pending_comments.length)} تقييمًا؟`)) return;
+  $('tmall').disabled = true;
+  for (const c of TD.pending_comments) await tcall('api_t_moderate', {p_rating: c.id, p_status: 'approved'});
+  $('tmall').disabled = false; BT = null; tload();
 };
 function edit() {
   $('elist').innerHTML = P.steps.map((s, i) => `<div class="stepedit"><b>${ar(i + 1)}.</b><span>${esc(s.title)}${s.video_url ? ' 🎬' : ''}${s.platforms ? ' (المنصات)' : ''}${s.due_at ? ' 📅' : ''}</span>
