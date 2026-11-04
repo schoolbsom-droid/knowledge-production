@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>نماذج صفحة المنسوبات</title>
+<link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--g1:#1f7a5c;--g2:#2f9a78;--t1:#2a7f9e;--ink:#123c34;--mut:#5f7a74;--line:#d7e9e3;--soft:#eef8f4;--gold:#c9a24a;--teal:#3cb8c9;--teal2:#1b8a9a;--tealL:#e8f8fa}
+*{box-sizing:border-box}
+body{margin:0;font-family:Almarai,Tahoma,sans-serif;background:#e9eeec;color:var(--ink)}
+.top{max-width:1180px;margin:0 auto;padding:24px 16px 4px}.top h1{margin:0;font-size:24px}.top p{margin:4px 0 0;color:var(--mut)}
+.grid{max-width:1180px;margin:0 auto;padding:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:22px;align-items:start}
+.cap{display:flex;gap:8px;align-items:baseline;margin:0 4px 8px;font-size:14px;color:var(--mut)}.cap b{color:var(--ink);font-size:16px}
+.cap .n{background:var(--ink);color:#fff;border-radius:99px;padding:0 9px;font-weight:800}
+.ph{background:linear-gradient(160deg,#f3faf7,#fff 45%,#eef6f6);border-radius:24px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.1);overflow:hidden}
+.ttl{font-size:21px;font-weight:800;text-align:center;margin:2px 0 12px}
+.chip{display:block;width:max-content;margin:0 auto 6px;background:var(--g1);color:#fff;font-size:12px;font-weight:800;border-radius:99px;padding:3px 12px}
+.card{background:#fff;border:2px solid var(--line);border-radius:18px;padding:12px;margin-top:10px}
+.f{display:block;font-size:12px;font-weight:800;margin-bottom:4px}
+.inp{height:34px;border:2px solid var(--line);border-radius:10px;margin-bottom:8px;background:#fff}
+.inp.tall{height:56px}
+.btn{display:block;text-align:center;background:linear-gradient(90deg,var(--g1),var(--t1));color:#fff;font-weight:800;font-size:13px;border-radius:99px;padding:8px}
+.wi{background:var(--tealL);border:2px solid var(--teal);border-radius:14px;padding:9px 10px;margin-top:8px;font-size:12.5px;line-height:1.7}
+.wi b{display:block;font-size:13px}.wi small{color:#0e6d7a;font-weight:700}
+.av{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#e7c873);display:grid;place-items:center;flex:none;color:#fff}
+.av svg{width:32px;height:32px;fill:#fff}
+.nm{font-size:16px;font-weight:800}.rl{font-size:12px;font-weight:700;color:var(--mut)}
+.wd{font-size:13px;line-height:1.8;margin-top:6px}
+.ph .hint{color:var(--mut)}
+
+/* ١ بطاقة ذهبية أعلى الصفحة */
+.m1 .pr{display:flex;gap:10px;align-items:center;background:linear-gradient(135deg,#fff8e6,#fdf0cf);border:2px solid var(--gold);border-radius:18px;padding:12px}
+/* ٢ ترويسة كاملة */
+.m2 .pr{margin:-14px -14px 0;padding:18px 16px 22px;background:linear-gradient(135deg,var(--g1),var(--t1));color:#fff;text-align:center;border-radius:0 0 26px 26px}
+.m2 .pr .av{margin:0 auto 6px;background:rgba(255,255,255,.22)}.m2 .pr .rl{color:rgba(255,255,255,.85)}
+/* ٣ رسالة موقّعة */
+.m3 .pr{background:#fffdf6;border:1px solid #e9dcb8;border-radius:6px;padding:14px;box-shadow:0 4px 12px rgba(0,0,0,.07);position:relative}
+.m3 .pr::before{content:"";position:absolute;inset:5px;border:1px solid #efe3c2;border-radius:3px;pointer-events:none}
+.m3 .sg{margin-top:10px;text-align:left;font-size:12.5px;font-weight:800}.m3 .sg span{display:block;font-weight:700;color:var(--mut);font-size:11px}
+/* ٤ صف القيادة */
+.m4 .row{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:6px;align-items:end;text-align:center}
+.m4 .c{background:#fff;border:2px solid var(--line);border-radius:14px;padding:8px 4px;font-size:11px;font-weight:800}
+.m4 .c.main{border-color:var(--gold);background:#fff8e6;padding:12px 4px}.m4 .c .av{width:42px;height:42px;margin:0 auto 4px}.m4 .c .av svg{width:22px;height:22px}
+.m4 .c:not(.main) .av{background:linear-gradient(135deg,var(--teal),var(--teal2));width:32px;height:32px}.m4 .c:not(.main) .av svg{width:17px;height:17px}
+/* ٥ تبويبان */
+.m5 .tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--soft);border-radius:99px;padding:3px;font-size:12.5px;font-weight:800;text-align:center}
+.m5 .tabs span{padding:7px;border-radius:99px;color:var(--mut)}.m5 .tabs .on{background:#fff;color:var(--g1);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.m5 .pr{display:flex;gap:10px;align-items:center;margin-top:10px}
+/* ٦ درع المديرة */
+.m6 .pr{position:relative;text-align:center;padding:12px 12px 14px;border-radius:18px;background:var(--tealL);border:2px solid var(--teal)}
+.m6 .sh{width:70px;height:82px;display:block;margin:0 auto 4px}
+</style>
+</head>
+<body>
+<div class="top"><h1>نماذج صفحة منسوبات المدرسة</h1><p>٦ نماذج، وفي كل نموذج مكان خاص لمديرة المدرسة. البطاقات والأسماء أمثلة للتوضيح</p></div>
+<div class="grid" id="g"></div>
+<script>
+const P='<svg viewBox="0 0 24 24"><path d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zm0 2c-4.4 0-8 2.4-8 5.4V21h16v-1.6c0-3-3.6-5.4-8-5.4z"/></svg>';
+const WD='هنا تظهر كلمة مديرة المدرسة التي تكتبها بنفسها لجنودنا وللطالبات.';
+const FORM='<div class="card"><label class="f">الاسم</label><div class="inp"></div><label class="f">العمل</label><div class="inp"></div><label class="f">رسالتك لجنودنا</label><div class="inp tall"></div><div class="btn">أرسلي وأضيفي قطعتك 💚</div></div>';
+const WALL='<div class="wi"><b>معلمة (مثال)</b>شكرًا لكم يا حماة الوطن.<br><small>منسوبة المدرسة / معلمة</small></div>';
+const HEAD='<span class="chip">منسوبات المدرسة</span><div class="ttl">كلمتكن لحماة الوطن</div>';
+const M=[
+ ['بطاقة ذهبية','كلمة المديرة في بطاقة ذهبية أعلى الصفحة، وتحتها النموذج',HEAD+`<div class="pr"><div class="av">${P}</div><div><div class="rl">مديرة المدرسة</div><div class="nm">اسم المديرة</div><div class="wd">${WD}</div></div></div>`+FORM+WALL],
+ ['ترويسة كاملة','الجزء العلوي كله للمديرة بألوان الموقع',`<div class="pr"><div class="av">${P}</div><div class="nm">اسم المديرة</div><div class="rl">مديرة المدرسة</div><div class="wd">${WD}</div></div><div style="height:12px"></div>`+HEAD+FORM+WALL],
+ ['رسالة موقّعة','كلمة المديرة مثل خطاب رسمي بتوقيعها',HEAD+`<div class="pr"><div class="wd" style="margin:0">${WD}</div><div class="sg">اسم المديرة<span>مديرة المدرسة</span></div></div>`+FORM+WALL],
+ ['صف القيادة','المديرة في الوسط، وجنبها الوكيلة والمرشدة',HEAD+`<div class="row"><div class="c"><div class="av">${P}</div>الوكيلة</div><div class="c main"><div class="av">${P}</div>مديرة المدرسة<div class="rl">اسم المديرة</div></div><div class="c"><div class="av">${P}</div>المرشدة</div></div><div class="wd" style="text-align:center">${WD}</div>`+FORM+WALL],
+ ['تبويبان','تبويب «كلمة المديرة» وتبويب «شاركي»',HEAD+`<div class="tabs"><span class="on">كلمة المديرة</span><span>شاركي</span></div><div class="pr"><div class="av">${P}</div><div><div class="nm">اسم المديرة</div><div class="rl">مديرة المدرسة</div></div></div><div class="wd">${WD}</div><div class="card hint" style="text-align:center;font-size:12px">النموذج في تبويب «شاركي»</div>`+WALL],
+ ['درع المديرة','درع فيروزي كبير باسم المديرة، بنفس هوية المبادرة',HEAD+`<div class="pr"><svg class="sh" viewBox="0 0 120 140"><path d="M60 6 L110 24 V66 C110 100 88 122 60 134 C32 122 10 100 10 66 V24 Z" fill="#2aa5b5"/><path d="M60 40l8 17 18 2-13.5 12.5 3.5 18L60 80.5 44 89.5l3.5-18L34 59l18-2z" fill="#fff"/></svg><div class="nm">اسم المديرة</div><div class="rl">مديرة المدرسة</div><div class="wd">${WD}</div></div>`+FORM+WALL]
+];
+const ar=n=>String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+document.getElementById('g').innerHTML=M.map(([t,d,h],i)=>`<div><div class="cap"><span class="n">${ar(i+1)}</span><b>${t}</b><span>${d}</span></div><div class="ph m${i+1}">${h}</div></div>`).join('');
+</script>
+</body>
+</html>
