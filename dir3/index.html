@@ -74,6 +74,7 @@ section{padding:40px 0}
 #shield polygon.g2g{transition:none;animation:mineGreen 2.4s ease-in-out .3s both}
 @keyframes mineGreen{from{fill:var(--gold)}to{fill:#2a8f7f}}
 #shield polygon.mine.done{fill:url(#hx)}
+#shield polygon.qz,#shield polygon.mine.done.qz{fill:#f2d98a}
 #shield polygon.grow{animation:mineGrow 1.2s ease-in-out 3}
 @keyframes mineGrow{0%,100%{transform:scale(1);filter:none}50%{transform:scale(1.9);filter:drop-shadow(0 0 3px rgba(43,196,125,.95))}}
 #shield{transform-origin:50% 50%}
@@ -259,6 +260,19 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
 .mbs cite{display:block;margin-top:6px;font-style:normal;font-size:15px;font-weight:700;color:var(--mut)}
 .qrbox{display:flex;flex-direction:column;align-items:center;gap:8px;margin:24px auto 0;font-weight:700;color:var(--mut);font-size:14px}
 .qrbox .qr{width:150px;height:150px;background:#fff;border-radius:16px;padding:6px;box-shadow:0 10px 26px rgba(18,60,52,.12)}
+.wi.qz{background:#f1f8e9;border-color:#7cb342}
+.wi.qz .who i{background:linear-gradient(135deg,#7cb342,#558b2f)}
+.wi.qz .tag{background:#dcedc8;color:#33691e}
+.wi .hrt{display:inline-flex;vertical-align:middle;margin-inline-start:6px}
+.wi .hrt svg{width:17px;height:17px;fill:#558b2f}
+.wfilt{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 0 12px;scroll-margin-top:90px}
+.wfilt button{border:2px solid var(--line);background:#fff;font:inherit;font-size:14px;font-weight:800;color:var(--g1);border-radius:99px;padding:7px 14px;cursor:pointer}
+.wfilt button.on{background:linear-gradient(90deg,var(--g1),var(--t1));color:#fff;border-color:transparent}
+.wfilt button small{font-size:12px;font-weight:700;opacity:.8}
+.pager{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:14px 0}.pager:empty{display:none}
+.pager button{min-width:40px;height:40px;padding:0 8px;border-radius:12px;border:2px solid var(--line);background:#fff;font:inherit;font-weight:800;color:var(--g1);cursor:pointer}
+.pager button.on{background:linear-gradient(90deg,var(--g1),var(--t1));color:#fff;border-color:transparent}
+.pager span{align-self:center;color:var(--mut);font-weight:800}
 </style>
 </head>
 <body>
@@ -323,7 +337,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
   <!-- JOIN -->
   <section class="page" id="pg-join" data-t="شاركي">
     <div class="head"><span class="chip">شاركي</span><div class="ttl">اكتبي اسمك… واختاري طريقة مشاركتك</div><div class="sub">يظهر اسمك مع مشاركتك في حائط الدرع</div></div>
-    <div class="card" id="joinDone" style="max-width:760px;margin:auto;text-align:center;display:none"><div style="font-size:54px;line-height:1">🛡️</div><div class="ttl grad" style="margin-top:10px">شاركتِ في الدرع، شكرًا لكِ</div><div class="sub" id="jdTxt" style="margin-top:6px"></div><div class="sub" style="margin-top:4px">لكل طالبة مشاركة واحدة في الدرع</div>
+    <div class="card" id="joinDone" style="max-width:760px;margin:auto;text-align:center;display:none"><svg width="64" height="74" viewBox="0 0 120 140" aria-hidden="true"><defs><linearGradient id="gjd" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#2f9a78"/><stop offset="1" stop-color="#2a7f9e"/></linearGradient></defs><path d="M60 6 L110 24 V66 C110 100 88 122 60 134 C32 122 10 100 10 66 V24 Z" fill="url(#gjd)"/><path d="M60 40l8 17 18 2-13.5 12.5 3.5 18L60 80.5 44 89.5l3.5-18L34 59l18-2z" fill="#fff"/></svg><div class="ttl grad" style="margin-top:10px">شاركتِ في الدرع، شكرًا لكِ</div><div class="sub" id="jdTxt" style="margin-top:6px"></div><div class="sub" style="margin-top:4px">لكل طالبة مشاركة واحدة في الدرع</div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px"><button class="btn" id="jdQuiz" type="button">🎯 حلّي الاستبانة = نقطتين في الدرع</button><button class="btn ghost" id="jdBadge" type="button">عرض وسامي</button></div></div>
     <div class="card" id="joinCard" style="max-width:760px;margin:auto">
       <div class="row2">
@@ -345,7 +359,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
       <div class="pane" id="p-voice"><div class="rec"><button class="recbtn" id="recb" aria-label="تسجيل"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></button><div class="hint" id="rech">اضغطي لبدء التسجيل (حتى ٣٠ ثانية)</div><audio id="recplay" controls style="display:none;width:100%;max-width:340px"></audio></div></div>
 
       <div class="err" id="jerr"></div>
-      <div style="text-align:center;margin-top:10px"><button class="btn" id="send">أرسلي وأضيفي قطعتك 🛡️</button></div>
+      <div style="text-align:center;margin-top:10px"><button class="btn" id="send">أرسلي وأضيفي قطعتك 💚</button></div>
     </div>
   </section>
 
@@ -361,7 +375,10 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
   <!-- WALL -->
   <section class="page" id="pg-wall" data-t="حائط الدرع">
     <div class="head"><span class="chip">حائط الدرع</span><div class="ttl">رسائلكن لحماة الوطن</div><div class="sub">أحدث المشاركات — تتحدّث تلقائيًا</div></div>
+    <div class="wfilt" id="wallFilt"><button type="button" data-w="all" class="on">الكل</button><button type="button" data-w="students">الطالبات</button><button type="button" data-w="parents">أولياء الأمور</button><button type="button" data-w="staff">منسوبات المدرسة</button></div>
+    <div class="pager" id="wallPagerTop"></div>
     <div class="wall" id="wallList"><div class="empty">جاري التحميل…</div></div>
+    <div class="pager" id="wallPager"></div>
   </section>
 
   <!-- PARENTS -->
@@ -511,7 +528,7 @@ function shieldShow(){showT.forEach(clearTimeout);showT=[];
  const tick=()=>ready()?run():later(tick,300);tick()}
 function setCount(n){const lit=Math.min(n,GOAL);const mine=store.get('myNums',[]);
  cells.forEach((p,i)=>{const on=i<lit;if(on&&!p.classList.contains('lit')&&!p.classList.contains('mine')){p.classList.add('pop')}
-  p.classList.toggle('lit',on&&!mine.includes(i+1));p.classList.toggle('mine',on&&mine.includes(i+1))});
+  p.classList.toggle('lit',on&&!mine.includes(i+1));p.classList.toggle('mine',on&&mine.includes(i+1));p.classList.toggle('qz',on&&goldSet.has(i+1))});
  const from=shown,t0=performance.now();(function an(t){const k=Math.max(0,Math.min(1,(t-t0)/900));const v=Math.round(from+(n-from)*(1-Math.pow(1-k,3)));$('#cN').textContent=AR(v);if(k<1)requestAnimationFrame(an)})(t0);shown=n;
  $('#cBar').style.width=Math.min(100,n/GOAL*100)+'%';
  // تسلسل الدرع: القطع ذهبية ← أخضر، ثم قطعة الطالبة تنبض وتكبر، ثم الدرع كله ينبض مع صوت ويتوقف
@@ -526,18 +543,31 @@ async function lightPiece(data,showBadge=true){const s=await api('post',{text:''
  const mine=store.get('myNums',[]);mine.push(num);store.set('myNums',mine);applyStats(s);
  if(showBadge){$('#bName').textContent=data.name;$('#bNum').textContent='#'+AR(num);openBadge()}return num}
 const who=()=>($('#nm').value.trim()||store.get('name','')||'حارسة الدرع');
+let goldSet=new Set(),wallPage=1,wallTotal=0,wallWho='all',wallReq=0;
+// حجم الصفحة: ١٠ في الجوال حتى تبقى الأرقام قريبة، و٣٠ في الكمبيوتر
+const WALL_PER=innerWidth<=640?10:30;
+const HEART='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.8 4.5c2.1 0 3.6 1.2 5.2 3 1.6-1.8 3.1-3 5.2-3 3.8 0 5.9 3.9 4.4 7.3C19.5 16.4 12 21 12 21z"/></svg>';
+function drawPager(){const pages=Math.max(1,Math.ceil(wallTotal/WALL_PER));
+ ['#wallPagerTop','#wallPager'].forEach(id=>{const el=$(id);el.innerHTML='';if(pages<2)return;
+  for(let n=1;n<=pages;n++){if(n===1||n===pages||Math.abs(n-wallPage)<=1){const b=document.createElement('button');b.type='button';b.textContent=AR(n);if(n===wallPage)b.className='on';b.onclick=()=>goWall(n);el.append(b)}
+   else if(el.lastChild.tagName!=='SPAN'){const x=document.createElement('span');x.textContent='…';el.append(x)}}})}
+async function goWall(n){wallPage=n;drawPager();const req=++wallReq;
+ try{const r=await api('wall',{page:n,size:WALL_PER,who:wallWho});if(req!==wallReq)return;wallTotal=+r.wallTotal||0;renderWall(r.wall);drawPager();$('#wallFilt').scrollIntoView({behavior:'smooth',block:'start'})}catch(e){}}
+function drawFilt(g){const all=Object.values(g).reduce((a,b)=>a+(+b||0),0);document.querySelectorAll('#wallFilt button').forEach(b=>{const k=b.dataset.w,c=k==='all'?all:(+g[k]||0);
+ let sm=b.querySelector('small');if(!sm){sm=document.createElement('small');b.append(' ',sm)}sm.textContent='('+AR(c)+')'})}
+$('#wallFilt').onclick=e=>{const b=e.target.closest('button');if(!b)return;wallWho=b.dataset.w;document.querySelectorAll('#wallFilt button').forEach(x=>x.classList.toggle('on',x===b));goWall(1)};
 function renderWall(list){const w=$('#wallList');w.innerHTML='';
- if(!list||!list.length){w.innerHTML='<div class="empty">كوني أول من يضيء قطعة في الدرع 🛡️</div>';return}
- list.forEach(it=>{const d=document.createElement('div');d.className='wi';
-  const who=document.createElement('div');who.className='who';const av=document.createElement('i');av.textContent=(it.name||'؟').trim()[0]||'؟';const nm=document.createElement('span');nm.textContent=it.name||'مشاركة';const sm=document.createElement('small');sm.textContent=ago(+new Date(it.time));who.append(av,nm,sm);d.append(who);
-  if(it.text){const tx=document.createElement('div');tx.className='tx';tx.textContent=it.text;d.append(tx)}
+ if(!list||!list.length){w.innerHTML='<div class="empty">كوني أول من يضيء قطعة في الدرع 💚</div>';return}
+ list.forEach(it=>{const d=document.createElement('div');d.className='wi'+(it.quiz?' qz':'');
+  const who=document.createElement('div');who.className='who';const av=document.createElement('i');av.textContent=(it.name||'؟').trim()[0]||'؟';const nm=document.createElement('span');nm.textContent=it.name||'مشاركة';const sm=document.createElement('small');sm.textContent=ago(+new Date(it.time));if(it.quiz){const q=document.createElement('span');q.className='hrt';q.innerHTML=HEART;nm.append(q)}who.append(av,nm,sm);d.append(who);
+  if(it.text){const tx=document.createElement('div');tx.className='tx';tx.textContent=it.text.replace(/\u{1F6E1}️?/gu,'💚');d.append(tx)}
   if(it.type==='draw'&&it.img&&/^data:image\/(jpeg|png);base64,/.test(it.img)){const im=document.createElement('img');im.src=it.img;im.alt='رسم';d.append(im)}
   if(it.type==='voice'){const tx=document.createElement('div');tx.className='tx';tx.textContent='🎙️ أرسلت رسالة صوتية لجنودنا';d.append(tx)}
   const tg=document.createElement('span');tg.className='tag';tg.textContent=TYPE[it.type]||'مشاركة';if(it.cls)tg.textContent+=' · '+it.cls+(it.sec?' / '+it.sec:'');d.append(tg);
   w.append(d)})}
 
 let prayersServer=0,prayPending=0;
-function applyStats(s){setCount(+s.count||0);prayersServer=+s.prayers||0;$('#pN').textContent=AR(prayersServer+prayPending);renderWall(s.wall)}
+function applyStats(s){goldSet=new Set(s.gold||[]);if(s.groups)drawFilt(s.groups);setCount(+s.count||0);prayersServer=+s.prayers||0;$('#pN').textContent=AR(prayersServer+prayPending);if(wallPage===1&&wallWho==='all'){wallTotal=+s.wallTotal||0;renderWall((s.wall||[]).slice(0,WALL_PER));drawPager()}}
 async function refresh(){try{applyStats(await api('stats'))}catch(e){if($('#wallList').querySelector('.empty'))$('#wallList').innerHTML='<div class="empty">تعذّر تحميل المشاركات، حاولي التحديث لاحقًا</div>'}}
 refresh();setInterval(refresh,25000);
 
@@ -595,7 +625,7 @@ $('#send').onclick=async()=>{if(store.get('postNum',0)){joinState();return}
   $('#bName').textContent=name;$('#bNum').textContent='#'+AR(num);openBadge();
   $('#msg').value='';$('#msgc').textContent='0';phrase='';document.querySelectorAll('#phr button').forEach(x=>x.classList.remove('on'));clearCv();voiceBlob=null;$('#recplay').style.display='none';$('#rech').textContent='اضغطي لبدء التسجيل (حتى ٣٠ ثانية)';
  }catch(e){er.textContent='تعذّر الإرسال، تأكدي من الاتصال وحاولي مرة أخرى'}
- b.disabled=false;b.textContent='أرسلي وأضيفي قطعتك 🛡️'};
+ b.disabled=false;b.textContent='أرسلي وأضيفي قطعتك 💚'};
 function openBadge(){$('#bQuiz').style.display=store.get('quizLit',false)?'none':'';$('#badge').classList.add('on')}
 $('#bQuiz').onclick=()=>{$('#badge').classList.remove('on');go('quiz');qi=0;qs=0;qa=[];qpts=0;qstreak=0;qShow()};
 $('#bClose').onclick=()=>{$('#badge').classList.remove('on');go('home')};
@@ -641,7 +671,7 @@ const QN=Q.length;
 let qi=-1,qs=0,qa=[],qpts=0,qstreak=0;
 function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
 function shuf(a,seed){return a.map((x,i)=>[x,Math.abs(Math.sin((i+1)*seed*9.73))%1]).sort((x,y)=>x[1]-y[1]).map(x=>x[0])}
-function burst(x,y){['🎉','⭐','💚','✨','🛡️'].forEach((s,i)=>{const b=el('span','burst',s);const a=i/5*Math.PI*2;b.style.left=x+'px';b.style.top=y+'px';b.style.setProperty('--x',Math.cos(a)*90+'px');b.style.setProperty('--y',Math.sin(a)*90-40+'px');document.body.append(b);setTimeout(()=>b.remove(),950)})}
+function burst(x,y){['🎉','⭐','💚','✨','🌟'].forEach((s,i)=>{const b=el('span','burst',s);const a=i/5*Math.PI*2;b.style.left=x+'px';b.style.top=y+'px';b.style.setProperty('--x',Math.cos(a)*90+'px');b.style.setProperty('--y',Math.sin(a)*90-40+'px');document.body.append(b);setTimeout(()=>b.remove(),950)})}
 function qStart(){const c=$('#qcard');c.innerHTML='';const h=el('div');h.style.textAlign='center';
  h.innerHTML='<div class="topics">'+TOP.map((t,i)=>'<div><b>'+AR(i+1)+'</b>'+t+'</div>').join('')+'</div><p class="sub">'+AR(QN)+' تحديًا: صح وخطأ، مواقف، مطابقة، ترتيب، وتحدّي كلمة المرور 🔐<br>وفي النهاية تضيئين <b>قطعتين في الدرع</b> وتحصلين على <b>شهادة درع الوطن 📜</b><br>كل إجابة صحيحة ⭐ ١٠ نقاط، وسلسلة الإجابات الصحيحة 🔥 تعطيك نقاطًا إضافية</p>';
  const done=store.get('quizScore',null);if(done!==null){const p=el('p','sub','درجتك السابقة: '+AR(done)+' من '+AR(QN));h.append(p)}
@@ -724,7 +754,7 @@ function certificate(name,score,title,stars){const W=1754,H=1240,c=document.crea
   const h=hijriToday();if(h){g.direction='ltr';g.textAlign='left';g.font='700 26px "Noto Kufi Arabic"';g.fillStyle='#5f7a74';const num=h.y+'/'+h.m+'/'+h.d,hw2=g.measureText('هـ').width,nw2=g.measureText(num).width,x0=580-(hw2+nw2)/2;g.fillText('هـ',x0,1080);g.fillText(num,x0+hw2,1080)}
   c.toBlob(bl=>{const a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='شهادة-درع-الوطن.png';document.body.append(a);a.click();a.remove()},'image/png')});lg.src=IMG.logo}
 async function qEnd(){const c=$('#qcard');store.set('quizScore',qs);
- const st=qs>=9?3:qs>=6?2:1;const title=['','حارسة مبتدئة 🌱','حارسة واعية 🛡️','حارسة خبيرة 🏆'][st];
+ const st=qs>=9?3:qs>=6?2:1;const title=['','حارسة مبتدئة 🌱','حارسة واعية 💚','حارسة خبيرة 🏆'][st];
  const msg=st===3?'رائع! أنتِ درع واعٍ لوطنك':st===2?'أداء جميل! راجعي الإجابات لتصبحي أقوى':'بداية طيبة — أعيدي التحدّي لتتعلّمي أكثر';
  const per=TOP.map((_,t)=>{let a=0,n=0;Q.forEach((q,k)=>{if(q.t===t){n++;a+=qa[k]||0}});return [a,n]});
  c.innerHTML='<div style="text-align:center"><div class="stars">'+[1,2,3].map(k=>'<i style="animation-delay:'+(k*.25)+'s">'+(k<=st?'⭐':'☆')+'</i>').join('')+'</div><div class="ttl" style="font-size:24px">'+title+'</div><div class="score grad">'+AR(qs)+' من '+AR(QN)+'</div><div class="sub">⭐ '+AR(qpts)+' نقطة — '+msg+'</div>'
@@ -737,7 +767,7 @@ async function qEnd(){const c=$('#qcard');store.set('quizScore',qs);
  const b=el('button','btn ghost','أعيدي التحدّي');b.style.cssText='display:flex;margin:18px auto 0';b.onclick=qStart;c.firstChild.append(b);
  try{await api('survey',{name:$('#nm').value.trim()||store.get('name',''),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),score:qs,answers:qa.join('')})}catch(e){}
  if(!store.get('quizLit',false)){store.set('quizLit',true);joinState();try{const n=await lightPiece({name:who(),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),type:'quiz',text:'🏆 أكملت تحدّي درع الوطن'},false);const n2=await lightPiece({name:who(),cls:$('#cls').value||store.get('cls',''),sec:$('#sec').value||store.get('sec',''),type:'bonus',text:'🏆 أكملت تحدّي درع الوطن'},false);
-  const s=el('p','sub','🛡️ نقطتاكِ: أضأتِ القطعتين #'+AR(n)+' و#'+AR(n2)+' في الدرع');s.style.fontWeight='800';c.querySelector('.tbars').before(s)}catch(e){store.set('quizLit',false)}}}
+  const s=el('p','sub','💚 نقطتاكِ: أضأتِ القطعتين #'+AR(n)+' و#'+AR(n2)+' في الدرع');s.style.fontWeight='800';c.querySelector('.tbars').before(s)}catch(e){store.set('quizLit',false)}}}
 qStart();
 
 /* ---------- pages ---------- */
