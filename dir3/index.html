@@ -87,7 +87,7 @@ section{padding:40px 0}
 .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--g1),var(--t1));border-radius:8px;transition:width 1s}
 .mini{font-size:14px;color:var(--mut);margin-top:6px}
 /* steps strip */
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
 @media(max-width:760px){.steps{grid-template-columns:repeat(2,1fr)}}
 .st{background:#fff;border:2px solid var(--line);border-radius:20px;padding:14px;text-align:center;text-decoration:none;color:inherit;transition:.2s}
 .st:hover{border-color:var(--g2);transform:translateY(-3px)}
@@ -273,6 +273,19 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
 .pager button{min-width:40px;height:40px;padding:0 8px;border-radius:12px;border:2px solid var(--line);background:#fff;font:inherit;font-weight:800;color:var(--g1);cursor:pointer}
 .pager button.on{background:linear-gradient(90deg,var(--g1),var(--t1));color:#fff;border-color:transparent}
 .pager span{align-self:center;color:var(--mut);font-weight:800}
+@media(max-width:760px){.st.wide{grid-column:1/-1}}
+.st{display:flex;align-items:center;justify-content:center}
+.stabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;max-width:520px;margin:0 auto;background:var(--soft);border-radius:99px;padding:4px}
+.stabs button{border:none;background:none;font:inherit;font-size:14px;font-weight:800;color:var(--mut);padding:9px 2px;border-radius:99px;cursor:pointer}
+.stabs button.on{background:#fff;color:var(--g1);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.prc{display:flex;gap:12px;align-items:center;max-width:760px;margin:14px auto 0}
+.prc .av{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#e7c873);display:grid;place-items:center;flex:none}
+.prc .av svg{width:36px;height:36px;fill:#fff}
+.prc .pn{font-size:19px;font-weight:800}.prc .pr{font-size:14px;font-weight:700;color:var(--mut)}.prc .pw{margin-top:6px;line-height:1.8}
+#shield polygon.stf,#shield polygon.mine.done.stf{fill:#3cb8c9}
+.wi.stf{background:#e8f8fa;border-color:#3cb8c9}
+.wi.stf .who i{background:linear-gradient(135deg,#3cb8c9,#1b8a9a)}
+.wi.stf .tag{background:#cdeff4;color:#0e6d7a}
 </style>
 </head>
 <body>
@@ -295,7 +308,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
 
 <div class="demo" id="demo" style="display:none">وضع تجريبي — غير مربوط بجدول البيانات بعد</div>
 <header><div class="in"><img id="lg1" alt=""><div class="sn grad">المتوسطة الحادية والعشرون</div>
-  <nav id="topnav"><a href="#home">الرئيسية</a><a href="#join">شاركي</a><a href="#pray">الدعاء</a><a href="#wall">حائط الدرع</a><a href="#parents">أولياء الأمور</a><a href="#quiz">الاستبانة</a><a href="#end">الختام</a></nav></div></header>
+  <nav id="topnav"><a href="#home">الرئيسية</a><a href="#join">شاركي</a><a href="#pray">الدعاء</a><a href="#wall">حائط الدرع</a><a href="#parents">أولياء الأمور</a><a href="#staff">الأقسام</a><a href="#quiz">الاستبانة</a><a href="#end">الختام</a></nav></div></header>
 
 <div class="pdots" id="pdots"></div>
 <main>
@@ -326,10 +339,11 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
 
   <section class="reveal">
     <div class="steps">
-      <a class="st" href="#join"><b>الخطوة ٣ و٤</b><span>اكتبي اسمك واختاري مشاركتك</span></a>
-      <a class="st" href="#pray"><b>الخطوة ٦</b><span>ادعي لجنودنا البواسل</span></a>
-      <a class="st" href="#parents"><b>الخطوة ٧</b><span>أولياء الأمور شركاؤنا</span></a>
-      <a class="st" href="#quiz"><b>الخطوة ٨</b><span>حلّي الاستبانة</span></a>
+      <a class="st wide" href="#staff"><span>مشاركة الإدارة والمعلمات</span></a>
+      <a class="st" href="#parents"><span>مشاركة أولياء الأمور</span></a>
+      <a class="st" href="#join"><span>مشاركة بناتنا الطالبات</span></a>
+      <a class="st" href="#pray"><span>ادعي لجنودنا البواسل</span></a>
+      <a class="st" href="#quiz"><span>حلّي الاستبانة</span></a>
     </div>
   </section>
  </div>
@@ -340,9 +354,10 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
     <div class="card" id="joinDone" style="max-width:760px;margin:auto;text-align:center;display:none"><svg width="64" height="74" viewBox="0 0 120 140" aria-hidden="true"><defs><linearGradient id="gjd" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#2f9a78"/><stop offset="1" stop-color="#2a7f9e"/></linearGradient></defs><path d="M60 6 L110 24 V66 C110 100 88 122 60 134 C32 122 10 100 10 66 V24 Z" fill="url(#gjd)"/><path d="M60 40l8 17 18 2-13.5 12.5 3.5 18L60 80.5 44 89.5l3.5-18L34 59l18-2z" fill="#fff"/></svg><div class="ttl grad" style="margin-top:10px">شاركتِ في الدرع، شكرًا لكِ</div><div class="sub" id="jdTxt" style="margin-top:6px"></div><div class="sub" style="margin-top:4px">لكل طالبة مشاركة واحدة في الدرع</div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px"><button class="btn" id="jdQuiz" type="button">🎯 حلّي الاستبانة = نقطتين في الدرع</button><button class="btn ghost" id="jdBadge" type="button">عرض وسامي</button></div></div>
     <div class="card" id="joinCard" style="max-width:760px;margin:auto">
+      <div class="sub" style="text-align:center;margin:0 0 10px">معلمة أو من إدارة المدرسة؟ <a href="#staff">صفحتكن الخاصة من هنا</a></div>
       <div class="row2">
         <div><label class="f" for="nm">الاسم</label><input class="inp" id="nm" maxlength="40" placeholder="مثال: سارة محمد" autocomplete="name"></div>
-        <div><label class="f" for="cls">الصف</label><select class="inp" id="cls"><option value="">اختاري</option><option>الأول المتوسط</option><option>الثاني المتوسط</option><option>الثالث المتوسط</option><option>منسوبة المدرسة</option></select></div>
+        <div><label class="f" for="cls">الصف</label><select class="inp" id="cls"><option value="">اختاري</option><option>الأول المتوسط</option><option>الثاني المتوسط</option><option>الثالث المتوسط</option></select></div>
         <div id="secw"><label class="f" for="sec">الفصل</label><select class="inp" id="sec"><option value="">اختاري</option><option>١</option><option>٢</option><option>٣</option></select></div>
       </div>
       <label class="f">طريقة المشاركة</label>
@@ -375,7 +390,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
   <!-- WALL -->
   <section class="page" id="pg-wall" data-t="حائط الدرع">
     <div class="head"><span class="chip">حائط الدرع</span><div class="ttl">رسائلكن لحماة الوطن</div><div class="sub">أحدث المشاركات — تتحدّث تلقائيًا</div></div>
-    <div class="wfilt" id="wallFilt"><button type="button" data-w="all" class="on">الكل</button><button type="button" data-w="students">الطالبات</button><button type="button" data-w="parents">أولياء الأمور</button><button type="button" data-w="staff">منسوبات المدرسة</button></div>
+    <div class="wfilt" id="wallFilt"><button type="button" data-w="all" class="on">الكل</button><button type="button" data-w="students">الطالبات</button><button type="button" data-w="parents">أولياء الأمور</button><button type="button" data-w="staff">الإدارة والمعلمات</button></div>
     <div class="pager" id="wallPagerTop"></div>
     <div class="wall" id="wallList"><div class="empty">جاري التحميل…</div></div>
     <div class="pager" id="wallPager"></div>
@@ -396,6 +411,22 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
   </section>
 
   <!-- QUIZ -->
+  <section class="page" id="pg-staff" data-t="الأقسام">
+    <div class="head"><span class="chip">الأقسام</span><div class="ttl">معًا في درع الوطن</div><div class="sub">الإدارة والمعلمات والطالبات والأولياء</div></div>
+    <div class="stabs" id="stTabs"><button type="button" data-g="admin" class="on">الإدارة</button><button type="button" data-g="teachers">المعلمات</button><button type="button" data-g="students">الطالبات</button><button type="button" data-g="parents">الأولياء</button></div>
+    <div class="prc" id="prCard"><div class="av"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zm0 2c-4.4 0-8 2.4-8 5.4V21h16v-1.6c0-3-3.6-5.4-8-5.4z"/></svg></div><div><div class="pn">أ/ أمينة آل مشيط</div><div class="pr">قائدة المدرسة</div><div class="pw" id="prWord" style="display:none"></div></div></div>
+    <div class="card" id="staffDone" style="max-width:760px;margin:12px auto 0;text-align:center;display:none"><svg width="64" height="74" viewBox="0 0 120 140" aria-hidden="true"><path d="M60 6 L110 24 V66 C110 100 88 122 60 134 C32 122 10 100 10 66 V24 Z" fill="#2aa5b5"/><path d="M60 40l8 17 18 2-13.5 12.5 3.5 18L60 80.5 44 89.5l3.5-18L34 59l18-2z" fill="#fff"/></svg><div class="ttl" style="margin-top:10px">شكرًا لكِ على مشاركتك</div><div class="sub" id="sdTxt" style="margin-top:6px"></div><div style="margin-top:16px"><button class="btn" id="sdBadge" type="button">عرض وسامي</button></div></div>
+    <form class="card" id="sform" style="max-width:760px;margin:12px auto 0">
+      <div class="row2"><div><label class="f" for="snm">الاسم</label><input class="inp" id="snm" maxlength="40" autocomplete="name"></div><div id="sjobw"><label class="f" for="sjob">العمل</label><select class="inp" id="sjob"><option value="">اختاري</option><option>مديرة المدرسة</option><option>وكيلة</option><option>مرشدة طلابية</option><option>رائدة نشاط</option><option>إدارية</option></select></div></div>
+      <label class="f" for="smsg">رسالتك لجنودنا البواسل</label><textarea class="inp" id="smsg" maxlength="300" rows="4" placeholder="اكتبي كلمتك لحماة الوطن…"></textarea>
+      <div id="serr" style="color:#c0392b;font-size:14px;min-height:20px;margin-top:6px"></div>
+      <div style="text-align:center;margin-top:6px"><button class="btn" id="ssend" type="submit">أرسلي وأضيفي قطعتك 💚</button></div>
+    </form>
+    <div class="card" id="stGo" style="max-width:760px;margin:12px auto 0;text-align:center;display:none"><a class="btn" id="stGoBtn" href="#join"></a></div>
+    <div class="pager" id="staffPagerTop"></div>
+    <div class="wall" id="staffWall" style="margin-top:16px"></div>
+    <div class="pager" id="staffPager"></div>
+  </section>
   <section class="page" id="pg-quiz" data-t="الاستبانة">
     <div class="head"><span class="chip">الخطوة ٨</span><div class="ttl">حلّي الاستبانة</div><div class="sub">١٠ أسئلة قصيرة، وتظهر درجتك مباشرة</div></div>
     <div class="card qwrap" id="qcard"></div>
@@ -421,7 +452,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
 <div class="modal" id="badge"><div class="box">
   <svg width="110" height="128" viewBox="0 0 120 140"><defs><linearGradient id="gb" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#2f9a78"/><stop offset="1" stop-color="#2a7f9e"/></linearGradient></defs><path d="M60 6 L110 24 V66 C110 100 88 122 60 134 C32 122 10 100 10 66 V24 Z" fill="url(#gb)"/><path d="M60 40l8 17 18 2-13.5 12.5 3.5 18L60 80.5 44 89.5l3.5-18L34 59l18-2z" fill="#fff"/></svg>
   <h3 class="grad">وسام حارسة الدرع</h3>
-  <p>شكرًا <b id="bName"></b>! أضفتِ قطعتك الذهبية في درع الوطن</p>
+  <p>شكرًا <b id="bName"></b>! أضفتِ قطعتك <span id="bCol">الذهبية</span> في درع الوطن</p>
   <div class="num grad" id="bNum"></div>
   <p style="margin-top:0">رقمك في الدرع</p>
   <button class="btn" id="bQuiz" type="button" style="display:flex;margin:16px auto 0;background:linear-gradient(90deg,#b8860b,#e0b84a);box-shadow:0 12px 28px rgba(184,134,11,.3);line-height:1.5">🎯 حلّي الاستبانة = نقطتين في الدرع<br>وتحصلين على شهادة درع الوطن 📜</button>
@@ -435,6 +466,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
   <a href="#pray" data-p="pray"><svg viewBox="0 0 24 24"><path d="M11 21V9c0-3-1.5-5-3-6-1 2-1.5 3.5-1.5 6L4 14v7"/><path d="M13 21V9c0-3 1.5-5 3-6 1 2 1.5 3.5 1.5 6L20 14v7"/></svg><span>الدعاء</span></a>
   <a href="#wall" data-p="wall"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>الحائط</span></a>
   <a href="#parents" data-p="parents"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 19c0-3.3 2.7-5 6-5s6 1.7 6 5M15 14.5c3 0 6 1.3 6 4.5"/></svg><span>الأسر</span></a>
+  <a href="#staff" data-p="staff"><svg viewBox="0 0 24 24"><path d="M12 4l10 5-10 5L2 9z"/><path d="M6 11.5V16c3 2.6 9 2.6 12 0v-4.5"/></svg><span>الأقسام</span></a>
   <a href="#quiz" data-p="quiz"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span>الاستبانة</span></a>
 </nav>
 <div class="toast" id="toast"></div>
@@ -528,7 +560,7 @@ function shieldShow(){showT.forEach(clearTimeout);showT=[];
  const tick=()=>ready()?run():later(tick,300);tick()}
 function setCount(n){const lit=Math.min(n,GOAL);const mine=store.get('myNums',[]);
  cells.forEach((p,i)=>{const on=i<lit;if(on&&!p.classList.contains('lit')&&!p.classList.contains('mine')){p.classList.add('pop')}
-  p.classList.toggle('lit',on&&!mine.includes(i+1));p.classList.toggle('mine',on&&mine.includes(i+1));p.classList.toggle('qz',on&&goldSet.has(i+1))});
+  p.classList.toggle('lit',on&&!mine.includes(i+1));p.classList.toggle('mine',on&&mine.includes(i+1));p.classList.toggle('qz',on&&goldSet.has(i+1));p.classList.toggle('stf',on&&staffSet.has(i+1))});
  const from=shown,t0=performance.now();(function an(t){const k=Math.max(0,Math.min(1,(t-t0)/900));const v=Math.round(from+(n-from)*(1-Math.pow(1-k,3)));$('#cN').textContent=AR(v);if(k<1)requestAnimationFrame(an)})(t0);shown=n;
  $('#cBar').style.width=Math.min(100,n/GOAL*100)+'%';
  // تسلسل الدرع: القطع ذهبية ← أخضر، ثم قطعة الطالبة تنبض وتكبر، ثم الدرع كله ينبض مع صوت ويتوقف
@@ -543,22 +575,21 @@ async function lightPiece(data,showBadge=true){const s=await api('post',{text:''
  const mine=store.get('myNums',[]);mine.push(num);store.set('myNums',mine);applyStats(s);
  if(showBadge){$('#bName').textContent=data.name;$('#bNum').textContent='#'+AR(num);openBadge()}return num}
 const who=()=>($('#nm').value.trim()||store.get('name','')||'حارسة الدرع');
-let goldSet=new Set(),wallPage=1,wallTotal=0,wallWho='all',wallReq=0;
+let goldSet=new Set(),staffSet=new Set(),wallPage=1,wallTotal=0,wallWho='all',wallReq=0;
 // حجم الصفحة: ١٠ في الجوال حتى تبقى الأرقام قريبة، و٣٠ في الكمبيوتر
 const WALL_PER=innerWidth<=640?10:30;
 const HEART='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.8 4.5c2.1 0 3.6 1.2 5.2 3 1.6-1.8 3.1-3 5.2-3 3.8 0 5.9 3.9 4.4 7.3C19.5 16.4 12 21 12 21z"/></svg>';
-function drawPager(){const pages=Math.max(1,Math.ceil(wallTotal/WALL_PER));
- ['#wallPagerTop','#wallPager'].forEach(id=>{const el=$(id);el.innerHTML='';if(pages<2)return;
-  for(let n=1;n<=pages;n++){if(n===1||n===pages||Math.abs(n-wallPage)<=1){const b=document.createElement('button');b.type='button';b.textContent=AR(n);if(n===wallPage)b.className='on';b.onclick=()=>goWall(n);el.append(b)}
-   else if(el.lastChild.tagName!=='SPAN'){const x=document.createElement('span');x.textContent='…';el.append(x)}}})}
+function pagerInto(el,cur,pages,fn){el.innerHTML='';if(pages<2)return;for(let n=1;n<=pages;n++){if(n===1||n===pages||Math.abs(n-cur)<=1){const b=document.createElement('button');b.type='button';b.textContent=AR(n);if(n===cur)b.className='on';b.onclick=()=>fn(n);el.append(b)}
+ else if(el.lastChild.tagName!=='SPAN'){const x=document.createElement('span');x.textContent='…';el.append(x)}}}
+function drawPager(){const pages=Math.max(1,Math.ceil(wallTotal/WALL_PER));['#wallPagerTop','#wallPager'].forEach(id=>pagerInto($(id),wallPage,pages,goWall))}
 async function goWall(n){wallPage=n;drawPager();const req=++wallReq;
  try{const r=await api('wall',{page:n,size:WALL_PER,who:wallWho});if(req!==wallReq)return;wallTotal=+r.wallTotal||0;renderWall(r.wall);drawPager();$('#wallFilt').scrollIntoView({behavior:'smooth',block:'start'})}catch(e){}}
 function drawFilt(g){const all=Object.values(g).reduce((a,b)=>a+(+b||0),0);document.querySelectorAll('#wallFilt button').forEach(b=>{const k=b.dataset.w,c=k==='all'?all:(+g[k]||0);
  let sm=b.querySelector('small');if(!sm){sm=document.createElement('small');b.append(' ',sm)}sm.textContent='('+AR(c)+')'})}
 $('#wallFilt').onclick=e=>{const b=e.target.closest('button');if(!b)return;wallWho=b.dataset.w;document.querySelectorAll('#wallFilt button').forEach(x=>x.classList.toggle('on',x===b));goWall(1)};
-function renderWall(list){const w=$('#wallList');w.innerHTML='';
+function renderWall(list,box){const w=box||$('#wallList');w.innerHTML='';
  if(!list||!list.length){w.innerHTML='<div class="empty">كوني أول من يضيء قطعة في الدرع 💚</div>';return}
- list.forEach(it=>{const d=document.createElement('div');d.className='wi'+(it.quiz?' qz':'');
+ list.forEach(it=>{const d=document.createElement('div');d.className='wi'+(it.quiz?' qz':'')+(it.cls==='منسوبة المدرسة'?' stf':'');
   const who=document.createElement('div');who.className='who';const av=document.createElement('i');av.textContent=(it.name||'؟').trim()[0]||'؟';const nm=document.createElement('span');nm.textContent=it.name||'مشاركة';const sm=document.createElement('small');sm.textContent=ago(+new Date(it.time));if(it.quiz){const q=document.createElement('span');q.className='hrt';q.innerHTML=HEART;nm.append(q)}who.append(av,nm,sm);d.append(who);
   if(it.text){const tx=document.createElement('div');tx.className='tx';tx.textContent=it.text.replace(/\u{1F6E1}️?/gu,'💚');d.append(tx)}
   if(it.type==='draw'&&it.img&&/^data:image\/(jpeg|png);base64,/.test(it.img)){const im=document.createElement('img');im.src=it.img;im.alt='رسم';d.append(im)}
@@ -567,7 +598,7 @@ function renderWall(list){const w=$('#wallList');w.innerHTML='';
   w.append(d)})}
 
 let prayersServer=0,prayPending=0;
-function applyStats(s){goldSet=new Set(s.gold||[]);if(s.groups)drawFilt(s.groups);setCount(+s.count||0);prayersServer=+s.prayers||0;$('#pN').textContent=AR(prayersServer+prayPending);if(wallPage===1&&wallWho==='all'){wallTotal=+s.wallTotal||0;renderWall((s.wall||[]).slice(0,WALL_PER));drawPager()}}
+function applyStats(s){goldSet=new Set(s.gold||[]);staffSet=new Set(s.staffPos||[]);if(s.groups)drawFilt(s.groups);setCount(+s.count||0);prayersServer=+s.prayers||0;$('#pN').textContent=AR(prayersServer+prayPending);if(wallPage===1&&wallWho==='all'){wallTotal=+s.wallTotal||0;renderWall((s.wall||[]).slice(0,WALL_PER));drawPager()}}
 async function refresh(){try{applyStats(await api('stats'))}catch(e){if($('#wallList').querySelector('.empty'))$('#wallList').innerHTML='<div class="empty">تعذّر تحميل المشاركات، حاولي التحديث لاحقًا</div>'}}
 refresh();setInterval(refresh,25000);
 
@@ -604,6 +635,23 @@ $('#recb').onclick=async()=>{
 const blobB64=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});
 
 // البصمة مرتبطة بمشاركة واحدة: بعد أول مشاركة يُقفل النموذج على هذا الجهاز وتُوجَّه الطالبة للاستبانة
+// صفحة إدارة المدرسة والمعلمات: تبويبان، ومشاركة واحدة لكل جهاز، وتُحفظ تحت «منسوبة المدرسة» والعمل في sec
+let staffTab='admin',staffReq=0,staffPage=1;
+const STAFF_EMPTY={admin:'كوني أول المشاركات من الإدارة 💚',teachers:'كوني أول المعلمات مشاركةً 💚',students:'لا توجد مشاركات بعد',parents:'لا توجد مشاركات بعد'};
+async function loadStaff(n){staffPage=n||1;const req=++staffReq,box=$('#staffWall'),tab=staffTab;try{const r=await api('wall',{page:staffPage,size:WALL_PER,who:tab});if(req!==staffReq)return;
+ if(r.wall&&r.wall.length)renderWall(r.wall,box);else box.innerHTML='<div class="empty">'+STAFF_EMPTY[tab]+'</div>';
+ const pages=Math.max(1,Math.ceil((+r.wallTotal||0)/WALL_PER));['#staffPagerTop','#staffPager'].forEach(id=>pagerInto($(id),staffPage,pages,loadStaff))}catch(e){}}
+function staffState(){const t=staffTab,post=t==='admin'||t==='teachers',n=store.get('staffNum',0);
+ $('#prCard').style.display=t==='admin'?'':'none';$('#sjobw').style.display=t==='admin'?'':'none';$('#sform').style.display=post&&!n?'':'none';$('#staffDone').style.display=post&&n?'':'none';
+ if(n)$('#sdTxt').textContent='رقمك في الدرع #'+AR(n);$('#stGo').style.display=post?'none':'';const g=$('#stGoBtn');g.href=t==='students'?'#join':'#parents';g.textContent=t==='students'?'شاركي من هنا':'شاركوا من هنا'}
+$('#stTabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;staffTab=b.dataset.g;document.querySelectorAll('#stTabs button').forEach(x=>x.classList.toggle('on',x===b));$('#serr').textContent='';staffState();loadStaff(1)};
+function staffBadge(){$('#bName').textContent=store.get('staffName','');$('#bNum').textContent='#'+AR(store.get('staffNum',0));openBadge(true)}
+$('#sdBadge').onclick=staffBadge;
+$('#sform').addEventListener('submit',async e=>{e.preventDefault();const b=$('#ssend'),name=$('#snm').value.trim(),job=staffTab==='admin'?$('#sjob').value:'معلمة',text=$('#smsg').value.trim();$('#serr').textContent='';
+ if(store.get('staffNum',0)){staffState();return}
+ if(!name||!job||text.length<3){$('#serr').textContent=staffTab==='admin'?'أكملي الاسم والعمل والرسالة':'أكملي الاسم والرسالة';return}
+ b.disabled=true;try{const n=await lightPiece({name,cls:'منسوبة المدرسة',sec:job,type:'msg',text},false);store.set('staffNum',n);store.set('staffName',name);staffState();staffBadge();loadStaff(1)}catch(err){$('#serr').textContent='تعذّر الإرسال، حاولي مرة أخرى'}b.disabled=false});
+staffState();loadStaff(1);
 function joinState(){const n=store.get('postNum',0);if(!n)return;$('#joinCard').style.display='none';$('#joinDone').style.display='';
  $('#jdTxt').textContent='رقمك في الدرع #'+AR(n);$('#jdQuiz').style.display=store.get('quizLit',false)?'none':''}
 $('#jdBadge').onclick=()=>{$('#bName').textContent=store.get('name','');$('#bNum').textContent='#'+AR(store.get('postNum',0));openBadge()};
@@ -626,14 +674,14 @@ $('#send').onclick=async()=>{if(store.get('postNum',0)){joinState();return}
   $('#msg').value='';$('#msgc').textContent='0';phrase='';document.querySelectorAll('#phr button').forEach(x=>x.classList.remove('on'));clearCv();voiceBlob=null;$('#recplay').style.display='none';$('#rech').textContent='اضغطي لبدء التسجيل (حتى ٣٠ ثانية)';
  }catch(e){er.textContent='تعذّر الإرسال، تأكدي من الاتصال وحاولي مرة أخرى'}
  b.disabled=false;b.textContent='أرسلي وأضيفي قطعتك 💚'};
-function openBadge(){$('#bQuiz').style.display=store.get('quizLit',false)?'none':'';$('#badge').classList.add('on')}
+function openBadge(staff){$('#bCol').textContent=staff?'الفيروزية':'الذهبية';$('#badge h3').textContent=staff?'وسام مربية الأجيال':'وسام حارسة الدرع';$('#bQuiz').style.display=(staff||store.get('quizLit',false))?'none':'';$('#badge').classList.add('on')}
 $('#bQuiz').onclick=()=>{$('#badge').classList.remove('on');go('quiz');qi=0;qs=0;qa=[];qpts=0;qstreak=0;qShow()};
 $('#bClose').onclick=()=>{$('#badge').classList.remove('on');go('home')};
 $('#bSave').onclick=()=>{const c=document.createElement('canvas');c.width=1080;c.height=1350;const g=c.getContext('2d');
  const gr=g.createLinearGradient(0,0,1080,1350);gr.addColorStop(0,'#f3faf7');gr.addColorStop(1,'#e6f2f2');g.fillStyle=gr;g.fillRect(0,0,1080,1350);
  const lg=new Image();lg.onload=()=>{g.drawImage(lg,390,60,300,300*lg.height/lg.width);
   g.save();g.translate(340,380);g.scale(3.33,3.33);const p=new Path2D('M60 6 L110 24 V66 C110 100 88 122 60 134 C32 122 10 100 10 66 V24 Z');const sg=g.createLinearGradient(0,0,120,140);sg.addColorStop(0,'#2f9a78');sg.addColorStop(1,'#2a7f9e');g.fillStyle=sg;g.fill(p);g.fillStyle='#fff';g.fill(new Path2D('M60 40l8 17 18 2-13.5 12.5 3.5 18L60 80.5 44 89.5l3.5-18L34 59l18-2z'));g.restore();
-  g.textAlign='center';g.direction='rtl';g.fillStyle='#1f7a5c';g.font='800 84px Almarai';g.fillText('وسام حارسة الدرع',540,960);
+  g.textAlign='center';g.direction='rtl';g.fillStyle='#1f7a5c';g.font='800 84px Almarai';g.fillText($('#badge h3').textContent,540,960);
   g.fillStyle='#123c34';g.font='800 64px Almarai';g.fillText($('#bName').textContent,540,1060);
   g.fillStyle='#2a7f9e';g.font='800 56px Almarai';g.fillText('رقمي في الدرع '+$('#bNum').textContent,540,1150);
   g.fillStyle='#5f7a74';g.font='700 38px Almarai';g.fillText('مبادرة درع الوطن — المتوسطة الحادية والعشرون',540,1260);
