@@ -261,9 +261,16 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
 .mbs cite{display:block;margin-top:6px;font-style:normal;font-size:15px;font-weight:700;color:var(--mut)}
 .qrbox{display:flex;flex-direction:column;align-items:center;gap:8px;margin:24px auto 0;font-weight:700;color:var(--mut);font-size:14px}
 .qrbox .qr{width:150px;height:150px;background:#fff;border-radius:16px;padding:6px;box-shadow:0 10px 26px rgba(18,60,52,.12)}
-.wi.qz{background:#fff8e6;border-color:#f0d48a}
-.wi .qzb{display:inline-block;margin-inline-start:6px;font-size:12px;font-weight:800;color:#8a6408;background:#fbe9b7;border-radius:10px;padding:2px 8px}
-.pager{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:18px 0 4px}
+.wi.qz{background:#f1f8e9;border-color:#7cb342}
+.wi.qz .who i{background:linear-gradient(135deg,#7cb342,#558b2f)}
+.wi.qz .tag{background:#dcedc8;color:#33691e}
+.wi .hrt{display:inline-flex;vertical-align:middle;margin-inline-start:6px}
+.wi .hrt svg{width:17px;height:17px;fill:#558b2f}
+.wfilt{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 0 12px;scroll-margin-top:90px}
+.wfilt button{border:2px solid var(--line);background:#fff;font:inherit;font-size:14px;font-weight:800;color:var(--g1);border-radius:99px;padding:7px 14px;cursor:pointer}
+.wfilt button.on{background:linear-gradient(90deg,var(--g1),var(--t1));color:#fff;border-color:transparent}
+.wfilt button small{font-size:12px;font-weight:700;opacity:.8}
+.pager{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:14px 0}.pager:empty{display:none}
 .pager button{min-width:40px;height:40px;padding:0 8px;border-radius:12px;border:2px solid var(--line);background:#fff;font:inherit;font-weight:800;color:var(--g1);cursor:pointer}
 .pager button.on{background:linear-gradient(90deg,var(--g1),var(--t1));color:#fff;border-color:transparent}
 .pager span{align-self:center;color:var(--mut);font-weight:800}
@@ -369,6 +376,8 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
   <!-- WALL -->
   <section class="page" id="pg-wall" data-t="حائط الدرع">
     <div class="head"><span class="chip">حائط الدرع</span><div class="ttl">رسائلكن لحماة الوطن</div><div class="sub">أحدث المشاركات — تتحدّث تلقائيًا</div></div>
+    <div class="wfilt" id="wallFilt"><button type="button" data-w="all" class="on">الكل</button><button type="button" data-w="students">الطالبات</button><button type="button" data-w="parents">أولياء الأمور</button><button type="button" data-w="staff">منسوبات المدرسة</button></div>
+    <div class="pager" id="wallPagerTop"></div>
     <div class="wall" id="wallList"><div class="empty">جاري التحميل…</div></div>
     <div class="pager" id="wallPager"></div>
   </section>
@@ -535,17 +544,23 @@ async function lightPiece(data,showBadge=true){const s=await api('post',{text:''
  const mine=store.get('myNums',[]);mine.push(num);store.set('myNums',mine);applyStats(s);
  if(showBadge){$('#bName').textContent=data.name;$('#bNum').textContent='#'+AR(num);openBadge()}return num}
 const who=()=>($('#nm').value.trim()||store.get('name','')||'حارسة الدرع');
-let goldSet=new Set(),wallPage=1,wallTotal=0;
-// أرقام صفحات الحائط (٣٠ مشاركة لكل صفحة)
-function drawPager(){const el=$('#wallPager'),pages=Math.max(1,Math.ceil(wallTotal/30));el.innerHTML='';if(pages<2)return;
- const mk=n=>{const b=document.createElement('button');b.type='button';b.textContent=AR(n);if(n===wallPage)b.className='on';b.onclick=()=>goWall(n);el.append(b)};
- const dots=()=>{const x=document.createElement('span');x.textContent='…';el.append(x)};
- for(let n=1;n<=pages;n++){if(n===1||n===pages||Math.abs(n-wallPage)<=1)mk(n);else if(el.lastChild&&el.lastChild.tagName!=='SPAN')dots()}}
-async function goWall(n){wallPage=n;drawPager();try{const r=await api('wall',{page:n});wallTotal=+r.wallTotal||wallTotal;renderWall(r.wall);drawPager();$('#wallList').scrollIntoView({behavior:'smooth',block:'start'})}catch(e){}}
+let goldSet=new Set(),wallPage=1,wallTotal=0,wallWho='all',wallReq=0;
+// حجم الصفحة: ١٠ في الجوال حتى تبقى الأرقام قريبة، و٣٠ في الكمبيوتر
+const WALL_PER=innerWidth<=640?10:30;
+const HEART='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.8 4.5c2.1 0 3.6 1.2 5.2 3 1.6-1.8 3.1-3 5.2-3 3.8 0 5.9 3.9 4.4 7.3C19.5 16.4 12 21 12 21z"/></svg>';
+function drawPager(){const pages=Math.max(1,Math.ceil(wallTotal/WALL_PER));
+ ['#wallPagerTop','#wallPager'].forEach(id=>{const el=$(id);el.innerHTML='';if(pages<2)return;
+  for(let n=1;n<=pages;n++){if(n===1||n===pages||Math.abs(n-wallPage)<=1){const b=document.createElement('button');b.type='button';b.textContent=AR(n);if(n===wallPage)b.className='on';b.onclick=()=>goWall(n);el.append(b)}
+   else if(el.lastChild.tagName!=='SPAN'){const x=document.createElement('span');x.textContent='…';el.append(x)}}})}
+async function goWall(n){wallPage=n;drawPager();const req=++wallReq;
+ try{const r=await api('wall',{page:n,size:WALL_PER,who:wallWho});if(req!==wallReq)return;wallTotal=+r.wallTotal||0;renderWall(r.wall);drawPager();$('#wallFilt').scrollIntoView({behavior:'smooth',block:'start'})}catch(e){}}
+function drawFilt(g){const all=Object.values(g).reduce((a,b)=>a+(+b||0),0);document.querySelectorAll('#wallFilt button').forEach(b=>{const k=b.dataset.w,c=k==='all'?all:(+g[k]||0);
+ let sm=b.querySelector('small');if(!sm){sm=document.createElement('small');b.append(' ',sm)}sm.textContent='('+AR(c)+')'})}
+$('#wallFilt').onclick=e=>{const b=e.target.closest('button');if(!b)return;wallWho=b.dataset.w;document.querySelectorAll('#wallFilt button').forEach(x=>x.classList.toggle('on',x===b));goWall(1)};
 function renderWall(list){const w=$('#wallList');w.innerHTML='';
  if(!list||!list.length){w.innerHTML='<div class="empty">كوني أول من يضيء قطعة في الدرع 💚</div>';return}
  list.forEach(it=>{const d=document.createElement('div');d.className='wi'+(it.quiz?' qz':'');
-  const who=document.createElement('div');who.className='who';const av=document.createElement('i');av.textContent=(it.name||'؟').trim()[0]||'؟';const nm=document.createElement('span');nm.textContent=it.name||'مشاركة';const sm=document.createElement('small');sm.textContent=ago(+new Date(it.time));if(it.quiz){const q=document.createElement('b');q.className='qzb';q.textContent='⭐ حلّت الاستبانة';nm.append(q)}who.append(av,nm,sm);d.append(who);
+  const who=document.createElement('div');who.className='who';const av=document.createElement('i');av.textContent=(it.name||'؟').trim()[0]||'؟';const nm=document.createElement('span');nm.textContent=it.name||'مشاركة';const sm=document.createElement('small');sm.textContent=ago(+new Date(it.time));if(it.quiz){const q=document.createElement('span');q.className='hrt';q.innerHTML=HEART;nm.append(q)}who.append(av,nm,sm);d.append(who);
   if(it.text){const tx=document.createElement('div');tx.className='tx';tx.textContent=it.text.replace(/\u{1F6E1}️?/gu,'💚');d.append(tx)}
   if(it.type==='draw'&&it.img&&/^data:image\/(jpeg|png);base64,/.test(it.img)){const im=document.createElement('img');im.src=it.img;im.alt='رسم';d.append(im)}
   if(it.type==='voice'){const tx=document.createElement('div');tx.className='tx';tx.textContent='🎙️ أرسلت رسالة صوتية لجنودنا';d.append(tx)}
@@ -553,7 +568,7 @@ function renderWall(list){const w=$('#wallList');w.innerHTML='';
   w.append(d)})}
 
 let prayersServer=0,prayPending=0;
-function applyStats(s){goldSet=new Set(s.gold||[]);wallTotal=+s.wallTotal||0;setCount(+s.count||0);prayersServer=+s.prayers||0;$('#pN').textContent=AR(prayersServer+prayPending);if(wallPage===1)renderWall(s.wall);drawPager()}
+function applyStats(s){goldSet=new Set(s.gold||[]);if(s.groups)drawFilt(s.groups);setCount(+s.count||0);prayersServer=+s.prayers||0;$('#pN').textContent=AR(prayersServer+prayPending);if(wallPage===1&&wallWho==='all'){wallTotal=+s.wallTotal||0;renderWall((s.wall||[]).slice(0,WALL_PER));drawPager()}}
 async function refresh(){try{applyStats(await api('stats'))}catch(e){if($('#wallList').querySelector('.empty'))$('#wallList').innerHTML='<div class="empty">تعذّر تحميل المشاركات، حاولي التحديث لاحقًا</div>'}}
 refresh();setInterval(refresh,25000);
 
