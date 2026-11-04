@@ -306,7 +306,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
     <div>
       <span class="chip">مبادرة وطنية</span>
       <h1 class="grad">درع الوطن</h1>
-      <p class="lead">كل مشاركة منكِ تضيء قطعة في درع الوطن. اكتبي رسالة شكر لجنودنا البواسل، أو اختاري بطاقة، أو ارسمي، أو سجّلي صوتك — <b>وهدفنا ٤٠٠ مشاركة</b>.</p>
+      <p class="lead">كل مشاركة منكِ تضيء قطعة في درع الوطن. اكتبي رسالة شكر لجنودنا البواسل، أو اختاري بطاقة، أو ارسمي، أو سجّلي صوتك — <b>وهدفنا ٣٠٠ مشاركة</b>.</p>
       <a class="btn" href="#join">ابدئي مشاركتك ←</a>
     </div>
     <div class="shieldbox">
@@ -318,7 +318,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
         <g clip-path="url(#cl)" id="hexes"></g>
         <path d="M60 6 L110 24 V66 C110 100 88 122 60 134 C32 122 10 100 10 66 V24 Z" fill="none" stroke="url(#gs)" stroke-width="3.5"/>
       </svg>
-      <div class="counter"><span class="grad" id="cN">٠</span> / ٤٠٠</div>
+      <div class="counter"><span class="grad" id="cN">٠</span> / ٣٠٠</div>
       <div class="bar"><i id="cBar"></i></div>
       <div class="mini" id="cMsg">مشاركة في الدرع</div>
     </div>
@@ -446,7 +446,7 @@ const IMG={logo:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAvgAAAJCCAYAAAC1c
 const SB = 'https://uautjfgslrfhceciqwyn.supabase.co/rest/v1/rpc/api_dir3';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhdXRqZmdzbHJmaGNlY2lxd3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNjI3NzMsImV4cCI6MjEwODgzODc3M30.Dj1dYWNMwhp02hJEko8XnDD23Mi-gK-Q82BkICdrj_Q';   // مفتاح عام: الجداول مقفلة، والوصول عبر api_dir3 فقط
 // ==================================================================
-const GOAL = 400;
+const GOAL = 300;
 const AR = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
 const $ = s => document.querySelector(s);
 ['lg0','lg1'].forEach(i => $('#'+i).src = IMG.logo); $('#imK').src = IMG.king; $('#imC').src = IMG.cp;
@@ -490,7 +490,7 @@ async function api(action, data){
 
 /* ---------- shield ---------- */
 const cells=[];
-(function(){const g=$('#hexes');const r=2.75,dx=r*1.74,dy=r*1.5;const all=[];
+(function(){const g=$('#hexes');const r=3.25,dx=r*1.74,dy=r*1.5;const all=[];
  for(let row=0;row<38;row++)for(let c=0;c<27;c++){const cx=4+c*dx+(row%2?dx/2:0),cy=8+row*dy;if(cy>134||cx>118)continue;
   const pts=[...Array(6)].map((_,j)=>{const a=Math.PI/3*j+Math.PI/6;return (cx+r*.88*Math.cos(a)).toFixed(2)+','+(cy+r*.88*Math.sin(a)).toFixed(2)}).join(' ');
   const p=document.createElementNS('http://www.w3.org/2000/svg','polygon');p.setAttribute('points',pts);p.setAttribute('fill','#dcefe8');p.style.transformOrigin=cx+'px '+cy+'px';g.appendChild(p);
