@@ -146,7 +146,8 @@ textarea.inp{min-height:120px;resize:vertical;line-height:1.7}
 .wi .who i{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--g1),var(--t1));color:#fff;font-style:normal;display:flex;align-items:center;justify-content:center;font-size:14px}
 .wi .who small{color:var(--mut);font-weight:400;font-size:12px;margin-inline-start:auto}
 .wi .tx{margin-top:10px;line-height:1.8;font-size:16px;white-space:pre-wrap;word-break:break-word}
-.wi img{width:100%;border-radius:14px;margin-top:10px;border:1px solid var(--line)}
+.wi img,.wi video{width:100%;border-radius:14px;margin-top:10px;border:1px solid var(--line)}
+.wi video{display:block;background:#000;max-height:70vh}
 .wi .tag{display:inline-block;margin-top:10px;font-size:12px;font-weight:700;color:var(--g1);background:var(--soft);padding:4px 10px;border-radius:12px}
 .empty{text-align:center;color:var(--mut);padding:30px}
 /* parents */
@@ -569,7 +570,7 @@ function setCount(n){const lit=Math.min(n,GOAL);const mine=store.get('myNums',[]
 
 /* ---------- wall ---------- */
 function ago(t){const s=(Date.now()-t)/1000;if(s<60)return 'الآن';if(s<3600)return 'قبل '+AR(Math.floor(s/60))+' د';if(s<86400)return 'قبل '+AR(Math.floor(s/3600))+' س';return 'قبل '+AR(Math.floor(s/86400))+' يوم'}
-const TYPE={msg:'رسالة',card:'بطاقة',draw:'رسم',voice:'رسالة صوتية',pray:'دعاء',quiz:'الاستبانة',parent:'ولي أمر'};
+const TYPE={msg:'رسالة',card:'بطاقة',draw:'رسم',voice:'رسالة صوتية',pray:'دعاء',quiz:'الاستبانة',parent:'ولي أمر',video:'فيديو'};
 // أي خطوة (رسالة، دعاء، استبانة، ولي أمر) تضيء قطعة في الدرع
 async function lightPiece(data,showBadge=true){const s=await api('post',{text:'',img:'',audio:'',...data});const num=+s.id||+s.count;
  const mine=store.get('myNums',[]);mine.push(num);store.set('myNums',mine);applyStats(s);
@@ -593,6 +594,7 @@ function renderWall(list,box){const w=box||$('#wallList');w.innerHTML='';
   const who=document.createElement('div');who.className='who';const av=document.createElement('i');av.textContent=(it.name||'؟').trim()[0]||'؟';const nm=document.createElement('span');nm.textContent=it.name||'مشاركة';const sm=document.createElement('small');sm.textContent=ago(+new Date(it.time));if(it.quiz){const q=document.createElement('span');q.className='hrt';q.innerHTML=HEART;nm.append(q)}who.append(av,nm,sm);d.append(who);
   if(it.text){const tx=document.createElement('div');tx.className='tx';tx.textContent=it.text.replace(/\u{1F6E1}️?/gu,'💚');d.append(tx)}
   if(it.type==='draw'&&it.img&&/^data:image\/(jpeg|png);base64,/.test(it.img)){const im=document.createElement('img');im.src=it.img;im.alt='رسم';d.append(im)}
+  if(it.type==='video'&&/^vid\/[\w-]+\.mp4$/.test(it.img||'')){const v=document.createElement('video');v.src=it.img;v.controls=true;v.playsInline=true;v.preload='metadata';d.append(v)}
   if(it.type==='voice'){const tx=document.createElement('div');tx.className='tx';tx.textContent='🎙️ أرسلت رسالة صوتية لجنودنا';d.append(tx)}
   const tg=document.createElement('span');tg.className='tag';tg.textContent=TYPE[it.type]||'مشاركة';if(it.cls)tg.textContent+=' · '+it.cls+(it.sec?' / '+it.sec:'');d.append(tg);
   w.append(d)})}
