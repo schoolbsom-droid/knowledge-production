@@ -98,6 +98,20 @@ label.f{display:block;font-size:13px;color:var(--on-sv);margin:14px 0 4px;font-w
 .hd{display:flex;gap:12px;align-items:center;margin:44px 0 10px}
 .logo{width:48px;height:48px;display:grid;place-items:center;color:#fff;font-weight:600;flex:none;font-size:18px;
   clip-path:polygon(50% 0,63% 12%,80% 8%,84% 25%,100% 32%,92% 50%,100% 68%,84% 75%,80% 92%,63% 88%,50% 100%,37% 88%,20% 92%,16% 75%,0 68%,8% 50%,0 32%,16% 25%,20% 8%,37% 12%)}
+.logo.img{background:#fff!important;clip-path:none;border-radius:14px;overflow:hidden;box-shadow:0 0 0 1px #E7DAEC}
+.logo.img img{width:100%;height:100%;object-fit:contain}
+.cover{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:18px;margin:2px 0 8px;background:#FAF6FB;cursor:zoom-in}
+.imgup{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.imgup>div{flex:1 1 200px;background:#FAF6FB;border-radius:16px;padding:10px 12px;font-size:13px;text-align:center}
+.imgup b{display:block;font-weight:500;margin-bottom:4px}
+.imgup img{max-width:100%;max-height:130px;border-radius:12px;display:block;margin:6px auto}
+.imgup .ph{height:90px;display:grid;place-items:center;color:var(--on-sv);border:2px dashed #D9C5DF;border-radius:12px;margin:6px 0}
+.imgup label.btn{display:inline-block;margin:4px 2px 0;padding:6px 14px;font-size:13px;cursor:pointer}
+.imgup input[type=file]{display:none}
+.tthumb{width:44px;height:44px;object-fit:contain;border-radius:8px;background:#fff;vertical-align:middle;cursor:zoom-in}
+.tthumb.c{width:72px;object-fit:cover}
+#zoom{position:fixed;inset:0;background:rgba(30,20,35,.8);display:grid;place-items:center;z-index:50;padding:16px}
+#zoom img{max-width:100%;max-height:90vh;border-radius:16px;background:#fff}
 .hd b{color:var(--on-surf);font-weight:500}.hd small{display:block;color:var(--on-sv);font-size:12px;line-height:1.4}
 .ring{position:absolute;left:14px;top:14px;width:54px;height:54px;border-radius:50%;display:grid;place-items:center}
 .ring span{background:var(--sc-low);border-radius:50%;width:44px;height:44px;display:grid;place-items:center;font-size:15px;font-weight:600;color:var(--primary);line-height:1}
@@ -244,6 +258,7 @@ footer{text-align:center;color:var(--on-sv);font-size:12px;padding:20px}
   <div id="rform">
     <div class="row"><div><label class="f">اسم الفريق</label><input class="in" id="rt" maxlength="40" placeholder="مثال: فريق الإبداع"></div><div><label class="f">اسم المتجر</label><input class="in" id="rs" maxlength="40" placeholder="مثال: متجر لمسة"></div></div>
     <label class="f">رابط المتجر <small style="color:var(--on-sv)">(يمكن إضافته لاحقًا)</small></label><input class="in" id="rl" dir="ltr" placeholder="https://">
+    <label class="f">آخر ٤ أرقام من سجلكِ المدني</label><input class="in" id="rp" dir="ltr" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="٠٠٠٠">
   </div>
   <div id="rmsg"></div>
   <button class="btn" id="rsave">حفظ</button>
@@ -251,14 +266,18 @@ footer{text-align:center;color:var(--on-sv);font-size:12px;padding:20px}
 
 <!-- ═════ صفحة فريقنا ═════ -->
 <section class="pg" id="team"><div class="card">
-  <h2>صفحة فريقنا</h2><div class="sub">أدخلي رمز فريقكِ</div>
-  <div class="row"><input class="in" id="tc" dir="ltr" placeholder="مثال: ١-٤٨٢٧"><button class="btn" id="tgo" style="margin:0;flex:0 0 100px;padding:10px">دخول</button></div>
+  <h2>صفحة فريقنا</h2>
+  <div id="tlog"><div class="sub">اختاري فصلكِ واسمكِ، واكتبي آخر ٤ أرقام من سجلكِ المدني</div>
+  <label class="f">الفصل</label><select class="in" id="lc"></select>
+  <label class="f">اسمكِ</label><select class="in" id="ln" disabled><option value="">اختاري الفصل أولًا</option></select>
+  <label class="f">آخر ٤ أرقام من سجلكِ المدني</label>
+  <div class="row"><input class="in" id="tc" dir="ltr" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="٠٠٠٠"><button class="btn" id="tgo" style="margin:0;flex:0 0 100px;padding:10px">دخول</button></div></div>
   <div id="tbody"></div>
 </div></section>
 
 <!-- ═════ لوحة المتاجر ═════ -->
 <section class="pg" id="board">
-  <div class="sub" style="text-align:center">زوري متاجر زميلاتكِ وقيّميها برمز فريقكِ · لا يمكن تقييم فريقكِ · تقييم واحد لكل متجر</div>
+  <div class="sub" style="text-align:center">زوري متاجر زميلاتكِ وقيّميها بعد الدخول من «صفحة فريقنا» · لا يمكن تقييم فريقكِ · تقييم واحد لكل متجر · التعليقات تظهر بعد مراجعة المعلمة</div>
   <div class="filt" id="bf"></div>
   <div class="cards" id="bc"></div>
 </section>
@@ -280,6 +299,10 @@ footer{text-align:center;color:var(--on-sv);font-size:12px;padding:20px}
       <div id="tnm"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="tngo">📢 إرسال التنبيه</button><button class="btn ghost" id="tnx">إخفاء التنبيه</button></div>
     </div>
+    <div class="card wide" style="margin-bottom:20px">
+      <h3 style="margin-top:0">رسائل الطالبات الخاصة <small style="font-weight:400;color:var(--on-sv)">(أسئلة عن الدرجة وتعليقات — لا تراها إلا صاحبتها)</small></h3>
+      <div id="tmsg"></div>
+    </div>
     <div class="card wide">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h2>تقييم الفرق</h2><span style="display:flex;gap:8px"><button class="btn sm" id="txls">⬇ تقرير Excel</button><button class="btn sm ghost" id="tout">خروج</button></span></div>
       <div class="sub">اختاري الدرجات، ثم ضعي علامة «نشر» لتظهر النتيجة للفريق. يُحفظ كل تغيير تلقائيًا.</div>
@@ -289,7 +312,8 @@ footer{text-align:center;color:var(--on-sv);font-size:12px;padding:20px}
     </div>
     <div class="grid2" style="margin-top:20px">
       <div class="card wide">
-        <h3 style="margin-top:0">تعليقات الزميلات بانتظار موافقتك</h3>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3 style="margin:0">تقييمات وتعليقات الزميلات بانتظار مراجعتك</h3><button class="btn sm" id="tmall" hidden style="margin:0">نشر الكل</button></div>
+        <div class="sub" style="margin:4px 0 8px">لا يظهر أي تقييم أو تعليق للطالبات إلا بعد «نشر» · «حذف» يمسحه نهائيًا</div>
         <div id="tmod"></div>
         <h3>لم يسجّلن في فريق</h3>
         <div class="chips" id="tun"></div>
@@ -337,7 +361,42 @@ const ss = {get: k => { try { return sessionStorage.getItem(k); } catch (e) { re
 const stars = (n, m) => '★'.repeat(n) + `<i>${'★'.repeat(Math.max(0, m - n))}</i>`;
 const level = g => g == null ? ['لم يُقيَّم بعد', 'l4'] : g >= 18 ? ['متميز', ''] : g >= 14 ? ['متقدم', ''] : g >= 10 ? ['جيد', ''] : ['قيد التطوير', 'l4'];
 const RANKN = ['', 'الأول 🥇', 'الثاني 🥈', 'الثالث 🥉'];
-const logo = (name, i) => { const c = COL[i % COL.length]; return `<span class="logo" style="background:${c[0]};color:${c[1]}">${esc(String(name || '؟').replace(/^متجر\s+/, '')[0] || '؟')}</span>`; };
+// صور الفرق (الشعار + صورة المتجر) من api_team_images، تُحمَّل مرة واحدة
+let IMG = null;
+async function loadImgs(force) {
+  if (IMG && !force) return IMG;
+  const r = await rpc('api_team_images', {p_slug: SLUG});
+  return IMG = r && !r.error ? r : (IMG || {});
+}
+const img = (id, k) => IMG && IMG[id] && IMG[id][k];
+const logo = (name, i, id) => {
+  if (img(id, 'logo')) return `<span class="logo img"><img src="${img(id, 'logo')}" alt="شعار المتجر" loading="lazy"></span>`;
+  const c = COL[i % COL.length]; return `<span class="logo" style="background:${c[0]};color:${c[1]}">${esc(String(name || '؟').replace(/^متجر\s+/, '')[0] || '؟')}</span>`;
+};
+const cover = id => img(id, 'cover') ? `<img class="cover" src="${img(id, 'cover')}" alt="صورة المتجر" loading="lazy" data-zoom>` : '';
+// تكبير الصورة عند الضغط
+document.addEventListener('click', e => {
+  const z = e.target.closest('[data-zoom]');
+  if (z) { const d = document.createElement('div'); d.id = 'zoom'; d.innerHTML = `<img src="${z.src}">`; d.onclick = () => d.remove(); document.body.append(d); }
+});
+// ضغط الصورة في المتصفح: الشعار مربع ٢٥٦، صورة المتجر عرض ١٠٢٤
+function shrink(file, kind) {
+  return new Promise((ok, no) => {
+    if (!/^image\//.test(file.type)) return no('اختاري صورة (JPG أو PNG).');
+    const u = URL.createObjectURL(file), im = new Image();
+    im.onload = () => {
+      URL.revokeObjectURL(u);
+      const max = kind === 'logo' ? 256 : 1024, s = Math.min(1, max / Math.max(im.width, im.height));
+      const cv = document.createElement('canvas'); cv.width = Math.round(im.width * s); cv.height = Math.round(im.height * s);
+      const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(im, 0, 0, cv.width, cv.height);
+      const lim = kind === 'logo' ? 190000 : 440000;
+      for (const q of [0.85, 0.75, 0.6, 0.45, 0.3]) { const d = cv.toDataURL('image/jpeg', q); if (d.length <= lim) return ok(d); }
+      no('الصورة كبيرة جدًا، اختاري صورة أصغر.');
+    };
+    im.onerror = () => { URL.revokeObjectURL(u); no('تعذّر فتح الصورة، جرّبي صورة أخرى.'); };
+    im.src = u;
+  });
+}
 const msg = (el, kind, html) => el.innerHTML = html ? `<div class="msg ${kind}">${html}</div>` : '';
 const busy = (b, on) => { b.disabled = on; };
 
@@ -368,7 +427,7 @@ function go(p) {
   document.querySelectorAll('.pg').forEach(s => s.classList.toggle('on', s.id === p));
   if (p === 'board') board();
   if (p === 'tch' && ss.get('ttok')) tload();
-  if (p === 'team' && ss.get('code') && !$('tbody').innerHTML) { $('tc').value = ar(ss.get('code')); tview(); }
+  if (p === 'team' && ss.get('code') && !$('tbody').innerHTML) tview(ss.get('code'));
   scrollTo(0, 0);
 }
 document.querySelectorAll('nav button').forEach(b => b.onclick = () => go(b.dataset.p));
@@ -385,11 +444,11 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = () => go(b.data
     $('due').innerHTML = `<div class="duebar"><span>آخر موعد لتسليم رابط المتجر: <b>${dayName(P.due_at)} ${hijri(P.due_at)}</b></span><span class="left">${txt}</span></div>`;
   }
   $('rsub').textContent = `تكفي طالبة واحدة من الفريق · فريق من طالبة${P.max_team_size > 1 ? ' أو ' + (P.max_team_size === 2 ? 'طالبتين' : ar(P.max_team_size) + ' طالبات') : ''}`;
-  $('rc').innerHTML = '<option value="">اختاري الفصل</option>' + P.classes.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  $('rc').innerHTML = $('lc').innerHTML = '<option value="">اختاري الفصل</option>' + P.classes.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
   learn(); notice();
   // صفحة المعلمة ملف مستقل (store-teacher.html نسخة من هذا الملف بـ data-mode="teacher")، وتُحذف من صفحة الطالبات
   if (TMODE) { document.querySelector('nav').hidden = true; go('tch'); }
-  else { $('tch').remove(); document.querySelector('nav .tch').remove(); go('learn'); }
+  else { $('tch').remove(); const b = document.querySelector('nav .tch'); b.hidden = false; b.onclick = () => location.href = 'store-teacher.html'; go('learn'); }
 })();
 
 // ---------- تنبيه المعلمة ----------
@@ -456,7 +515,7 @@ $('rn').onchange = () => {
   sel.clear(); $('rq').value = ''; msg($('rmsg')); $('rsave').disabled = false; $('rform').hidden = false;
   const me = ST.find(s => s.id === +$('rn').value);
   if (me && me.taken) {
-    msg($('rmsg'), 'w', 'أنتِ مسجّلة في فريق من قبل.<br>لإضافة الرابط أو رؤية النتيجة ادخلي «صفحة فريقنا» برمز فريقكِ، وإن نسيتِ الرمز فاسألي المعلمة.');
+    msg($('rmsg'), 'w', 'سجّلتِ الحد الأعلى من المشاريع من قبل.<br>للتعديل أو الحذف أو رؤية النتيجة ادخلي «صفحة فريقنا» باسمكِ وآخر ٤ أرقام من سجلكِ المدني.');
     $('rsave').disabled = true; $('rmw').hidden = true; $('rform').hidden = true; return;
   }
   $('rmw').hidden = !me || P.max_team_size < 2; pick();
@@ -478,56 +537,166 @@ $('rsave').onclick = async () => {
   if (!$('rt').value.trim() || !$('rs').value.trim()) return err('اكتبي اسم الفريق واسم المتجر.');
   const link = $('rl').value.trim();
   if (link && !url(link)) return err('الرابط غير صحيح، يجب أن يبدأ بـ https://');
+  if (!/^\d{4}$/.test(en($('rp').value))) return err('اكتبي آخر ٤ أرقام من سجلكِ المدني.');
   busy($('rsave'), true);
-  const r = await rpc('api_register_team', {p_slug: SLUG, p_class: +$('rc').value, p_team_name: $('rt').value.trim(), p_store_name: $('rs').value.trim(), p_members: [+$('rn').value, ...sel]});
-  if (r.error) { busy($('rsave'), false); return msg($('rmsg'), 'w', '⚠ ' + esc(r.error) + (/مسجّل من قبل/.test(r.error) ? '<br>اختاري اسمًا آخر، أو اسألي زميلتكِ عن رمز فريقكما.' : '')); }
+  const r = await rpc('api_register4', {p_pin: en($('rp').value), p_slug: SLUG, p_class: +$('rc').value, p_team_name: $('rt').value.trim(), p_store_name: $('rs').value.trim(), p_members: [+$('rn').value, ...sel]});
+  if (r.error) { busy($('rsave'), false); return msg($('rmsg'), 'w', '⚠ ' + esc(r.error) + (/مسجّل من قبل/.test(r.error) ? '<br>اختاري اسمًا آخر للفريق.' : '')); }
   if (link) await rpc('api_team_update', {p_slug: SLUG, p_code: r.code, p_store_name: '', p_store_url: link});
-  ss.set('code', r.code);
+  ss.set('code', r.code); ss.set('sid', $('rn').value);
   $('rmw').hidden = true; $('rform').hidden = true;
-  msg($('rmsg'), 'o', `تم تسجيل فريقكِ ✓<br>رمز فريقكِ<br><span class="code">${ar(r.code)}</span><br>احفظيه واكتبيه في الدفتر، تحتاجينه لإضافة رابط المتجر ورؤية النتيجة.`);
-  $('rmsg').insertAdjacentHTML('beforeend', `<button class="btn" onclick="$('tc').value='${ar(r.code)}';go('team');tview()">اذهبي إلى صفحة فريقنا ←</button>`);
+  msg($('rmsg'), 'o', `تم تسجيل فريقكِ ✓<br>تدخلين أنتِ وزميلتكِ «صفحة فريقنا» باسم كل واحدة وآخر ٤ أرقام من سجلها المدني.<br>أضيفي هناك شعار المتجر وصورته.`);
+  $('rmsg').insertAdjacentHTML('beforeend', `<button class="btn" onclick="go('team');tview(ss.get('code'))">اذهبي إلى صفحة فريقنا ←</button>`);
 };
 
 // ---------- صفحة فريقنا ----------
-$('tgo').onclick = tview;
+$('tgo').onclick = () => tview();
+$('lc').onchange = async () => {
+  $('ln').disabled = true; msg($('tbody'));
+  if (!$('lc').value) return $('ln').innerHTML = '<option value="">اختاري الفصل أولًا</option>';
+  $('ln').innerHTML = '<option>جارٍ التحميل…</option>';
+  const r = await rpc('api_class_students', {p_slug: SLUG, p_class: +$('lc').value});
+  if (r.error) return msg($('tbody'), 'e', esc(r.error));
+  $('ln').innerHTML = '<option value="">اختاري اسمكِ</option>' + r.map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
+  $('ln').disabled = false;
+};
 $('tc').onkeydown = e => { if (e.key === 'Enter') tview(); };
-async function tview() {
-  const code = en($('tc').value);
-  if (!code) return;
-  busy($('tgo'), true);
-  const t = await rpc('api_team', {p_slug: SLUG, p_code: code});
-  busy($('tgo'), false);
-  if (t.error) return msg($('tbody'), 'e', esc(t.error));
-  ss.set('code', code);
-  const head = `<div class="hd" style="margin-top:18px">${logo(t.store_name || t.name, 0)}<div><b>${esc(t.name)}</b><small>${esc(t.class)} · ${(t.members || []).map(esc).join('، ')}</small></div></div>`;
-  const peer = t.peer_count ? `<div class="peer"><span>تقييم الزميلات (منفصل عن الدرجة)</span><span class="stars">${stars(Math.round(t.peer_avg), 5)} ${ar(t.peer_avg)} من ${ar(t.peer_count)} ${t.peer_count > 2 && t.peer_count < 11 ? 'تقييمات' : 'تقييم'}</span></div>` : '';
-  if (!t.published) {
-    $('tbody').innerHTML = head + `
-      <label class="f">اسم المتجر</label><input class="in" id="ts" maxlength="40" value="${esc(t.store_name)}">
-      <label class="f">رابط المتجر</label><input class="in" id="tl" dir="ltr" placeholder="https://" value="${esc(t.store_url)}">
-      <div id="tm"></div><button class="btn" id="tsave">حفظ</button>
-      ${t.submitted_at ? `<div class="msg o">سُلِّم الرابط ✓ — ${dayName(t.submitted_at)} ${hijri(t.submitted_at)}</div>` : ''}
-      <div class="note"><b>النتيجة</b>لم تُنشر بعد. ستظهر هنا بعد أن تقيّم المعلمة متجركن.</div>${peer}`;
-    $('tsave').onclick = async () => {
-      const l = $('tl').value.trim();
-      if (l && !url(l)) return msg($('tm'), 'e', 'الرابط غير صحيح، يجب أن يبدأ بـ https://');
-      busy($('tsave'), true);
-      const u = await rpc('api_team_update', {p_slug: SLUG, p_code: code, p_store_name: $('ts').value.trim(), p_store_url: l});
-      busy($('tsave'), false);
-      if (u.error) return msg($('tm'), 'e', esc(u.error));
-      msg($('tm'), 'o', 'تم الحفظ ✓'); setTimeout(tview, 900);
-    };
-    return;
+// التعليقات المنشورة على متجر الفريق
+async function mycm(code) {
+  const r = await rpc('api_team_comments', {p_slug: SLUG, p_code: code});
+  if (!Array.isArray(r) || !r.length || !$('mycm')) return;
+  $('mycm').innerHTML = '<label class="f">تقييمات الزميلات وتعليقاتهن على متجركن</label>' + r.map(c => `<div class="cm"><span class="stars">${'★'.repeat(c.stars)}</span>${c.comment ? ' «' + esc(c.comment) + '»' : ''}</div>`).join(' ');
+}
+// رفع الشعار وصورة المتجر
+const upbox = id => ['logo', 'cover'].map(k => `<div><b>${k === 'logo' ? 'شعار المتجر' : 'صورة المتجر'}</b>
+    ${img(id, k) ? `<img src="${img(id, k)}" data-zoom>` : `<div class="ph">${k === 'logo' ? 'لم يُضف الشعار' : 'صورة لواجهة متجركن (لقطة شاشة)'}</div>`}
+    <label class="btn sm">${img(id, k) ? 'تغيير' : '⬆ رفع'}<input type="file" accept="image/*" data-up="${k}"></label>
+    ${img(id, k) ? `<button class="btn sm ghost" data-rm="${k}" style="margin:4px 2px 0;padding:6px 14px">حذف</button>` : ''}</div>`).join('');
+async function setImg(code, kind, data) {
+  msg($('im'), '', ''); $('im').innerHTML = '<div class="msg">جارٍ الحفظ…</div>';
+  const r = await rpc('api_team_image', {p_slug: SLUG, p_code: code, p_kind: kind, p_data: data});
+  if (r.error) return msg($('im'), 'e', esc(r.error));
+  await loadImgs(true); BT = null; tview(code);
+}
+// ---------- حساب الطالبة: مشاريعها + تعديل/حذف + مشروع جديد + رسائل للمعلمة ----------
+const SID = () => +ss.get('sid') || 0;
+function logout() { ['code', 'sid'].forEach(k => ss.set(k, null)); $('tbody').innerHTML = ''; $('tlog').hidden = false; RATED = null; BT = null; }
+async function tview(code) {
+  if (!code) {
+    const pin = en($('tc').value);
+    if (!$('ln').value) return msg($('tbody'), 'e', 'اختاري فصلكِ واسمكِ.');
+    if (!/^\d{4}$/.test(pin)) return msg($('tbody'), 'e', 'اكتبي آخر ٤ أرقام من سجلكِ المدني.');
+    busy($('tgo'), true);
+    const l = await rpc('api_login4', {p_slug: SLUG, p_student: +$('ln').value, p_pin: pin});
+    busy($('tgo'), false);
+    if (l.error) return msg($('tbody'), 'e', esc(l.error).replace('مشروعكِ', 'فريقكِ').replace('«سجّلي مشروعك»', '«سجّلي فريقك»'));
+    code = l.code; $('tc').value = ''; ss.set('sid', $('ln').value);
   }
-  const res = t.result, sc = Object.fromEntries((res.scores || []).map(s => [s.criterion_id, +s.points]));
-  const [ln] = level(+res.grade);
-  const groups = [];
-  CR().forEach(c => { let g = groups.find(x => x.g === c.group); if (!g) groups.push(g = {g: c.group, p: 0, m: 0}); g.p += sc[c.id] || 0; g.m += +c.max; });
-  $('tbody').innerHTML = `<div class="hd" style="margin-top:18px">${logo(t.store_name || t.name, 0)}<div><b>${esc(t.name)}</b><small>${esc(t.class)} · ${url(t.store_url) ? `<a href="${esc(t.store_url)}" target="_blank" rel="noopener" style="color:var(--primary)">${esc(t.store_name || 'المتجر')} ↗</a>` : esc(t.store_name)}</small></div></div>
-    <div class="big"><small>درجة المشروع</small><b>${ar(+res.grade)} / ${ar(P.max_grade)}</b><br><span class="lv">${ln}</span>
-      <small style="display:inline;margin-right:6px">${RANKN[res.rank] ? 'الترتيب: ' + RANKN[res.rank] : 'الترتيب: ' + ar(res.rank)}${+res.bonus ? ' · نقاط التميّز +' + ar(+res.bonus) : ''}</small></div>
-    <div class="crit">${groups.map(g => `<div><span>${esc(g.g)}</span><span class="stars">${stars(g.p, g.m)} <small>${ar(g.p)}/${ar(g.m)}</small></span></div>`).join('')}</div>
-    ${res.note ? `<div class="note"><b>ملاحظة المعلمة</b>${esc(res.note)}</div>` : ''}${peer}`;
+  if (!SID()) { ss.set('code', null); return msg($('tbody'), 'w', 'ادخلي باسمكِ وآخر ٤ أرقام من سجلكِ المدني.'); }
+  busy($('tgo'), true);
+  const [t, mine] = await Promise.all([rpc('api_team', {p_slug: SLUG, p_code: code}), rpc('api_my_teams', {p_slug: SLUG, p_code: code, p_student: SID()}), loadImgs()]);
+  busy($('tgo'), false);
+  if (t.error || mine.error) { logout(); return msg($('tbody'), 'e', esc(t.error || mine.error)); }
+  ss.set('code', code); $('tlog').hidden = true; BT = null;
+  const list = mine.teams || [], canAdd = list.length < mine.max;
+  const bar = `<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px">
+      <div class="chips">${list.map((x, i) => `<button class="chip ${x.code === code ? 'on' : ''}" data-go="${esc(x.code)}">${x.code === code ? '✓ ' : ''}مشروع ${ar(i + 1)}: ${esc(x.store_name || x.name)}</button>`).join('')}
+      ${canAdd ? '<button class="chip" id="tnew">＋ مشروع جديد</button>' : ''}</div>
+      <button class="btn sm ghost" onclick="logout()" style="margin:0">خروج</button></div>`;
+  const head = `<div class="hd" style="margin-top:14px">${logo(t.store_name || t.name, 0, t.id)}<div><b>${esc(t.name)}</b><small>${esc(t.class)} · ${(t.members || []).map(esc).join('، ')}</small></div></div>`;
+  const ups = `<label class="f">شعار المتجر وصورته <small style="color:var(--on-sv)">(تظهران في لوحة المتاجر)</small></label><div class="imgup" id="iu">${upbox(t.id)}</div><div id="im"></div>`;
+  const peer = t.peer_count ? `<div class="peer"><span>تقييم الزميلات (منفصل عن الدرجة)</span><span class="stars">${stars(Math.round(t.peer_avg), 5)} ${ar(t.peer_avg)} من ${ar(t.peer_count)} ${t.peer_count > 2 && t.peer_count < 11 ? 'تقييمات' : 'تقييم'}</span></div>` : '';
+  const msgs = `<h3 style="margin-bottom:4px">رسالة خاصة للمعلمة</h3><div class="sub" style="margin:0 0 6px">لا يراها إلا أنتِ والمعلمة</div>
+      <div class="chips" id="mk"><button class="chip on" data-k="grade">سؤال عن درجتي</button><button class="chip" data-k="note">تعليق أو ملاحظة</button></div>
+      <textarea class="in" id="mb" rows="3" maxlength="1000" placeholder="اكتبي رسالتكِ…" style="margin-top:8px"></textarea>
+      <div id="mm"></div><button class="btn" id="msend">إرسال للمعلمة</button><div id="ml"></div>`;
+  let body;
+  if (!t.published) {
+    body = `
+      <div class="row"><div><label class="f">اسم الفريق</label><input class="in" id="tn" maxlength="40" value="${esc(t.name)}"></div>
+        <div><label class="f">اسم المتجر</label><input class="in" id="ts" maxlength="40" value="${esc(t.store_name)}"></div></div>
+      <label class="f">رابط المتجر</label><input class="in" id="tl" dir="ltr" placeholder="https://" value="${esc(t.store_url)}">
+      <div id="tm"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="tsave" style="flex:1">حفظ التعديل</button><button class="btn ghost" id="tdel" style="flex:0 0 auto">🗑 حذف المشروع</button></div>
+      ${t.submitted_at ? `<div class="msg o">سُلِّم الرابط ✓ — ${dayName(t.submitted_at)} ${hijri(t.submitted_at)}</div>` : ''}
+      ${ups}
+      <div class="note"><b>النتيجة</b>لم تُنشر بعد. ستظهر هنا بعد أن تقيّم المعلمة متجركن.</div>`;
+  } else {
+    const res = t.result, sc = Object.fromEntries((res.scores || []).map(s => [s.criterion_id, +s.points]));
+    const [lv] = level(+res.grade), groups = [];
+    CR().forEach(c => { let g = groups.find(x => x.g === c.group); if (!g) groups.push(g = {g: c.group, p: 0, m: 0}); g.p += sc[c.id] || 0; g.m += +c.max; });
+    body = `<div class="sub" style="margin:0">${url(t.store_url) ? `<a href="${esc(t.store_url)}" target="_blank" rel="noopener" style="color:var(--primary)">${esc(t.store_name || 'المتجر')} ↗</a>` : esc(t.store_name)}</div>
+      <div class="big"><small>درجة المشروع</small><b>${ar(+res.grade)} / ${ar(P.max_grade)}</b><br><span class="lv">${lv}</span>
+        <small style="display:inline;margin-right:6px">${RANKN[res.rank] ? 'الترتيب: ' + RANKN[res.rank] : 'الترتيب: ' + ar(res.rank)}${+res.bonus ? ' · نقاط التميّز +' + ar(+res.bonus) : ''}</small></div>
+      <div class="crit">${groups.map(g => `<div><span>${esc(g.g)}</span><span class="stars">${stars(g.p, g.m)} <small>${ar(g.p)}/${ar(g.m)}</small></span></div>`).join('')}</div>
+      ${res.note ? `<div class="note"><b>ملاحظة المعلمة</b>${esc(res.note)}</div>` : ''}${ups}`;
+  }
+  $('tbody').innerHTML = bar + head + body + peer + '<div id="mycm"></div>' + msgs;
+  // التنقل بين المشاريع + مشروع جديد
+  $('tbody').querySelectorAll('[data-go]').forEach(b => b.onclick = () => tview(b.dataset.go));
+  if ($('tnew')) $('tnew').onclick = () => newForm(code, t);
+  // الصور
+  $('iu').onchange = async e => {
+    const f = e.target.files && e.target.files[0]; if (!f) return;
+    try { await setImg(code, e.target.dataset.up, await shrink(f, e.target.dataset.up)); } catch (er) { msg($('im'), 'e', esc(er)); }
+  };
+  $('iu').onclick = e => { const b = e.target.closest('[data-rm]'); if (b && confirm('حذف الصورة؟')) setImg(code, b.dataset.rm, ''); };
+  // تعديل وحذف
+  if ($('tsave')) $('tsave').onclick = async () => {
+    const l = $('tl').value.trim();
+    if (!$('tn').value.trim()) return msg($('tm'), 'e', 'اكتبي اسم الفريق.');
+    if (l && !url(l)) return msg($('tm'), 'e', 'الرابط غير صحيح، يجب أن يبدأ بـ https://');
+    busy($('tsave'), true);
+    const u = await rpc('api_team_edit', {p_slug: SLUG, p_code: code, p_student: SID(), p_team_name: $('tn').value.trim(), p_store_name: $('ts').value.trim(), p_store_url: l});
+    busy($('tsave'), false);
+    if (u.error) return msg($('tm'), 'e', esc(u.error));
+    msg($('tm'), 'o', 'تم الحفظ ✓'); setTimeout(() => tview(code), 900);
+  };
+  if ($('tdel')) $('tdel').onclick = async () => {
+    if (!confirm(`حذف مشروع «${t.store_name || t.name}» نهائيًا؟\nيُحذف للفريق كله مع الشعار والصورة والتقييمات.`)) return;
+    const r = await rpc('api_team_delete', {p_slug: SLUG, p_code: code, p_student: SID()});
+    if (r.error) return msg($('tm'), 'e', esc(r.error));
+    const rest = list.filter(x => x.code !== code);
+    BT = null; await loadImgs(true);
+    if (rest.length) return tview(rest[0].code);
+    logout(); msg($('tbody'), 'o', 'تم حذف المشروع ✓ يمكنكِ تسجيل مشروع جديد من «سجّلي فريقك».');
+  };
+  // الرسائل
+  let kind = 'grade';
+  $('mk').onclick = e => { const b = e.target.closest('[data-k]'); if (!b) return; kind = b.dataset.k; $('mk').querySelectorAll('[data-k]').forEach(x => x.classList.toggle('on', x === b)); };
+  $('msend').onclick = async () => {
+    if (!$('mb').value.trim()) return msg($('mm'), 'e', 'اكتبي رسالتكِ.');
+    busy($('msend'), true);
+    const r = await rpc('api_msg_send', {p_slug: SLUG, p_code: code, p_student: SID(), p_kind: kind, p_body: $('mb').value.trim()});
+    busy($('msend'), false);
+    if (r.error) return msg($('mm'), 'e', esc(r.error));
+    $('mb').value = ''; msg($('mm'), 'o', 'وصلت رسالتكِ للمعلمة ✓ سيظهر ردها هنا.'); mylist(code);
+  };
+  mycm(code); mylist(code);
+}
+async function mylist(code) {
+  const r = await rpc('api_msgs', {p_slug: SLUG, p_code: code, p_student: SID()});
+  if (!Array.isArray(r) || !$('ml')) return;
+  $('ml').innerHTML = r.map(m => `<div class="mod" style="display:block;margin-top:8px"><small style="color:var(--on-sv)">${m.kind === 'grade' ? 'سؤال عن الدرجة' : 'تعليق'} · ${dayName(m.at)} ${hijri(m.at)}</small><div>${esc(m.body)}</div>
+      ${m.reply ? `<div class="note" style="margin:6px 0 0"><b>رد المعلمة</b>${esc(m.reply)}</div>` : '<small style="color:var(--on-sv)">⏳ بانتظار رد المعلمة</small>'}</div>`).join('');
+}
+// نموذج مشروع جديد داخل صفحة الطالبة
+async function newForm(code, t) {
+  const r = await rpc('api_class_students', {p_slug: SLUG, p_class: P.classes.find(c => c.name === t.class).id});
+  const others = Array.isArray(r) ? r.filter(s => s.id !== SID() && !s.taken) : [];
+  $('tbody').innerHTML = `<h3>مشروع جديد</h3>
+    <div class="row"><div><label class="f">اسم الفريق</label><input class="in" id="nn" maxlength="40"></div><div><label class="f">اسم المتجر</label><input class="in" id="ns" maxlength="40"></div></div>
+    ${P.max_team_size > 1 ? `<label class="f">زميلتكِ <small style="color:var(--on-sv)">(اختياري)</small></label><select class="in" id="np"><option value="">بدون — مشروع فردي</option>${others.map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select>` : ''}
+    <div id="nm"></div>
+    <div style="display:flex;gap:8px"><button class="btn" id="nsave" style="flex:1">إضافة المشروع</button><button class="btn ghost" id="nx" style="flex:0 0 auto">رجوع</button></div>`;
+  $('nx').onclick = () => tview(code);
+  $('nsave').onclick = async () => {
+    if (!$('nn').value.trim() || !$('ns').value.trim()) return msg($('nm'), 'e', 'اكتبي اسم الفريق واسم المتجر.');
+    busy($('nsave'), true);
+    const a = await rpc('api_team_add', {p_slug: SLUG, p_code: code, p_student: SID(), p_team_name: $('nn').value.trim(), p_store_name: $('ns').value.trim(), p_partner: $('np') && $('np').value ? +$('np').value : null});
+    busy($('nsave'), false);
+    if (a.error) return msg($('nm'), 'e', esc(a.error));
+    tview(a.code);
+  };
 }
 
 // ---------- لوحة المتاجر ----------
@@ -535,7 +704,7 @@ let BT = null, bfil = 0, RATED = null;
 async function board() {
   if (!BT) {
     $('bc').innerHTML = '<div class="empty">جارٍ التحميل…</div>';
-    const r = await rpc('api_board', {p_slug: SLUG});
+    const [r] = await Promise.all([rpc('api_board', {p_slug: SLUG}), loadImgs(true)]);
     if (r.error) return msg($('bc'), 'e', esc(r.error));
     BT = r; setTimeout(() => BT = null, 60000);
     RATED = null;
@@ -550,16 +719,17 @@ async function board() {
     const rk = t.rank ? `<span class="rank ${t.rank == 1 ? 'g' : t.rank == 2 ? 's' : ''}">${ar(t.rank)}</span>` : '';
     const mine = RATED && RATED.id === t.id, done = RATED && RATED.list.includes(t.id);
     return `<div class="sc">${rk}${g == null ? '' : `<div class="ring" style="background:conic-gradient(var(--primary) ${pct}%,var(--sc-top) 0)"><span>${ar(g)}<small>/${ar(P.max_grade)}</small></span></div>`}
-      <div class="hd">${logo(t.store_name || t.name, i)}<div><b>${esc(t.store_name || t.name)}</b><small>${esc(t.name)} · ${esc(t.class)}</small></div></div>
+      <div class="hd">${logo(t.store_name || t.name, i, t.id)}<div><b>${esc(t.store_name || t.name)}</b><small>${esc(t.name)} · ${esc(t.class)}</small></div></div>
+      ${cover(t.id)}
       <span class="lv ${lc}">${ln}</span>
       ${t.peer_count ? `<div class="peer"><span>الزميلات</span><span class="stars">${stars(Math.round(t.peer_avg), 5)} ${ar(t.peer_avg)}</span></div>` : ''}
       ${(t.comments || []).map(c => `<div class="cm">«${esc(c)}»</div>`).join(' ')}
       <a class="visit" href="${esc(t.store_url)}" target="_blank" rel="noopener">زيارة المتجر ↗</a>
       ${mine ? '<div class="rate" style="color:var(--on-sv)">هذا متجر فريقكِ</div>'
         : done ? '<div class="rate" style="color:var(--ok)">✓ قيّمتنّ هذا المتجر</div>'
+        : !RATED ? '<div class="rate">لتقييم هذا المتجر والتعليق عليه ادخلي <a href="#" onclick="go(&quot;team&quot;);return false" style="color:var(--primary)">«صفحة فريقنا»</a> أولًا</div>'
         : `<div class="rate" data-t="${t.id}">قيّمي هذا المتجر:<div class="big-stars">${[1, 2, 3, 4, 5].map(n => `<button data-n="${n}">★</button>`).join('')}</div>
-            ${RATED ? '' : '<input class="in rc" dir="ltr" placeholder="رمز فريقكِ" style="margin-bottom:6px">'}
-            <input class="in rm" maxlength="500" placeholder="تعليق (اختياري) — يظهر بعد موافقة المعلمة"><div class="rmsg"></div><button class="btn sm rgo" style="margin-top:6px">إرسال</button></div>`}
+            <input class="in rm" maxlength="500" placeholder="تعليق (اختياري)"><small style="display:block;color:var(--on-sv);margin:4px 0">التقييم والتعليق يظهران بعد مراجعة المعلمة</small><div class="rmsg"></div><button class="btn sm rgo" style="margin-top:6px">إرسال</button></div>`}
     </div>`;
   }).join('') : '<div class="empty">لا توجد متاجر بعد</div>';
 }
@@ -568,14 +738,15 @@ $('bc').onclick = async e => {
   const s = e.target.closest('[data-n]');
   if (s) { box.dataset.s = s.dataset.n; box.querySelectorAll('[data-n]').forEach(b => b.classList.toggle('on', +b.dataset.n <= +s.dataset.n)); return; }
   if (!e.target.classList.contains('rgo')) return;
-  const code = RATED ? ss.get('code') : en(box.querySelector('.rc').value), out = box.querySelector('.rmsg');
+  const code = ss.get('code'), out = box.querySelector('.rmsg');
   if (!box.dataset.s) return msg(out, 'e', 'اختاري عدد النجوم.');
-  if (!code) return msg(out, 'e', 'اكتبي رمز فريقكِ.');
+  if (!code) return msg(out, 'e', 'ادخلي «صفحة فريقنا» أولًا.');
   e.target.disabled = true;
   const r = await rpc('api_peer_rate', {p_slug: SLUG, p_code: code, p_target: +box.dataset.t, p_stars: +box.dataset.s, p_comment: box.querySelector('.rm').value.trim()});
   e.target.disabled = false;
   if (r.error) return msg(out, 'e', esc(r.error));
-  ss.set('code', code); BT = null; board();
+  BT = null; await board();
+  alert('تم إرسال تقييمكِ ✓ يظهر بعد مراجعة المعلمة.');
 };
 
 // ---------- صفحة المعلمة ----------
@@ -591,7 +762,7 @@ $('tpin').onkeydown = e => { if (e.key === 'Enter') $('tlgo').onclick(); };
 $('tout').onclick = () => { ss.set('ttok', null); $('tmain').hidden = true; $('tlogin').hidden = false; };
 const tcall = (fn, a = {}) => rpc(fn, Object.assign({p_token: ss.get('ttok')}, a));
 async function tload() {
-  const r = await tcall('api_t_overview', {p_slug: SLUG});
+  const [r] = await Promise.all([tcall('api_t_overview', {p_slug: SLUG}), loadImgs(true)]);
   if (r.error) { ss.set('ttok', null); $('tmain').hidden = true; $('tlogin').hidden = false; return msg($('tlmsg'), 'e', esc(r.error)); }
   TD = r; $('tlogin').hidden = true; $('tmain').hidden = false;
   const T = TD.teams;
@@ -600,11 +771,36 @@ async function tload() {
   $('tf').innerHTML = [{id: 0, name: 'كل الفصول'}, ...P.classes].map(c => `<button class="${c.id === tfil ? 'on' : ''}" data-f="${c.id}">${esc(c.name)}</button>`).join('');
   $('tf').onclick = e => { const b = e.target.closest('[data-f]'); if (b) { tfil = +b.dataset.f; tload(); } };
   table();
-  $('tmod').innerHTML = TD.pending_comments.length ? TD.pending_comments.map(c => `<div class="mod"><span>«${esc(c.comment)}» <small style="color:var(--on-sv)">← ${esc(c.to)} ${'★'.repeat(c.stars)} · من ${esc(c.from)}</small></span>
-      <span class="acts"><button class="btn sm" data-m="${c.id}" data-st="approved">إظهار</button><button class="btn sm ghost" data-m="${c.id}" data-st="hidden">إخفاء</button></span></div>`).join('') : '<div class="sub">لا توجد تعليقات جديدة</div>';
+  $('tmall').hidden = !TD.pending_comments.length;
+  $('tmod').innerHTML = TD.pending_comments.length ? TD.pending_comments.map(c => `<div class="mod"><span>${c.comment ? '«' + esc(c.comment) + '»' : '<i style="color:var(--on-sv)">بلا تعليق</i>'} <small style="color:var(--on-sv)">← ${esc(c.to)} ${'★'.repeat(c.stars)} · من ${esc(c.from)}</small></span>
+      <span class="acts"><button class="btn sm" data-m="${c.id}" data-st="approved">نشر</button><button class="btn sm ghost" data-m="${c.id}" data-st="delete">حذف</button></span></div>`).join('') : '<div class="sub">لا توجد تقييمات جديدة</div>';
   $('tun').innerHTML = TD.unregistered.length ? TD.unregistered.map(s => `<span class="chip" style="cursor:default">${esc(s.name)} · ${esc(s.class)}</span>`).join('') : '<div class="sub">سجّلت كل الطالبات ✓</div>';
-  edit();
+  edit(); tmsgs();
 }
+// رسائل الطالبات الخاصة: رد + إغلاق
+async function tmsgs() {
+  const r = await tcall('api_t_msgs', {p_slug: SLUG});
+  if (!Array.isArray(r)) return msg($('tmsg'), 'e', esc(r.error || 'تعذّر تحميل الرسائل'));
+  const open = r.filter(m => !m.reply && !m.done).length;
+  $('tstats').insertAdjacentHTML('beforeend', `<div class="stat"><b>${ar(open)}</b><small>رسائل بانتظار ردكِ</small></div>`);
+  $('tmsg').innerHTML = r.length ? r.map(m => `<div class="mod" style="display:block${m.reply || m.done ? ';opacity:.7' : ''}" data-mid="${m.id}">
+      <small style="color:var(--on-sv)">${m.kind === 'grade' ? '❓ سؤال عن الدرجة' : '💬 تعليق'} · <b>${esc(m.student)}</b> · ${esc(m.class)} · ${esc(m.store || m.team)} · ${dayName(m.at)} ${hijri(m.at)}</small>
+      <div style="margin:4px 0">${esc(m.body)}</div>
+      ${m.reply ? `<div class="note" style="margin:4px 0"><b>ردّكِ</b>${esc(m.reply)}</div>` : ''}
+      ${m.reply || m.done ? '' : `<div class="row" style="margin-top:6px"><input class="in" data-rep maxlength="1000" placeholder="اكتبي ردّكِ…" style="margin:0"><button class="btn sm" data-send style="margin:0;flex:0 0 auto">ردّ</button><button class="btn sm ghost" data-close style="margin:0;flex:0 0 auto" title="إغلاق بلا رد">تمّ</button></div>`}
+    </div>`).join('') : '<div class="sub">لا توجد رسائل بعد</div>';
+}
+$('tmsg').onclick = async e => {
+  const box = e.target.closest('[data-mid]'); if (!box) return;
+  const send = e.target.hasAttribute('data-send'), close = e.target.hasAttribute('data-close');
+  if (!send && !close) return;
+  const rep = box.querySelector('[data-rep]').value.trim();
+  if (send && !rep) return box.querySelector('[data-rep]').focus();
+  e.target.disabled = true;
+  const r = await tcall('api_t_msg_reply', {p_id: +box.dataset.mid, p_reply: send ? rep : '', p_done: true});
+  if (r.error) { e.target.disabled = false; return alert(r.error); }
+  tload();
+};
 function table() {
   const cname = tfil && P.classes.find(c => c.id === tfil).name;
   const T = TD.teams.filter(t => !tfil || t.class === cname), crit = [...CR(), BONUS()].filter(Boolean);
@@ -612,7 +808,8 @@ function table() {
   $('tt').innerHTML = `<tr><th>الفريق</th><th>الرمز</th><th>المتجر</th>${crit.map(c => `<th title="${esc(c.title)}">${c.bonus ? '✨ ' : ''}${esc(c.title.length > 14 ? c.group : c.title)} /${ar(c.max)}</th>`).join('')}<th>المجموع</th><th>ملاحظة</th><th>نشر</th><th></th></tr>` +
     (T.length ? T.map(t => `<tr data-id="${t.id}"><td><b>${esc(t.name)}</b><br><small>${esc(t.class)} · ${(t.members || []).map(esc).join('، ')}</small></td>
       <td><code>${ar(t.code)}</code></td>
-      <td>${url(t.store_url) ? `<a href="${esc(t.store_url)}" target="_blank" rel="noopener" style="color:var(--primary)">${esc(t.store_name || 'فتح')} ↗</a>` : '<small style="color:var(--warn)">لم يُسلَّم</small>'}</td>
+      <td>${url(t.store_url) ? `<a href="${esc(t.store_url)}" target="_blank" rel="noopener" style="color:var(--primary)">${esc(t.store_name || 'فتح')} ↗</a>` : '<small style="color:var(--warn)">لم يُسلَّم</small>'}
+        <div style="margin-top:4px;white-space:nowrap">${['logo', 'cover'].map(k => img(t.id, k) ? `<img class="tthumb ${k === 'cover' ? 'c' : ''}" src="${img(t.id, k)}" data-zoom title="${k === 'logo' ? 'الشعار' : 'صورة المتجر'}"><button class="chip" data-imgdel="${k}" title="حذف ${k === 'logo' ? 'الشعار' : 'صورة المتجر'}" style="padding:0 6px">×</button>` : '').join(' ') || '<small style="color:var(--on-sv)">بلا صور</small>'}</div></td>
       ${crit.map(c => `<td><select data-c="${c.id}">${opt(t.scores[c.id], c.max)}</select></td>`).join('')}
       <td class="tot">${t.grade != null && Object.keys(t.scores).length ? ar(+t.grade) : '—'}</td>
       <td><input type="text" data-note maxlength="300" value="${esc(t.note)}" placeholder="ملاحظة للفريق"></td>
@@ -669,6 +866,13 @@ $('tpgo').onclick = async () => {
   msg($('tpm'), 'o', 'تم تغيير الرقم السري ✓ استخدميه في الدخول القادم.');
 };
 $('tt').onclick = async e => {
+  const k = e.target.dataset.imgdel;
+  if (k) {
+    if (!confirm(`حذف ${k === 'logo' ? 'الشعار' : 'صورة المتجر'} لهذا الفريق؟`)) return;
+    const r = await tcall('api_t_team_image_clear', {p_team: +e.target.closest('tr[data-id]').dataset.id, p_kind: k});
+    if (r.error) return alert(r.error);
+    BT = null; return tload();
+  }
   if (!e.target.hasAttribute('data-del')) return;
   const tr = e.target.closest('tr[data-id]'), t = TD.teams.find(x => x.id === +tr.dataset.id);
   if (!confirm(`حذف فريق «${t.name}» نهائيًا؟ ستعود عضواته غير مسجّلات.`)) return;
@@ -678,7 +882,15 @@ $('tt').onclick = async e => {
 };
 $('tmod').onclick = async e => {
   const b = e.target.closest('[data-m]'); if (!b) return;
+  if (b.dataset.st === 'delete' && !confirm('حذف هذا التقييم نهائيًا؟')) return;
+  b.disabled = true;
   await tcall('api_t_moderate', {p_rating: +b.dataset.m, p_status: b.dataset.st}); BT = null; tload();
+};
+$('tmall').onclick = async () => {
+  if (!confirm(`نشر كل التقييمات المنتظرة (${ar(TD.pending_comments.length)})؟`)) return;
+  $('tmall').disabled = true;
+  for (const c of TD.pending_comments) await tcall('api_t_moderate', {p_rating: c.id, p_status: 'approved'});
+  $('tmall').disabled = false; BT = null; tload();
 };
 function edit() {
   $('elist').innerHTML = P.steps.map((s, i) => `<div class="stepedit"><b>${ar(i + 1)}.</b><span>${esc(s.title)}${s.video_url ? ' 🎬' : ''}${s.platforms ? ' (المنصات)' : ''}${s.due_at ? ' 📅' : ''}</span>
