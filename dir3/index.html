@@ -72,9 +72,9 @@ section{padding:40px 0}
 #shield polygon.pop{animation:pop .9s}
 #shield polygon.mine{fill:var(--gold);transition:none}
 #shield polygon.g2g{transition:none;animation:mineGreen 2.4s ease-in-out .3s both}
-@keyframes mineGreen{from{fill:var(--gold)}to{fill:#2a8f7f}}
+@keyframes mineGreen{from{fill:var(--gold)}to{fill:#006c3f}}
 #shield polygon.mine.done{fill:url(#hx)}
-#shield polygon.qz,#shield polygon.mine.done.qz{fill:#f2d98a}
+#shield polygon.qz,#shield polygon.mine.done.qz{fill:#b5d9a8}
 #shield polygon.grow{animation:mineGrow 1.2s ease-in-out 3}
 @keyframes mineGrow{0%,100%{transform:scale(1);filter:none}50%{transform:scale(1.9);filter:drop-shadow(0 0 3px rgba(43,196,125,.95))}}
 #shield{transform-origin:50% 50%}
@@ -283,7 +283,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
 .prc .av{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#e7c873);display:grid;place-items:center;flex:none}
 .prc .av svg{width:36px;height:36px;fill:#fff}
 .prc .pn{font-size:19px;font-weight:800}.prc .pr{font-size:14px;font-weight:700;color:var(--mut)}.prc .pw{margin-top:6px;line-height:1.8}
-#shield polygon.stf,#shield polygon.mine.done.stf{fill:#3cb8c9}
+#shield polygon.stf,#shield polygon.mine.done.stf{fill:#3e9b62}
 .wi.stf{background:#e8f8fa;border-color:#3cb8c9}
 .wi.stf .who i{background:linear-gradient(135deg,#3cb8c9,#1b8a9a)}
 .wi.stf .tag{background:#cdeff4;color:#0e6d7a}
@@ -326,8 +326,8 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
     <div class="shieldbox">
       <svg id="shield" viewBox="0 0 120 140">
         <defs><clipPath id="cl"><path id="shp" d="M60 6 L110 24 V66 C110 100 88 122 60 134 C32 122 10 100 10 66 V24 Z"/></clipPath>
-        <linearGradient id="gs" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#2f9a78"/><stop offset="1" stop-color="#2a7f9e"/></linearGradient>
-        <linearGradient id="hx" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#2f9a78"/><stop offset="1" stop-color="#2a7f9e"/></linearGradient></defs>
+        <linearGradient id="gs" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#006c3f"/><stop offset="1" stop-color="#005c35"/></linearGradient>
+        <linearGradient id="hx" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#006c3f"/><stop offset="1" stop-color="#005c35"/></linearGradient></defs>
         <path d="M60 6 L110 24 V66 C110 100 88 122 60 134 C32 122 10 100 10 66 V24 Z" fill="#f4faf8"/>
         <g clip-path="url(#cl)" id="hexes"></g>
         <path d="M60 6 L110 24 V66 C110 100 88 122 60 134 C32 122 10 100 10 66 V24 Z" fill="none" stroke="url(#gs)" stroke-width="3.5"/>
@@ -352,7 +352,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
   <!-- JOIN -->
   <section class="page" id="pg-join" data-t="شاركي">
     <div class="head"><span class="chip">شاركي</span><div class="ttl">اكتبي اسمك… واختاري طريقة مشاركتك</div><div class="sub">يظهر اسمك مع مشاركتك في حائط الدرع</div></div>
-    <div class="card" id="joinDone" style="max-width:760px;margin:auto;text-align:center;display:none"><svg width="64" height="74" viewBox="0 0 120 140" aria-hidden="true"><defs><linearGradient id="gjd" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#2f9a78"/><stop offset="1" stop-color="#2a7f9e"/></linearGradient></defs><path d="M60 6 L110 24 V66 C110 100 88 122 60 134 C32 122 10 100 10 66 V24 Z" fill="url(#gjd)"/><path d="M60 40l8 17 18 2-13.5 12.5 3.5 18L60 80.5 44 89.5l3.5-18L34 59l18-2z" fill="#fff"/></svg><div class="ttl grad" style="margin-top:10px">شاركتِ في الدرع، شكرًا لكِ</div><div class="sub" id="jdTxt" style="margin-top:6px"></div><div class="sub" style="margin-top:4px">لكل طالبة مشاركة واحدة في الدرع</div>
+    <div class="card" id="joinDone" style="max-width:760px;margin:auto;text-align:center;display:none"><svg width="64" height="74" viewBox="0 0 120 140" aria-hidden="true"><defs><linearGradient id="gjd" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#006c3f"/><stop offset="1" stop-color="#005c35"/></linearGradient></defs><path d="M60 6 L110 24 V66 C110 100 88 122 60 134 C32 122 10 100 10 66 V24 Z" fill="url(#gjd)"/><path d="M60 40l8 17 18 2-13.5 12.5 3.5 18L60 80.5 44 89.5l3.5-18L34 59l18-2z" fill="#fff"/></svg><div class="ttl grad" style="margin-top:10px">شاركتِ في الدرع، شكرًا لكِ</div><div class="sub" id="jdTxt" style="margin-top:6px"></div><div class="sub" style="margin-top:4px">لكل طالبة مشاركة واحدة في الدرع</div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px"><button class="btn" id="jdQuiz" type="button">🎯 حلّي الاستبانة = نقطتين في الدرع</button><button class="btn ghost" id="jdBadge" type="button">عرض وسامي</button></div></div>
     <div class="card" id="joinCard" style="max-width:760px;margin:auto">
       <div class="sub" style="text-align:center;margin:0 0 10px">معلمة أو من إدارة المدرسة؟ <a href="#staff">صفحتكن الخاصة من هنا</a></div>
@@ -451,7 +451,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 0 40px}
 </main>
 
 <div class="modal" id="badge"><div class="box">
-  <svg width="110" height="128" viewBox="0 0 120 140"><defs><linearGradient id="gb" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#2f9a78"/><stop offset="1" stop-color="#2a7f9e"/></linearGradient></defs><path d="M60 6 L110 24 V66 C110 100 88 122 60 134 C32 122 10 100 10 66 V24 Z" fill="url(#gb)"/><path d="M60 40l8 17 18 2-13.5 12.5 3.5 18L60 80.5 44 89.5l3.5-18L34 59l18-2z" fill="#fff"/></svg>
+  <svg width="110" height="128" viewBox="0 0 120 140"><defs><linearGradient id="gb" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#006c3f"/><stop offset="1" stop-color="#005c35"/></linearGradient></defs><path d="M60 6 L110 24 V66 C110 100 88 122 60 134 C32 122 10 100 10 66 V24 Z" fill="url(#gb)"/><path d="M60 40l8 17 18 2-13.5 12.5 3.5 18L60 80.5 44 89.5l3.5-18L34 59l18-2z" fill="#fff"/></svg>
   <h3 class="grad">وسام حارسة الدرع</h3>
   <p>شكرًا <b id="bName"></b>! أضفتِ قطعتك <span id="bCol">الذهبية</span> في درع الوطن</p>
   <div class="num grad" id="bNum"></div>
@@ -526,7 +526,7 @@ const cells=[];
 (function(){const g=$('#hexes');const r=3.25,dx=r*1.74,dy=r*1.5;const all=[];
  for(let row=0;row<38;row++)for(let c=0;c<27;c++){const cx=4+c*dx+(row%2?dx/2:0),cy=8+row*dy;if(cy>134||cx>118)continue;
   const pts=[...Array(6)].map((_,j)=>{const a=Math.PI/3*j+Math.PI/6;return (cx+r*.88*Math.cos(a)).toFixed(2)+','+(cy+r*.88*Math.sin(a)).toFixed(2)}).join(' ');
-  const p=document.createElementNS('http://www.w3.org/2000/svg','polygon');p.setAttribute('points',pts);p.setAttribute('fill','#dcefe8');p.style.transformOrigin=cx+'px '+cy+'px';g.appendChild(p);
+  const p=document.createElementNS('http://www.w3.org/2000/svg','polygon');p.setAttribute('points',pts);p.setAttribute('fill','#e6f2ea');p.style.transformOrigin=cx+'px '+cy+'px';g.appendChild(p);
   const inside=cy>10&&cy<128&&Math.abs(cx-60)<(cy<66?46:46*(1-Math.pow((cy-66)/64,1.6)));
   all.push({p,inside,d:Math.hypot(cx-60,(cy-66)*.9)})}
  const ins=all.filter(a=>a.inside).sort((a,b)=>a.d-b.d).slice(0,GOAL);
