@@ -3,7 +3,7 @@
 const SB = 'https://uautjfgslrfhceciqwyn.supabase.co/rest/v1/rpc/';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhdXRqZmdzbHJmaGNlY2lxd3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNjI3NzMsImV4cCI6MjEwODgzODc3M30.Dj1dYWNMwhp02hJEko8XnDD23Mi-gK-Q82BkICdrj_Q'; // مفتاح عام: الجداول مقفلة، والوصول عبر الدوال فقط
 const SLUG = 'store-1448'; // نفس طالبات ثالث في صفحة مشاريع المتاجر (للربط لاحقًا)
-const TEACHER = location.hash === '#teacher';
+const TEACHER = location.hash === '#teacher' || location.hash === '#students';
 const STORE = 'pylab-g3-v1';
 const MASTER = 0.8;
 
@@ -213,7 +213,7 @@ function mcq(host, q, { key, ctx, pts = 10, retry = 5, onDone, mono, noShuffle }
   if (prev) { fin(true); onDone && onDone(true, true); return el; }
   $$('.opt', el).forEach(b => b.onclick = () => {
     const i = +b.dataset.i;
-    if (i === q.a) { beep(1); const s = tries ? retry : pts; if (key) ctx.rec(key, s, { tries }); b.classList.add('ok'); fin(true); onDone && onDone(true); }
+    if (i === q.a) { beep(1); const s = tries ? retry : pts; if (key) ctx.rec(key, s, { tries }); b.classList.add('ok'); fin(true); onDone && onDone(true, false, tries); }
     else { beep(0); tries++; b.classList.add('no'); b.disabled = true; $('.fbw', el).innerHTML = `<div class="fb no">ليست هذه. ${q.hint || 'فكّري مرة أخرى وجرّبي إجابة ثانية.'}</div>`; }
   });
   return el;
@@ -290,7 +290,7 @@ R.traffic = ({ a, body, rec, got }) => {
     const row = $('#s' + i, body), tries = { n: 0 };
     const fin = () => { $$('.lt', row).forEach(b => { b.disabled = true; if (b.dataset.c === x.a) b.classList.add('on', 'right'); }); $('.fbw', row).innerHTML = `<div class="fb ${x.a === 'g' ? 'ok' : 'info'}">✍ ${rich(x.fix)}</div>`; };
     if (got('s' + i)) return fin();
-    $$('.lt', row).forEach(b => b.onclick = () => { if (b.dataset.c === x.a) { beep(1); rec('s' + i, tries.n ? 5 : 10); fin(); } else { beep(0); tries.n++; b.disabled = true; b.classList.add('on'); $('.fbw', row).innerHTML = '<div class="fb no">ليس هذا اللون. اقرئي العبارة مرة أخرى بدقة.</div>'; } });
+    $$('.lt', row).forEach(b => b.onclick = () => { if (b.dataset.c === x.a) { beep(1); rec('s' + i, tries.n ? 5 : 10, { tries: tries.n }); fin(); } else { beep(0); tries.n++; b.disabled = true; b.classList.add('on'); $('.fbw', row).innerHTML = '<div class="fb no">ليس هذا اللون. اقرئي العبارة مرة أخرى بدقة.</div>'; } });
   });
   a.opinion.forEach((x, i) => {
     const row = $('#o' + i, body), inp = $('input', row); let col = null; const g = got('o' + i);
@@ -303,7 +303,7 @@ R.traffic = ({ a, body, rec, got }) => {
     const row = $('#m' + i, body), tries = { n: 0 };
     const fin = () => { $$('.gest button', row).forEach(b => { b.disabled = true; if (b.dataset.c === x.a) b.classList.add('ok'); }); $('.fbw', row).innerHTML = `<div class="fb ok">${rich(x.why)}</div>`; };
     if (got('m' + i)) return fin();
-    $$('.gest button', row).forEach(b => b.onclick = () => { if (b.dataset.c === x.a) { beep(1); rec('m' + i, tries.n ? 5 : 10); fin(); } else { beep(0); tries.n++; b.classList.add('no'); b.disabled = true; } });
+    $$('.gest button', row).forEach(b => b.onclick = () => { if (b.dataset.c === x.a) { beep(1); rec('m' + i, tries.n ? 5 : 10, { tries: tries.n }); fin(); } else { beep(0); tries.n++; b.classList.add('no'); b.disabled = true; } });
   });
 };
 
@@ -316,7 +316,7 @@ R.tpr = ({ a, body, rec, got }) => {
       body.appendChild(row); const tries = { n: 0 };
       const fin = () => { $$('button', row).forEach(b => { b.disabled = true; if (b.dataset.c === x.a) b.classList.add('ok'); }); $('.fbw', row).innerHTML = `<div class="fb info">${rich(x.why)}</div>`; };
       if (got('t' + i)) return fin();
-      $$('button', row).forEach(b => b.onclick = () => { if (b.dataset.c === x.a) { beep(1); rec('t' + i, tries.n ? 5 : 10); fin(); } else { beep(0); tries.n++; b.classList.add('no'); b.disabled = true; $('.fbw', row).innerHTML = '<div class="fb no">فكّري مرة أخرى… ما الدليل من الدرس؟</div>'; } });
+      $$('button', row).forEach(b => b.onclick = () => { if (b.dataset.c === x.a) { beep(1); rec('t' + i, tries.n ? 5 : 10, { tries: tries.n }); fin(); } else { beep(0); tries.n++; b.classList.add('no'); b.disabled = true; $('.fbw', row).innerHTML = '<div class="fb no">فكّري مرة أخرى… ما الدليل من الدرس؟</div>'; } });
     });
   }
   if (a.conf) {
@@ -405,11 +405,11 @@ R.mission = ({ a, body, rec, got }) => {
   const openM = i => {
     const m = a.missions[i]; const md = h(`<div class="modal"><div class="card"><div class="row" style="justify-content:space-between"><span class="mode">${m.type}</span><button class="btn ghost" style="padding:4px 12px">✕</button></div><h2 class="h2" style="margin-top:8px">المهمة ${ar(i + 1)}: ${m.ar}</h2><div id="mb"></div></div></div>`);
     document.body.appendChild(md); const close = () => { md.remove(); paint(); }; $('.btn', md).onclick = close; md.onclick = e => { if (e.target === md) close(); };
-    const mb = $('#mb', md), win = (s) => { if (rec('m' + i, s)) { toast(`🔓 حصلتِ على الحرف ${m.r}`); } mb.appendChild(h(`<div class="fb ok" style="text-align:center;font-size:18px">الحرف السري: <b class="mono" style="font-size:28px">${m.r}</b> <button class="btn" style="margin-right:10px">رجوع للوحة</button></div>`)); $('.fb.ok:last-child .btn', mb).onclick = close; };
+    const mb = $('#mb', md), win = (s, tr) => { if (rec('m' + i, s, { tries: tr || 0 })) { toast(`🔓 حصلتِ على الحرف ${m.r}`); } mb.appendChild(h(`<div class="fb ok" style="text-align:center;font-size:18px">الحرف السري: <b class="mono" style="font-size:28px">${m.r}</b> <button class="btn" style="margin-right:10px">رجوع للوحة</button></div>`)); $('.fb.ok:last-child .btn', mb).onclick = close; };
     if (got('m' + i)) { mb.innerHTML = `<div class="fb ok">أنجزتِ هذه المهمة، والحرف هو <b class="mono">${m.r}</b>.</div>`; return; }
-    if (m.kind === 'order') { mb.appendChild(h(`<p>${rich(m.q)}</p>`)); orderTask(mb, m.lines, t => win(t ? 5 : 10)); }
-    else if (m.kind === 'match') { mb.appendChild(h(`<p>${rich(m.q)}</p>`)); matchTask(mb, m.pairs, w => win(w > 1 ? 5 : 10), 'l'); }
-    else mcq(mb, m, { onDone: () => win(10), mono: m.mono });
+    if (m.kind === 'order') { mb.appendChild(h(`<p>${rich(m.q)}</p>`)); orderTask(mb, m.lines, t => win(t ? 5 : 10, t)); }
+    else if (m.kind === 'match') { mb.appendChild(h(`<p>${rich(m.q)}</p>`)); matchTask(mb, m.pairs, w => win(w > 1 ? 5 : 10, w), 'l'); }
+    else mcq(mb, m, { onDone: (ok, old, tr) => win(tr ? 5 : 10, tr), mono: m.mono });
   };
   paint();
 };
@@ -498,7 +498,7 @@ function exCoords({ a, body, rec, got }) {
   c.onmousemove = e => { const [X, Y] = pos(e); $('#pos', body).textContent = `x=${X}, y=${Y}`; };
   c.onclick = e => { const i = cur(); if (i < 0) return; const [X, Y] = pos(e); const t = a.targets[i]; const d = Math.hypot(X - t[0], Y - t[1]);
     $('#pos', body).textContent = `x=${X}, y=${Y}`;
-    if (d <= 22) { beep(1); rec('t' + i, tries ? 2 : 5); tries = 0; $('#fb', body).innerHTML = '<div class="fb ok">✔ إصابة دقيقة!</div>'; draw(); task(); }
+    if (d <= 22) { beep(1); rec('t' + i, tries ? 2 : 5, { tries }); tries = 0; $('#fb', body).innerHTML = '<div class="fb ok">✔ إصابة دقيقة!</div>'; draw(); task(); }
     else { beep(0); tries++; $('#fb', body).innerHTML = `<div class="fb no">ضغطتِ عند (${X}, ${Y}). ${Math.abs(Y - t[1]) > 22 ? (Y > t[1] ? 'اصعدي للأعلى (y أصغر).' : 'انزلي للأسفل (y أكبر).') : (X > t[0] ? 'اتجهي يسارًا (x أصغر).' : 'اتجهي يمينًا (x أكبر).')}</div>`; draw([X, Y]); } };
   draw(); task();
 }
@@ -510,7 +510,7 @@ function exGrid({ a, body, rec, got }) {
   let tries = 0;
   $$('.c', body).forEach(b => b.onclick = () => { const i = cur(); if (i < 0) return; const t = a.targets[i];
     $$('.c', body).forEach(x => x.classList.remove('hit', 'bad'));
-    if (+b.dataset.i === t[0] && +b.dataset.j === t[1]) { beep(1); b.classList.add('hit'); rec('t' + i, tries ? 2 : 5); tries = 0; $('#fb', body).innerHTML = `<div class="fb ok">✔ list[${t[0]}][${t[1]}] = ${esc(String(lit(D[t[0]][t[1]])))}</div>`; task(); }
+    if (+b.dataset.i === t[0] && +b.dataset.j === t[1]) { beep(1); b.classList.add('hit'); rec('t' + i, tries ? 2 : 5, { tries }); tries = 0; $('#fb', body).innerHTML = `<div class="fb ok">✔ list[${t[0]}][${t[1]}] = ${esc(String(lit(D[t[0]][t[1]])))}</div>`; task(); }
     else { beep(0); tries++; b.classList.add('bad'); $('#fb', body).innerHTML = `<div class="fb no">هذا list[${b.dataset.i}][${b.dataset.j}]. ${+b.dataset.i !== t[0] ? 'غيّري الصف أولًا.' : 'الصف صحيح، غيّري موقع العنصر.'}</div>`; } });
   task();
 }
@@ -583,7 +583,7 @@ function countdown(sec) {
 try { const th = localStorage.getItem('pylab-theme'); if (th) document.documentElement.dataset.theme = th; } catch (e) {}
 if (S.user && !S.user.sid) S.user = null; // دخول قديم باسم مكتوب: تعيد الاختيار من القائمة
 if (S.user && !TEACHER) sync(true);
-go(TEACHER ? 'teach' : S.user ? 'map' : 'login');
+go(TEACHER ? (location.hash === '#students' ? 'students' : 'teach') : S.user ? 'map' : 'login');
 
 /* ---------- صفحة «الطالبات» للمعلمة ---------- */
 let TL = null;
@@ -598,6 +598,7 @@ async function vStudents() {
   let rows;
   try { rows = await rpc('api_t_lab', { p_token: tok, p_lab: LAB, p_slug: SLUG }); }
   catch (e) { try { sessionStorage.removeItem('ttok'); } catch (x) {} return vStudents(); }
+  TROWS = rows; TDATA = null;
   const classes = [...new Set(rows.map(r => r.class))];
   TL = TL && classes.includes(TL) ? TL : 'all';
   const core = LESSONS.filter(L => !L.exam && !L.project);
@@ -608,9 +609,9 @@ async function vStudents() {
     const inn = list.filter(r => r.last_at), mast = list.filter(r => r.pct && core.every(L => (r.pct[L.id] || 0) >= MASTER));
     $('#tbl').innerHTML = `<div class="teams" style="margin:0 0 14px"><div class="team"><div class="mute">دخلن المعمل</div><div class="s">${ar(inn.length)} / ${ar(list.length)}</div></div><div class="team"><div class="mute">لم يدخلن</div><div class="s">${ar(list.length - inn.length)}</div></div><div class="team"><div class="mute">أتقنّ الوحدة</div><div class="s">${ar(mast.length)}</div></div><div class="team"><div class="mute">متوسط النقاط</div><div class="s">${ar(inn.length ? Math.round(inn.reduce((x, r) => x + r.score, 0) / inn.length) : 0)}</div></div></div>
     <div style="overflow-x:auto"><table class="skills" style="min-width:900px"><tr><th>الطالبة</th><th>الفصل</th><th>آخر دخول</th><th>مرات</th><th>النقاط</th>${LESSONS.map(L => `<th style="text-align:center;font-size:12px">${L.project ? 'المشروع' : L.exam ? 'الاختبار' : 'م' + ar(L.n)}</th>`).join('')}</tr>
-    ${list.map(r => `<tr style="${r.last_at ? '' : 'opacity:.55'}"><td>${esc(r.name)}</td><td>${esc(r.class)}</td><td style="font-size:13px">${r.last_at ? fmt(r.last_at) : '<span class="badge wait">لم تدخل</span>'}</td><td>${ar(r.visits || 0)}</td><td><b>${ar(r.score || 0)}</b></td>${LESSONS.map(L => cell(r.pct && r.pct[L.id])).join('')}</tr>`).join('')}</table></div>`;
+    ${list.map(r => `<tr style="${r.last_at ? '' : 'opacity:.55'}"><td>${r.last_at ? `<a href="#" onclick="showStu(${r.id});return false" style="color:var(--plum);font-weight:700">${esc(r.name)}</a>` : esc(r.name)}</td><td>${esc(r.class)}</td><td style="font-size:13px">${r.last_at ? fmt(r.last_at) : '<span class="badge wait">لم تدخل</span>'}</td><td>${ar(r.visits || 0)}</td><td><b>${ar(r.score || 0)}</b></td>${LESSONS.map(L => cell(r.pct && r.pct[L.id])).join('')}</tr>`).join('')}</table></div>`;
   };
-  main().innerHTML = `<div class="row" style="justify-content:space-between"><h1 class="h1">الطالبات في المعمل 👩‍🎓</h1><div class="row"><select class="in" id="cf" style="width:auto"><option value="all">كل الفصول</option>${classes.map(c => `<option>${esc(c)}</option>`).join('')}</select><button class="btn ghost" id="rf">↻ تحديث</button><button class="btn ghost" id="ex">⬇ Excel</button></div></div><p class="mute" style="margin-top:0">م١…م٦ = نسبة الإتقان في كل محطة. الأخضر = متقنة (٨٠٪ فأكثر).</p><div id="tbl"></div>`;
+  main().innerHTML = `<div class="row" style="justify-content:space-between"><h1 class="h1">الطالبات في المعمل 👩‍🎓</h1><div class="row"><select class="in" id="cf" style="width:auto"><option value="all">كل الفصول</option>${classes.map(c => `<option>${esc(c)}</option>`).join('')}</select><button class="btn plum" onclick="hardQ()">📊 أصعب الأسئلة</button><button class="btn ghost" id="rf">↻ تحديث</button><button class="btn ghost" id="ex">⬇ Excel</button></div></div><p class="mute" style="margin-top:0">اضغطي اسم الطالبة لرؤية إجاباتها: آراؤها، وثقتها، والكود، وأخطاؤها. م١…م٦ = نسبة الإتقان (الأخضر = متقنة ٨٠٪ فأكثر).</p><div id="tbl"></div>`;
   $('#cf').value = TL; $('#cf').onchange = e => { TL = e.target.value; paint(); };
   $('#rf').onclick = () => vStudents();
   $('#ex').onclick = () => {

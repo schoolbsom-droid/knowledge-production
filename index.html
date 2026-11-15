@@ -41,6 +41,16 @@
     <a class="btn" href="video-teacher.html">الدخول بالرقم السري</a>
   </div>
 
+  <div class="feature">
+    <div><h3>معمل بايثون · ثالث متوسط</h3><p id="labsum">إجابات الطالبات في المعمل الافتراضي: آراؤهن، وثقتهن، والكود، وأخطاؤهن، وأصعب الأسئلة</p></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="pylab/#students">إجابات الطالبات</a><a class="btn" href="pylab/#teacher">وضع الشرح</a></div>
+  </div>
+  <script>
+  // ملخص المعمل (أرقام فقط بلا أسماء)
+  fetch('https://uautjfgslrfhceciqwyn.supabase.co/rest/v1/rpc/api_lab_summary', { method: 'POST', headers: { apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhdXRqZmdzbHJmaGNlY2lxd3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNjI3NzMsImV4cCI6MjEwODgzODc3M30.Dj1dYWNMwhp02hJEko8XnDD23Mi-gK-Q82BkICdrj_Q', Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhdXRqZmdzbHJmaGNlY2lxd3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNjI3NzMsImV4cCI6MjEwODgzODc3M30.Dj1dYWNMwhp02hJEko8XnDD23Mi-gK-Q82BkICdrj_Q', 'Content-Type': 'application/json' }, body: JSON.stringify({ p_lab: 'pylab-g3', p_slug: 'store-1448' }) })
+    .then(r => r.json()).then(s => { const a = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]); document.getElementById('labsum').innerHTML = `دخلت <b>${a(s.entered)}</b> من ${a(s.total)} طالبة · اليوم <b>${a(s.today)}</b> · أتقنّ الوحدة <b>${a(s.mastered)}</b> · متوسط النقاط <b>${a(s.avg)}</b>`; }).catch(() => {});
+  </script>
+
   <div class="lbl">جدول الحصص</div>
   <div class="tblwrap"><table id="tt"></table></div>
 
