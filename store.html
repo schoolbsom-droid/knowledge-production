@@ -228,7 +228,7 @@ footer{text-align:center;color:var(--on-sv);font-size:12px;padding:20px}
 </style></head><body>
 <header><div class="wrap"><div class="brand">مشاريع المتجر الإلكتروني<small>ثالث متوسط · المهارات الرقمية · أ. ابتسام الشهري</small></div></div></header>
 <nav><div class="wrap">
-  <button data-p="learn" class="on">الشرح</button><button data-p="reg">سجّلي فريقك</button><button data-p="team">صفحة فريقنا</button><button data-p="board">لوحة المتاجر</button><button data-p="tch" class="tch" hidden>صفحة المعلمة</button>
+  <button data-p="reg" class="on">سجّلي فريقك</button><button data-p="learn">الشرح</button><button data-p="team">صفحة فريقنا</button><button data-p="board">لوحة المتاجر</button><button data-p="tch" class="tch" hidden>صفحة المعلمة</button>
 </div></nav>
 <main class="wrap">
 <div id="due"></div>
@@ -344,11 +344,7 @@ const SB = 'https://uautjfgslrfhceciqwyn.supabase.co/rest/v1/rpc/';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhdXRqZmdzbHJmaGNlY2lxd3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNjI3NzMsImV4cCI6MjEwODgzODc3M30.Dj1dYWNMwhp02hJEko8XnDD23Mi-gK-Q82BkICdrj_Q';   // مفتاح عام: الجداول مقفلة، والوصول عبر الدوال فقط
 const SLUG = 'store-1448';
 const TMODE = document.body.dataset.mode === 'teacher';
-const PLAT = [
-  ['سلة', 'https://salla.sa', 'uMuidzuaNcQ', 1], ['زد', 'https://zid.sa', 'bjDbnfDAp_U'],
-  ['Shopify', 'https://www.shopify.com', 'xW3LQVF7xqk'], ['Ecwid', 'https://www.ecwid.com', 'pRp-p3JUieA'],
-  ['Big Cartel', 'https://www.bigcartel.com', 'IeFhxIXg0EI'],
-];
+const MSTEPS = ['ادخلي موقع mapp.sa واضغطي «ابدأ الآن».', 'أنشئي حسابًا واختاري الباقة المجانية.', 'اكتبي اسم المتجر واختاري القالب.', 'ارفعي شعار المتجر.', 'أضيفي التصنيفات، ثم ١٠ منتجات على الأقل بصورها وأسعارها.', 'انسخي رابط المتجر وضعيه في «صفحة فريقنا».'];
 const COL = [['#534057', '#fff'], ['#ECD571', '#3D3000'], ['#FFCB7D', '#4A2E00'], ['#AC88B7', '#fff']];
 const $ = id => document.getElementById(id);
 const ar = x => String(x ?? '').replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]).replace(/\./g, '٫');
@@ -448,7 +444,7 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = () => go(b.data
   learn(); notice();
   // صفحة المعلمة ملف مستقل (store-teacher.html نسخة من هذا الملف بـ data-mode="teacher")، وتُحذف من صفحة الطالبات
   if (TMODE) { document.querySelector('nav').hidden = true; go('tch'); }
-  else { $('tch').remove(); const b = document.querySelector('nav .tch'); b.hidden = false; b.onclick = () => location.href = 'store-teacher.html'; go('learn'); }
+  else { $('tch').remove(); const b = document.querySelector('nav .tch'); b.hidden = false; b.onclick = () => location.href = 'store-teacher.html'; go('reg'); }
 })();
 
 // ---------- تنبيه المعلمة ----------
@@ -478,7 +474,7 @@ function media(l) {
   if (m) return `<div class="vframe" style="padding-top:62%"><iframe src="https://drive.google.com/file/d/${m[1]}/preview" allow="autoplay"></iframe></div>`;
   return url(l) ? `<a class="visit" style="max-width:220px" href="${esc(l)}" target="_blank" rel="noopener">فتح الملف ↗</a>` : '';
 }
-const plats = () => `<div class="plats">${PLAT.map(p => `<div class="plat"><b>${p[0]}${p[3] ? ' ⭐' : ''}</b><a href="${p[1]}" target="_blank" rel="noopener">زيارة المنصة</a><button class="pbtn" data-vid="${p[2]}">▶ فيديو الشرح</button></div>`).join('')}</div><div class="vbox"></div>`;
+const plats = () => `<div class="plat" style="margin-top:10px"><b>منصة متاجر</b><a href="https://mapp.sa/login" target="_blank" rel="noopener">فتح المنصة ↗</a><ol style="margin:8px 0 0;padding-inline-start:20px;line-height:1.9">${MSTEPS.map(x => `<li style="all:revert;list-style:arabic-indic">${x}</li>`).join('')}</ol></div>`;
 function learn() {
   $('lsteps').innerHTML = P.steps.length ? P.steps.map(s => {
     const lines = String(s.body || '').split('\n'), warn = lines.filter(x => /^تنبيه/.test(x)), body = lines.filter(x => !/^تنبيه/.test(x)).join('\n');
