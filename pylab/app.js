@@ -24,7 +24,24 @@ async function rpc(fn, body) {
 /* ---------- الحفظ ---------- */
 let S = { user: null, p: {} };
 try { S = Object.assign(S, JSON.parse(localStorage.getItem(STORE) || '{}')); } catch (e) {}
-const save = () => { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} };
+const LAB = 'pylab-g3';
+const save = () => { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} sync(); };
+let syncT = null;
+function sync(visit) {
+  if (!S.user?.sid) return;
+  clearTimeout(syncT);
+  syncT = setTimeout(() => {
+    const pct = {}; LESSONS.forEach(L => pct[L.id] = Math.round(lessonStat(L).pct * 100) / 100);
+    rpc('api_lab_save', { p_lab: LAB, p_student: S.user.sid, p_data: { p: S.p, self: S.self || {}, cele: S.cele || {} }, p_score: totalXP(), p_pct: pct, p_visit: !!visit }).catch(() => {});
+  }, visit ? 0 : 2500);
+}
+const sumP = p => Object.values(p || {}).reduce((x, L) => x + Object.values(L).reduce((y, a) => y + Object.values(a.it || {}).reduce((z, v) => z + (v.s || 0), 0), 0), 0);
+async function pullServer() {
+  try {
+    const r = await rpc('api_lab_load', { p_lab: LAB, p_student: S.user.sid });
+    if (r.data && r.data.p && sumP(r.data.p) > sumP(S.p)) { S.p = r.data.p; S.self = r.data.self || {}; S.cele = r.data.cele || {}; try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} }
+  } catch (e) {}
+}
 const P = (lid, ai) => ((S.p[lid] ||= {})[ai] ||= { it: {} });
 function rec(lid, ai, k, s, data) {
   const a = P(lid, ai); if (a.it[k]) return false;
@@ -117,7 +134,7 @@ function bar() {
   const u = S.user;
   $('#bar').innerHTML = `<div class="brand">معمل بايثون<small>المهارات الرقمية · ثالث متوسط · الوحدة الرابعة</small></div><span class="sp"></span>
   ${u ? `<span class="chip" title="${esc(u.cls)}">👩‍💻 <b>${esc(u.name.split(' ')[0])}</b></span><span class="chip xp" id="xp"></span>` : ''}
-  ${TEACHER ? `<button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('teach')">📖 الشرح</button><button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('board')">🎯 لوحة التحدي</button>` : ''}
+  ${TEACHER ? `<button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('teach')">📖 الشرح</button><button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('board')">🎯 لوحة التحدي</button><button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('students')">👩‍🎓 الطالبات</button>` : ''}
   ${u ? `<button class="iconbtn" title="الخريطة" onclick="go('map')">${icon('home')}</button>` : ''}
   <button class="iconbtn" title="الوضع الليلي" onclick="theme()">${icon('moon')}</button>
   ${u ? `<button class="iconbtn" title="خروج" onclick="logout()">${icon('out')}</button>` : ''}`;
@@ -127,7 +144,7 @@ function theme() { const r = document.documentElement, d = r.dataset.theme === '
 function logout() { if (!confirm('تسجيل الخروج؟ يبقى تقدّمكِ محفوظًا على هذا الجهاز.')) return; S.user = null; save(); go('login'); }
 
 let CUR = { view: 'login', L: null, ai: 0 };
-function go(v, L, ai = 0) { CUR = { view: v, L, ai }; bar(); window.scrollTo(0, 0); ({ login: vLogin, map: vMap, lesson: vLesson, cert: vCert, board: vBoard, teach: vTeach })[v](); }
+function go(v, L, ai = 0) { CUR = { view: v, L, ai }; bar(); window.scrollTo(0, 0); ({ login: vLogin, map: vMap, lesson: vLesson, cert: vCert, board: vBoard, teach: vTeach, students: vStudents })[v](); }
 
 /* ---------- الدخول ---------- */
 async function vLogin() {
@@ -135,27 +152,27 @@ async function vLogin() {
   <div class="card"><h1 class="h1">أهلًا بكِ في المعمل!</h1><p class="mute">معمل افتراضي تتعلمين فيه البرمجة بلغة بايثون بالتجربة: قصص مصورة، ومهمات سرية، وألغاز، وتحديات برمجة حقيقية.</p>
   <label class="f" for="lc">الفصل</label><select class="in" id="lc"><option value="">جارٍ التحميل…</option></select>
   <div id="pickwrap"><label class="f" for="ln">اسمكِ</label><select class="in" id="ln" disabled><option value="">اختاري الفصل أولًا</option></select>
-  <button class="btn ghost" style="margin-top:8px;font-size:13px;padding:4px 12px" id="typeit">اسمي غير موجود؟ اكتبيه</button></div>
-  <div id="typewrap" hidden><label class="f" for="lt">اكتبي اسمكِ الثلاثي</label><input class="in" id="lt" placeholder="مثال: نورة محمد القحطاني" maxlength="60"></div>
+  <p class="mute" style="font-size:13px;margin:6px 0 0">اسمكِ غير موجود؟ أخبري معلمتكِ.</p></div>
   <div style="margin-top:16px" class="row"><button class="btn plum" id="enter">ادخلي المعمل ←</button></div><p id="lmsg" class="mute" style="font-size:14px"></p></div></div>`;
   let classes = [{ id: 0, name: 'ثالث/١' }, { id: 0, name: 'ثالث/٢' }, { id: 0, name: 'ثالث/٣' }], online = false;
   try { const p = await rpc('api_project', { p_slug: SLUG }); if (p.classes?.length) { classes = p.classes; online = true; } } catch (e) {}
   $('#lc').innerHTML = '<option value="">اختاري فصلكِ</option>' + classes.map((c, i) => `<option value="${i}">${esc(c.name)}</option>`).join('');
-  const typed = () => { $('#pickwrap').hidden = true; $('#typewrap').hidden = false; };
-  if (!online) typed();
-  $('#typeit').onclick = typed;
+  if (!online) $('#lmsg').textContent = 'تعذّر الاتصال، تأكدي من الإنترنت ثم أعيدي فتح الصفحة.';
   $('#lc').onchange = async () => {
     const c = classes[$('#lc').value]; if (!c || !online) return;
     $('#ln').innerHTML = '<option>جارٍ التحميل…</option>';
     try { const st = await rpc('api_class_students', { p_slug: SLUG, p_class: c.id }); $('#ln').innerHTML = '<option value="">اختاري اسمكِ</option>' + st.map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join(''); $('#ln').disabled = false; }
-    catch (e) { typed(); }
+    catch (e) { $('#lmsg').textContent = 'تعذّر تحميل الأسماء، أعيدي المحاولة.'; }
   };
-  $('#enter').onclick = () => {
+  $('#enter').onclick = async () => {
     const c = classes[$('#lc').value]; if (!c) return $('#lmsg').textContent = 'اختاري الفصل أولًا.';
-    let name, sid = null;
-    if (!$('#typewrap').hidden) { name = $('#lt').value.trim(); if (name.split(/\s+/).length < 2) return $('#lmsg').textContent = 'اكتبي اسمكِ واسم والدكِ على الأقل.'; }
-    else { const o = $('#ln').selectedOptions[0]; if (!o || !o.value) return $('#lmsg').textContent = 'اختاري اسمكِ.'; name = o.textContent; sid = +o.value; }
-    S.user = { cls: c.name, cid: c.id, sid, name }; save(); go('map');
+    const o = $('#ln').selectedOptions[0]; if (!o || !o.value) return $('#lmsg').textContent = 'اختاري اسمكِ.';
+    const sid = +o.value;
+    if (S.user && S.user.sid !== sid) { S.p = {}; S.self = {}; S.cele = {}; }
+    S.user = { cls: c.name, cid: c.id, sid, name: o.textContent };
+    $('#enter').disabled = true; $('#lmsg').textContent = 'جارٍ الدخول…';
+    await pullServer(); try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {}
+    sync(true); go('map');
   };
 }
 
@@ -564,4 +581,43 @@ function countdown(sec) {
 
 /* ---------- البدء ---------- */
 try { const th = localStorage.getItem('pylab-theme'); if (th) document.documentElement.dataset.theme = th; } catch (e) {}
+if (S.user && !S.user.sid) S.user = null; // دخول قديم باسم مكتوب: تعيد الاختيار من القائمة
+if (S.user && !TEACHER) sync(true);
 go(TEACHER ? 'teach' : S.user ? 'map' : 'login');
+
+/* ---------- صفحة «الطالبات» للمعلمة ---------- */
+let TL = null;
+async function vStudents() {
+  let tok = null; try { tok = sessionStorage.getItem('ttok'); } catch (e) {}
+  if (!tok) {
+    main().innerHTML = `<div class="card" style="max-width:420px;margin:40px auto;text-align:center"><div style="width:110px;margin:auto">${koda('think')}</div><h1 class="h1">الطالبات</h1><p class="mute">أدخلي رقمكِ السري (نفس رقم صفحة المتاجر)</p><input class="in" id="pin" type="password" inputmode="numeric" style="text-align:center;font-size:22px"><div style="margin-top:12px"><button class="btn plum" id="go">دخول</button></div><p id="pm" class="mute"></p></div>`;
+    const goin = async () => { $('#pm').textContent = '…'; try { const r = await rpc('api_t_login', { p_pin: $('#pin').value }); if (r.error) return $('#pm').textContent = r.error; try { sessionStorage.setItem('ttok', r.token); } catch (e) {} vStudents(); } catch (e) { $('#pm').textContent = 'تعذّر الاتصال'; } };
+    $('#go').onclick = goin; $('#pin').onkeydown = e => { if (e.key === 'Enter') goin(); }; $('#pin').focus(); return;
+  }
+  main().innerHTML = '<p class="mute">جارٍ التحميل…</p>';
+  let rows;
+  try { rows = await rpc('api_t_lab', { p_token: tok, p_lab: LAB, p_slug: SLUG }); }
+  catch (e) { try { sessionStorage.removeItem('ttok'); } catch (x) {} return vStudents(); }
+  const classes = [...new Set(rows.map(r => r.class))];
+  TL = TL && classes.includes(TL) ? TL : 'all';
+  const core = LESSONS.filter(L => !L.exam && !L.project);
+  const fmt = s => s ? new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura-nu-arab', { day: 'numeric', month: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(s)) : '';
+  const cell = p => { const v = Math.round((p || 0) * 100); return `<td style="text-align:center;background:${v >= 80 ? 'var(--g2)' : v > 0 ? 'var(--yel2)' : 'transparent'};color:${v >= 80 ? 'var(--g)' : 'inherit'};font-weight:${v >= 80 ? 700 : 400}">${v ? ar(v) + '٪' : '–'}</td>`; };
+  const paint = () => {
+    const list = rows.filter(r => TL === 'all' || r.class === TL);
+    const inn = list.filter(r => r.last_at), mast = list.filter(r => r.pct && core.every(L => (r.pct[L.id] || 0) >= MASTER));
+    $('#tbl').innerHTML = `<div class="teams" style="margin:0 0 14px"><div class="team"><div class="mute">دخلن المعمل</div><div class="s">${ar(inn.length)} / ${ar(list.length)}</div></div><div class="team"><div class="mute">لم يدخلن</div><div class="s">${ar(list.length - inn.length)}</div></div><div class="team"><div class="mute">أتقنّ الوحدة</div><div class="s">${ar(mast.length)}</div></div><div class="team"><div class="mute">متوسط النقاط</div><div class="s">${ar(inn.length ? Math.round(inn.reduce((x, r) => x + r.score, 0) / inn.length) : 0)}</div></div></div>
+    <div style="overflow-x:auto"><table class="skills" style="min-width:900px"><tr><th>الطالبة</th><th>الفصل</th><th>آخر دخول</th><th>مرات</th><th>النقاط</th>${LESSONS.map(L => `<th style="text-align:center;font-size:12px">${L.project ? 'المشروع' : L.exam ? 'الاختبار' : 'م' + ar(L.n)}</th>`).join('')}</tr>
+    ${list.map(r => `<tr style="${r.last_at ? '' : 'opacity:.55'}"><td>${esc(r.name)}</td><td>${esc(r.class)}</td><td style="font-size:13px">${r.last_at ? fmt(r.last_at) : '<span class="badge wait">لم تدخل</span>'}</td><td>${ar(r.visits || 0)}</td><td><b>${ar(r.score || 0)}</b></td>${LESSONS.map(L => cell(r.pct && r.pct[L.id])).join('')}</tr>`).join('')}</table></div>`;
+  };
+  main().innerHTML = `<div class="row" style="justify-content:space-between"><h1 class="h1">الطالبات في المعمل 👩‍🎓</h1><div class="row"><select class="in" id="cf" style="width:auto"><option value="all">كل الفصول</option>${classes.map(c => `<option>${esc(c)}</option>`).join('')}</select><button class="btn ghost" id="rf">↻ تحديث</button><button class="btn ghost" id="ex">⬇ Excel</button></div></div><p class="mute" style="margin-top:0">م١…م٦ = نسبة الإتقان في كل محطة. الأخضر = متقنة (٨٠٪ فأكثر).</p><div id="tbl"></div>`;
+  $('#cf').value = TL; $('#cf').onchange = e => { TL = e.target.value; paint(); };
+  $('#rf').onclick = () => vStudents();
+  $('#ex').onclick = () => {
+    const head = ['الطالبة', 'الفصل', 'آخر دخول', 'مرات الدخول', 'النقاط', ...LESSONS.map(L => L.title)];
+    const list = rows.filter(r => TL === 'all' || r.class === TL);
+    const csv = [head, ...list.map(r => [r.name, r.class, r.last_at ? fmt(r.last_at) : 'لم تدخل', r.visits || 0, r.score || 0, ...LESSONS.map(L => Math.round(((r.pct || {})[L.id] || 0) * 100) + '%')])].map(a => a.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\r\n');
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['\ufeff' + csv], { type: 'text/csv' })); a.download = 'طالبات-معمل-بايثون.csv'; a.click();
+  };
+  paint();
+}
