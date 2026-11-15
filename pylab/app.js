@@ -117,7 +117,7 @@ function bar() {
   const u = S.user;
   $('#bar').innerHTML = `<div class="brand">معمل بايثون<small>المهارات الرقمية · ثالث متوسط · الوحدة الرابعة</small></div><span class="sp"></span>
   ${u ? `<span class="chip" title="${esc(u.cls)}">👩‍💻 <b>${esc(u.name.split(' ')[0])}</b></span><span class="chip xp" id="xp"></span>` : ''}
-  ${TEACHER ? `<button class="iconbtn" title="لوحة التحدي" onclick="go('board')">${icon('board')}</button>` : ''}
+  ${TEACHER ? `<button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('teach')">📖 الشرح</button><button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('board')">🎯 لوحة التحدي</button>` : ''}
   ${u ? `<button class="iconbtn" title="الخريطة" onclick="go('map')">${icon('home')}</button>` : ''}
   <button class="iconbtn" title="الوضع الليلي" onclick="theme()">${icon('moon')}</button>
   ${u ? `<button class="iconbtn" title="خروج" onclick="logout()">${icon('out')}</button>` : ''}`;
@@ -127,7 +127,7 @@ function theme() { const r = document.documentElement, d = r.dataset.theme === '
 function logout() { if (!confirm('تسجيل الخروج؟ يبقى تقدّمكِ محفوظًا على هذا الجهاز.')) return; S.user = null; save(); go('login'); }
 
 let CUR = { view: 'login', L: null, ai: 0 };
-function go(v, L, ai = 0) { CUR = { view: v, L, ai }; bar(); window.scrollTo(0, 0); ({ login: vLogin, map: vMap, lesson: vLesson, cert: vCert, board: vBoard })[v](); }
+function go(v, L, ai = 0) { CUR = { view: v, L, ai }; bar(); window.scrollTo(0, 0); ({ login: vLogin, map: vMap, lesson: vLesson, cert: vCert, board: vBoard, teach: vTeach })[v](); }
 
 /* ---------- الدخول ---------- */
 async function vLogin() {
@@ -564,4 +564,4 @@ function countdown(sec) {
 
 /* ---------- البدء ---------- */
 try { const th = localStorage.getItem('pylab-theme'); if (th) document.documentElement.dataset.theme = th; } catch (e) {}
-go(TEACHER && !S.user ? 'board' : S.user ? 'map' : 'login');
+go(TEACHER ? 'teach' : S.user ? 'map' : 'login');

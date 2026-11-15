@@ -262,3 +262,32 @@ code{background:var(--lilac3);color:var(--plum);border-radius:6px;padding:0 5px;
 :root[data-theme="dark"] code{color:var(--lilac2)}
 .opt.ok code,.opt.no code{background:rgba(255,255,255,.6)}
 @media(max-width:640px){.bar{gap:6px;padding:8px 10px}.brand{font-size:19px}.brand small{display:none}.iconbtn{width:32px;height:32px}.iconbtn svg{width:17px;height:17px}.chip{padding:3px 8px;font-size:12px}.chip .lv{display:none}main{padding:14px 12px 70px}.card{padding:14px}.jboard{gap:4px}.jcat{font-size:11px;min-height:48px;padding:4px}.jt{font-size:20px;min-height:52px}}
+
+/* وضع الشرح */
+.tslide{min-height:62vh;font-size:20px}
+.tcenter{text-align:center}
+.tbig{font-family:Lalezar;font-weight:400;font-size:52px;color:var(--plum);margin:6px 0}
+.th2{font-size:26px;margin:0 0 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tgoals{display:inline-block;text-align:right;background:var(--yel2);border-radius:18px;padding:14px 22px;font-size:20px;margin:10px 0}
+.tpanel{display:flex;gap:24px;align-items:center;min-height:52vh;padding:10px}
+.tpanel.flip{flex-direction:row-reverse}
+.twho{width:min(260px,32vw);flex:none}
+.tsay{flex:1;background:#fff;color:#2B2030;border:3px solid var(--plum);border-radius:28px;padding:18px 24px;font-size:28px;line-height:1.7;box-shadow:6px 6px 0 var(--yel)}
+.tsay pre{background:var(--code);color:var(--codeink);border-radius:14px;padding:10px 16px;font-size:22px;white-space:pre-wrap;margin:10px 0 0}
+.fx2{font-family:Lalezar;color:var(--r);font-size:34px;transform:rotate(-6deg)}
+.tstate{font-size:28px;font-weight:700;line-height:1.7;margin:14px 0;text-align:center}
+.topts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:10px}
+.topt{border:3px solid var(--line);border-radius:18px;padding:14px;font-size:22px;background:var(--card)}
+.topt.mono{direction:ltr;text-align:left}
+.topt b{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--plum);color:var(--yel);font-family:Rubik;font-size:18px;margin-left:8px}
+.topt.ok{border-color:var(--g);background:var(--g2)}
+.tlight{display:flex;gap:12px;align-items:center;justify-content:center;margin:12px 0;font-size:22px}
+.tlight svg{width:80px;height:80px}
+.tmatch{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:20px;margin:10px 0}
+.tmatch>div{border:2px solid var(--line);border-radius:12px;padding:10px;background:var(--card)}
+.tmatch .hid{color:transparent;background:var(--lilac3)}
+.torder{font-size:20px;direction:ltr;text-align:left}
+.torder li{border:2px dashed var(--line);border-radius:10px;padding:6px 12px;margin:6px 0;list-style:none}
+.tslide .ide textarea.code{font-size:19px}
+.tslide .out{font-size:17px}
+@media(max-width:700px){.tpanel{flex-direction:column}.tpanel.flip{flex-direction:column}.tsay{font-size:20px}.tbig{font-size:34px}.tstate{font-size:21px}}
