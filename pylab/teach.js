@@ -7,7 +7,7 @@ function teachSlides(L) {
   L.acts.forEach(a => {
     if (a.t === 'comic') {
       a.panels.forEach((p, i) => add(a.title, 'COMIC', el => {
-        el.innerHTML = `<div class="tpanel ${p.w === 'b' ? 'flip' : ''}"><div class="twho">${char(p.w, p.m)}</div><div class="tsay"><b style="color:var(--plum)">${p.w === 'b' ? 'بيثو' : 'كودة'}:</b> ${rich(p.s)}${p.code ? `<pre class="mono">${esc(p.code)}</pre>` : ''}${p.fx ? `<div class="fx2">${esc(p.fx)}</div>` : ''}</div></div><div class="mute tcenter">${ar(i + 1)} / ${ar(a.panels.length)}</div>`;
+        el.innerHTML = `<div class="tpanel ${p.w === 'b' ? 'flip' : ''}"><div class="twho">${char(p.w, p.m)}</div><div class="tsay"><b style="color:var(--plum)">${cname(p.w)}:</b> ${rich(p.s)}${p.code ? `<pre class="mono">${esc(p.code)}</pre>` : ''}${p.fx ? `<div class="fx2">${esc(p.fx)}</div>` : ''}</div></div><div class="mute tcenter">${ar(i + 1)} / ${ar(a.panels.length)}</div>`;
         if (p.blank && a.q) tAsk(el, a.q);
       }));
     }
@@ -55,6 +55,8 @@ function teachSlides(L) {
       a.prints.forEach((pr, j) => pr.forEach((q, i) => add(`البصمة ${ar(j + 1)} · سؤال ${ar(i + 1)}`, 'FINGERPRINT', el => { el.innerHTML = `<h2 class="th2">البصمة ${ar(j + 1)} · سؤال ${ar(i + 1)}</h2>`; tAsk(el, q); })));
       add('فتح القضية', 'FINAL CASE', el => { el.innerHTML = '<h2 class="th2">فتح القضية <span class="mode">FINAL CASE</span></h2>'; tAsk(el, a.final); });
     }
+    if (a.t === 'turtlepad') add(a.title, 'TURTLE', el => { el.innerHTML = `<h2 class="th2">${esc(a.title)}</h2><div class="tex"></div>`; turtlePad({ a, body: $('.tex', el), rec: () => true, got: () => null }); });
+    if (a.t === 'story' || a.t === 'tools') add(a.title, a.t === 'story' ? 'STORY' : 'TOOLS', el => { el.innerHTML = `<h2 class="th2">${esc(a.title)}</h2><div class="tex"></div>`; (a.t === 'story' ? storyAct : toolsAct)({ a, body: $('.tex', el), rec: () => true, got: () => null }); });
     if (a.t === 'explore') add(a.title, 'EXPLORE', el => { el.innerHTML = `<h2 class="th2">${esc(a.title)}</h2><div class="tex"></div>`; const fake = { a, body: $('.tex', el), rec: () => true, got: () => null }; R.explore(fake); });
     if (a.t === 'code') add(a.title, 'CHALLENGE', el => {
       el.innerHTML = `<h2 class="th2">${esc(a.title)} ${a.p ? `<span class="mute" style="font-size:16px">ص${a.p}</span>` : ''}</h2><div class="fb info" style="font-size:19px">${a.task}</div><div class="ted" style="margin-top:10px"></div><div class="row" style="margin-top:10px"><button class="btn ghost hn">💡 تلميح</button><button class="btn sl">👀 الحل النموذجي</button></div><div class="tans"></div>`;
@@ -63,7 +65,7 @@ function teachSlides(L) {
       $('.sl', el).onclick = () => { ed.set(a.sol); $('.run', ed.el).click(); };
     });
   });
-  add('الختام', 'END', el => { el.innerHTML = `<div class="tcenter"><div style="width:150px;margin:auto">${koda('wow')}</div><h1 class="tbig">أحسنتن! 🌟</h1><div class="tgoals"><b>قيّمي نفسكِ (جدول المهارات ص٢١٦)</b>${L.skills.map(s => `<div>☐ ${rich(s)}</div>`).join('')}</div><p style="font-size:20px">الآن افتحن المعمل وأكملن أنشطة المحطة لتصبحن «متقنات»:</p><div class="mono" style="font-size:20px;direction:ltr">schoolbsom-droid.github.io/knowledge-production/pylab</div></div>`; });
+  add('الختام', 'END', el => { el.innerHTML = `<div class="tcenter"><div style="width:150px;margin:auto">${koda('wow')}</div><h1 class="tbig">أحسنتن! 🌟</h1><div class="tgoals"><b>قيّمي نفسكِ (جدول المهارات ص٢١٦)</b>${L.skills.map(s => `<div>☐ ${rich(s)}</div>`).join('')}</div><p style="font-size:20px">الآن افتحن المعمل وأكملن أنشطة المحطة لتصبحن «متقنات»:</p><div class="mono" style="font-size:20px;direction:ltr">${location.host + location.pathname.replace(/index\.html$/, '')}</div></div>`; });
   return S_;
 }
 // سؤال على السبورة: الخيارات ظاهرة، والإجابة تُكشف بالزر
@@ -77,7 +79,7 @@ let TS = { L: 0, i: 0 };
 function vTeach() {
   if (CUR.L == null) {
     main().innerHTML = `<div class="greet"><div class="avatar">${koda('happy')}</div><div class="bubble">أهلًا أ. ابتسام! اختاري المحطة التي ستشرحينها اليوم. تُعرض كشرائح على السبورة، والكود يعمل مباشرة.</div></div>
-    <div class="stations">${LESSONS.map((L, i) => `<button class="st" onclick="go('teach',${i})"><span class="num">${L.project ? icon('trophy', 24) : L.exam ? icon('star', 24) : ar(L.n)}</span><span class="t">${esc(L.title)}</span><span class="meta">ص${L.pages} · ${ar(teachSlides(L).length)} شريحة</span></button>`).join('')}</div>`;
+    <div class="stations">${LESSONS.map((L, i) => `<button class="st" onclick="go('teach',${i})"><span class="num">${L.extra ? '⚡' : L.project ? icon('trophy', 24) : L.exam ? icon('star', 24) : ar(L.n)}</span><span class="t">${esc(L.title)}</span><span class="meta">ص${L.pages} · ${ar(teachSlides(L).length)} شريحة</span></button>`).join('')}</div>`;
     return;
   }
   const L = LESSONS[CUR.L], sl = teachSlides(L);

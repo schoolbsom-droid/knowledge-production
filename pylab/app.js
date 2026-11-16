@@ -2,9 +2,10 @@
 'use strict';
 const SB = 'https://uautjfgslrfhceciqwyn.supabase.co/rest/v1/rpc/';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhdXRqZmdzbHJmaGNlY2lxd3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNjI3NzMsImV4cCI6MjEwODgzODc3M30.Dj1dYWNMwhp02hJEko8XnDD23Mi-gK-Q82BkICdrj_Q'; // مفتاح عام: الجداول مقفلة، والوصول عبر الدوال فقط
-const SLUG = 'store-1448'; // نفس طالبات ثالث في صفحة مشاريع المتاجر (للربط لاحقًا)
+const CFG = Object.assign({ grade: 3, gname: 'ثالث متوسط', slug: 'store-1448', lab: 'pylab-g3', store: 'pylab-g3-v1', unit: 'الوحدة الرابعة «البرمجة مع بايثون»', sub: 'المهارات الرقمية · ثالث متوسط · الوحدة الرابعة' }, window.LABCFG || {});
+const SLUG = CFG.slug; // ثالث: نفس طالبات صفحة مشاريع المتاجر
 const TEACHER = location.hash === '#teacher' || location.hash === '#students';
-const STORE = 'pylab-g3-v1';
+const STORE = CFG.store;
 const MASTER = 0.8;
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -24,7 +25,7 @@ async function rpc(fn, body) {
 /* ---------- الحفظ ---------- */
 let S = { user: null, p: {} };
 try { S = Object.assign(S, JSON.parse(localStorage.getItem(STORE) || '{}')); } catch (e) {}
-const LAB = 'pylab-g3';
+const LAB = CFG.lab;
 const save = () => { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} sync(); };
 let syncT = null;
 function sync(visit) {
@@ -62,6 +63,9 @@ function maxOf(a) {
     case 'quiz': return a.items.length * 10;
     case 'code': return a.project ? 50 : 30;
     case 'explore': return a.targets.length * 5;
+    case 'story': return a.steps.filter(s => s.ask).length * 5 + 10;
+    case 'tools': return a.missions.length * 5;
+    case 'turtlepad': return 30;
     default: return 0;
   }
 }
@@ -105,7 +109,7 @@ function bitho(m = 'happy') {
   <circle cx="50" cy="38" r="11" fill="#fff"/><circle cx="78" cy="38" r="11" fill="#fff"/>${eyes(m, 50, 78, 38, '#1F1A24')}${mouth(m, 64, 56, '#7a3b00')}
   ${m === 'happy' || m === 'wink' ? '<path d="M64 66 v10 l-5 5 M64 76 l5 5" stroke="#D64545" stroke-width="2.5" fill="none" stroke-linecap="round"/>' : ''}</svg>`;
 }
-const char = (w, m) => w === 'b' ? bitho(m) : koda(m);
+const char = (w, m) => w === 'b' ? bitho(m) : w === 'q' ? barq(m) : koda(m);
 function say(text, m = 'happy', w = 'k') { return `<div class="hintbox">${char(w, m)}<div>${text}</div></div>`; }
 
 /* ---------- أيقونات ---------- */
@@ -116,7 +120,7 @@ const IC = {
   back: '<path d="M9 5l7 7-7 7"/>', home: '<path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/>', board: '<path d="M3 4h18v12H3zM8 20h8M12 16v4"/>', moon: '<path d="M20 14A8 8 0 1 1 10 4a6 6 0 0 0 10 10z"/>', out: '<path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9"/>',
 };
 const icon = (n, s = 22) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[n] || ''}</svg>`;
-const TYPE = { comic: ['قصة مصورة', 'COMIC'], run: ['جرّبي بنفسك', 'CODE LAB'], traffic: ['إشارة المرور', 'TRAFFIC LIGHT'], tpr: ['استجيبي', 'TPR'], mission: ['المهمة السرية', 'SECRET MISSION'], prints: ['لغز البصمات', 'FINGERPRINT'], match: ['طابقي', 'MATCH IT'], quiz: ['اختاري', 'QUIZ'], code: ['تحدي البرمجة', 'CHALLENGE'], explore: ['استكشفي', 'EXPLORE'], master: ['بطاقة الإتقان', 'MASTERY'] };
+const TYPE = { comic: ['قصة مصورة', 'COMIC'], run: ['جرّبي بنفسك', 'CODE LAB'], traffic: ['إشارة المرور', 'TRAFFIC LIGHT'], tpr: ['استجيبي', 'TPR'], mission: ['المهمة السرية', 'SECRET MISSION'], prints: ['لغز البصمات', 'FINGERPRINT'], match: ['طابقي', 'MATCH IT'], quiz: ['اختاري', 'QUIZ'], code: ['تحدي البرمجة', 'CHALLENGE'], explore: ['استكشفي', 'EXPLORE'], master: ['بطاقة الإتقان', 'MASTERY'], story: ['حكاية', 'STORY'], tools: ['ورشة الدوال', 'TOOLS'], turtlepad: ['ورشة السلحفاة', 'TURTLE'] };
 
 /* ---------- عام ---------- */
 function toast(t) { const d = h(`<div class="toast">${t}</div>`); document.body.appendChild(d); setTimeout(() => d.remove(), 2200); }
@@ -132,7 +136,7 @@ const main = () => $('main');
 /* ---------- الشريط ---------- */
 function bar() {
   const u = S.user;
-  $('#bar').innerHTML = `<div class="brand">معمل بايثون<small>المهارات الرقمية · ثالث متوسط · الوحدة الرابعة</small></div><span class="sp"></span>
+  $('#bar').innerHTML = `<div class="brand">معمل بايثون<small>${CFG.sub}</small></div><span class="sp"></span>
   ${u ? `<span class="chip" title="${esc(u.cls)}">👩‍💻 <b>${esc(u.name.split(' ')[0])}</b></span><span class="chip xp" id="xp"></span>` : ''}
   ${TEACHER ? `<button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('teach')">📖 الشرح</button><button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('board')">🎯 لوحة التحدي</button><button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('students')">👩‍🎓 الطالبات</button>` : ''}
   ${u ? `<button class="iconbtn" title="الخريطة" onclick="go('map')">${icon('home')}</button>` : ''}
@@ -154,7 +158,7 @@ async function vLogin() {
   <div id="pickwrap"><label class="f" for="ln">اسمكِ</label><select class="in" id="ln" disabled><option value="">اختاري الفصل أولًا</option></select>
   <p class="mute" style="font-size:13px;margin:6px 0 0">اسمكِ غير موجود؟ أخبري معلمتكِ.</p></div>
   <div style="margin-top:16px" class="row"><button class="btn plum" id="enter">ادخلي المعمل ←</button></div><p id="lmsg" class="mute" style="font-size:14px"></p></div></div>`;
-  let classes = [{ id: 0, name: 'ثالث/١' }, { id: 0, name: 'ثالث/٢' }, { id: 0, name: 'ثالث/٣' }], online = false;
+  let classes = ['١', '٢', '٣'].map(s => ({ id: 0, name: CFG.gname.split(' ')[0] + '/' + s })), online = false;
   try { const p = await rpc('api_project', { p_slug: SLUG }); if (p.classes?.length) { classes = p.classes; online = true; } } catch (e) {}
   $('#lc').innerHTML = '<option value="">اختاري فصلكِ</option>' + classes.map((c, i) => `<option value="${i}">${esc(c.name)}</option>`).join('');
   if (!online) $('#lmsg').textContent = 'تعذّر الاتصال، تأكدي من الإنترنت ثم أعيدي فتح الصفحة.';
@@ -180,10 +184,10 @@ async function vLogin() {
 function ring(p) { const r = 22, C = 2 * Math.PI * r; return `<svg class="ring" viewBox="0 0 54 54"><circle cx="27" cy="27" r="${r}" fill="none" stroke="var(--lilac3)" stroke-width="6"/><circle cx="27" cy="27" r="${r}" fill="none" stroke="${p >= MASTER ? 'var(--g)' : 'var(--org)'}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${C * p} ${C}" transform="rotate(-90 27 27)"/><text x="27" y="31" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor">${ar(Math.round(p * 100))}٪</text></svg>`; }
 function vMap() {
   const u = S.user; if (!u) return go('login');
-  const all = LESSONS.filter(L => !L.exam && !L.project).every(L => lessonStat(L).pct >= MASTER);
+  const all = LESSONS.filter(L => !L.exam && !L.project && !L.extra).every(L => lessonStat(L).pct >= MASTER);
   const next = LESSONS.find(L => lessonStat(L).pct < MASTER);
   main().innerHTML = `<div class="greet"><div class="avatar">${koda(all ? 'wow' : 'happy')}</div><div class="bubble">أهلًا ${esc(u.name.split(' ')[0])}! ${all ? 'أتقنتِ كل المحطات 🎉 شهادتكِ جاهزة!' : next ? `محطتكِ التالية: <b>${esc(next.title)}</b>. لتصبحي «متقنة» في أي محطة اجمعي ${ar(80)}٪ من نقاطها.` : ''}</div></div>
-  <div class="stations">${LESSONS.map((L, i) => { const st = lessonStat(L); return `<button class="st" onclick="go('lesson',${i})">${ring(st.pct)}<span class="num">${L.project ? icon('trophy', 24) : L.exam ? icon('star', 24) : ar(L.n)}</span><span class="t">${esc(L.title)}</span><span class="meta">ص${L.pages} · ${ar(L.acts.filter(a => a.t !== 'master').length)} أنشطة</span><span>${st.pct >= MASTER ? '<span class="badge">✔ متقنة</span>' : st.s ? '<span class="badge go">قيد الإنجاز</span>' : '<span class="badge wait">لم تبدئي</span>'}</span></button>`; }).join('')}</div>
+  <div class="stations">${LESSONS.map((L, i) => { const st = lessonStat(L); return `<button class="st" onclick="go('lesson',${i})">${ring(st.pct)}<span class="num">${L.extra ? '⚡' : L.project ? icon('trophy', 24) : L.exam ? icon('star', 24) : ar(L.n)}</span><span class="t">${esc(L.title)}</span><span class="meta">ص${L.pages} · ${ar(L.acts.filter(a => a.t !== 'master').length)} أنشطة</span><span>${st.pct >= MASTER ? '<span class="badge">✔ متقنة</span>' : st.s ? '<span class="badge go">قيد الإنجاز</span>' : '<span class="badge wait">لم تبدئي</span>'}</span></button>`; }).join('')}</div>
   <div class="card" style="margin-top:22px"><div class="row"><div style="flex:1"><h2 class="h2">شهادة إتقان الوحدة</h2><p class="mute" style="margin:0">تُفتح عندما تصلين إلى ${ar(80)}٪ في المحطات الست.</p></div><button class="btn ${all ? 'g' : 'ghost'}" ${all ? '' : 'disabled'} onclick="go('cert')">🎓 شهادتي</button></div></div>`;
 }
 
@@ -191,7 +195,7 @@ function vMap() {
 function vLesson() {
   const L = LESSONS[CUR.L], ai = CUR.ai, a = L.acts[ai];
   main().innerHTML = `<div class="lhead"><button class="iconbtn" style="background:var(--plum)" onclick="go('map')" title="رجوع">${icon('back')}</button><div><h1 class="h1" style="font-size:24px;margin:0">${esc(L.title)}</h1><div class="mute" style="font-size:13px">الكتاب ص${L.pages}</div></div></div>
-  <div class="steps">${L.acts.map((x, i) => { const mx = maxOf(x), sc = scoreOf(L.id, i); return `<button class="${i === ai ? 'on' : ''} ${mx && sc >= mx * .6 ? 'ok' : ''}" onclick="go('lesson',${CUR.L},${i})"><span class="dot"></span>${ar(i + 1)}. ${TYPE[x.t][0]}</button>`; }).join('')}</div>
+  <div class="steps">${L.acts.map((x, i) => { const mx = maxOf(x), sc = scoreOf(L.id, i); return `<button class="${i === ai ? 'on' : ''} ${mx && sc >= mx * .6 ? 'ok' : ''}" onclick="go('lesson',${CUR.L},${i})"><span class="dot"></span>${ar(i + 1)}. ${x.t === 'story' ? esc(x.title.split(':')[1] || x.title).trim() : TYPE[x.t][0]}</button>`; }).join('')}</div>
   <div class="card act" id="act"></div>
   <div class="nav"><button class="btn ghost" ${ai ? '' : 'disabled'} onclick="go('lesson',${CUR.L},${ai - 1})">→ السابق</button><button class="btn" onclick="${ai < L.acts.length - 1 ? `go('lesson',${CUR.L},${ai + 1})` : `go('map')`}">${ai < L.acts.length - 1 ? 'التالي ←' : 'إلى الخريطة'}</button></div>`;
   const box = $('#act');
@@ -254,9 +258,12 @@ function ide(host, code, { files, onRun, label = '▶ شغّلي' } = {}) {
 
 /* ---------- الأنشطة ---------- */
 const R = {};
+R.story = ctx => storyAct(ctx);
+R.tools = ctx => toolsAct(ctx);
+R.turtlepad = ctx => turtlePad(ctx);
 
 R.comic = ({ a, body, rec, got }) => {
-  body.innerHTML = `<div class="comic">${a.panels.map((p, i) => `<div class="panel ${p.w === 'b' ? 'flip' : ''} ${p.blank ? 'blank' : ''}" style="background:${['#FFF8E1', '#F3ECF6', '#E9F5EE', '#FFF0E0', '#EAF2FA', '#FBEFF3'][i % 6]}"><span class="pn">${ar(i + 1)}</span>${p.fx ? `<span class="fx">${esc(p.fx)}</span>` : ''}<div class="who">${char(p.w, p.m)}</div><div class="say"><b style="color:var(--plum)">${p.w === 'b' ? 'بيثو' : 'كودة'}:</b> ${rich(p.s)}${p.code ? `<pre class="mono">${esc(p.code)}</pre>` : ''}${p.blank ? '<div id="blank" style="margin-top:6px;font-weight:700">… ؟</div>' : ''}</div></div>`).join('')}</div><div id="cq"></div>`;
+  body.innerHTML = `<div class="comic">${a.panels.map((p, i) => `<div class="panel ${p.w === 'b' ? 'flip' : ''} ${p.blank ? 'blank' : ''}" style="background:${['#FFF8E1', '#F3ECF6', '#E9F5EE', '#FFF0E0', '#EAF2FA', '#FBEFF3'][i % 6]}"><span class="pn">${ar(i + 1)}</span>${p.fx ? `<span class="fx">${esc(p.fx)}</span>` : ''}<div class="who">${char(p.w, p.m)}</div><div class="say"><b style="color:var(--plum)">${cname(p.w)}:</b> ${rich(p.s)}${p.code ? `<pre class="mono">${esc(p.code)}</pre>` : ''}${p.blank ? '<div id="blank" style="margin-top:6px;font-weight:700">… ؟</div>' : ''}</div></div>`).join('')}</div><div id="cq"></div>`;
   if (a.q) mcq($('#cq', body), a.q, { key: 'q', ctx: { rec, got }, onDone: () => { const k = a.q.o[a.q.a]; const b = $('#blank'); if (b) b.textContent = '«' + k + '»'; } });
 };
 
@@ -530,10 +537,10 @@ R.master = ({ L, body }) => {
 
 /* ---------- الشهادة ---------- */
 function vCert() {
-  const u = S.user; const core = LESSONS.filter(L => !L.exam && !L.project);
+  const u = S.user; const core = LESSONS.filter(L => !L.exam && !L.project && !L.extra);
   if (!core.every(L => lessonStat(L).pct >= MASTER)) return go('map');
   const d = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura-nu-arab', { day: 'numeric', month: 'numeric', year: 'numeric' }).format(new Date());
-  main().innerHTML = `<div class="cert"><div style="width:120px;margin:auto">${koda('wow')}</div><div class="mute">المتوسطة الحادية والعشرون · المهارات الرقمية</div><h1 class="h1" style="font-size:36px">شهادة إتقان</h1><p>تشهد المعلمة أ. ابتسام الشهري بأن الطالبة</p><div class="nm">${esc(u.name)}</div><p>من فصل ${esc(u.cls)} أتقنت الوحدة الرابعة «البرمجة مع بايثون» في المعمل الافتراضي</p>
+  main().innerHTML = `<div class="cert"><div style="width:120px;margin:auto">${koda('wow')}</div><div class="mute">المتوسطة الحادية والعشرون · المهارات الرقمية</div><h1 class="h1" style="font-size:36px">شهادة إتقان</h1><p>تشهد المعلمة أ. ابتسام الشهري بأن الطالبة</p><div class="nm">${esc(u.name)}</div><p>من فصل ${esc(u.cls)} أتقنت ${CFG.unit} في المعمل الافتراضي</p>
   <table class="skills" style="max-width:520px;margin:auto">${LESSONS.map(L => `<tr><td>${esc(L.title)}</td><td>${ar(Math.round(lessonStat(L).pct * 100))}٪</td></tr>`).join('')}</table><p style="margin-top:12px">مجموع النقاط: <b>${ar(totalXP())}</b> · المستوى: <b>${level(totalXP())[0]}</b></p><p class="mute">التاريخ: ${d}هـ</p></div>
   <div class="row noprint" style="justify-content:center;margin-top:14px"><button class="btn plum" onclick="print()">🖨 طباعة / حفظ PDF</button><button class="btn ghost" onclick="go('map')">رجوع</button></div>`;
   confetti();
@@ -542,9 +549,9 @@ function vCert() {
 /* ---------- لوحة التحدي على السبورة (للمعلمة) ---------- */
 let JB = null;
 function vBoard() {
-  try { JB = JB || JSON.parse(localStorage.getItem('pylab-board') || 'null'); } catch (e) {}
+  try { JB = JB || JSON.parse(localStorage.getItem(CFG.lab + '-board') || 'null'); } catch (e) {}
   JB = JB || { teams: ['الفريق ١', 'الفريق ٢', 'الفريق ٣', 'الفريق ٤'].map(n => ({ n, s: 0 })), used: {}, turn: 0 };
-  const sv = () => { try { localStorage.setItem('pylab-board', JSON.stringify(JB)); } catch (e) {} };
+  const sv = () => { try { localStorage.setItem(CFG.lab + '-board', JSON.stringify(JB)); } catch (e) {} };
   const ROLES = ['المختارة', 'القارئة', 'قائدة التفكير', 'صائدة الأدلة', 'المتحدثة النهائية'];
   const roundN = Object.keys(JB.used).length;
   main().innerHTML = `<div class="row" style="justify-content:space-between"><h1 class="h1">لوحة التحدي 🎯</h1><div class="row"><button class="btn ghost" id="fs">⛶ ملء الشاشة</button><button class="btn ghost" id="rs">↺ لعبة جديدة</button></div></div>
@@ -555,7 +562,7 @@ function vBoard() {
   <div class="card" style="margin-top:16px"><b>أدوار الجولة ${ar(roundN + 1)}:</b> ${ROLES.map((r, i) => `${r}: العضوة رقم ${ar(((i + roundN) % 5) + 1)}`).join(' · ')}</div>`;
   $$('.team input').forEach(i => i.onchange = () => { JB.teams[i.dataset.i].n = i.value; sv(); });
   $$('.pm button').forEach(b => b.onclick = () => { JB.teams[b.dataset.i].s += +b.dataset.d; sv(); vBoard(); });
-  $('#rs').onclick = () => { if (confirm('بدء لعبة جديدة ومسح النقاط؟')) { JB = null; localStorage.removeItem('pylab-board'); vBoard(); } };
+  $('#rs').onclick = () => { if (confirm('بدء لعبة جديدة ومسح النقاط؟')) { JB = null; localStorage.removeItem(CFG.lab + '-board'); vBoard(); } };
   $('#fs').onclick = () => document.documentElement.requestFullscreen?.();
   $('#cnt').onclick = () => countdown();
   $$('.jt').forEach(b => b.onclick = () => { if (b.classList.contains('used')) return; tile(+b.dataset.c, +b.dataset.r); });
@@ -601,14 +608,14 @@ async function vStudents() {
   TROWS = rows; TDATA = null;
   const classes = [...new Set(rows.map(r => r.class))];
   TL = TL && classes.includes(TL) ? TL : 'all';
-  const core = LESSONS.filter(L => !L.exam && !L.project);
+  const core = LESSONS.filter(L => !L.exam && !L.project && !L.extra);
   const fmt = s => s ? new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura-nu-arab', { day: 'numeric', month: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(s)) : '';
   const cell = p => { const v = Math.round((p || 0) * 100); return `<td style="text-align:center;background:${v >= 80 ? 'var(--g2)' : v > 0 ? 'var(--yel2)' : 'transparent'};color:${v >= 80 ? 'var(--g)' : 'inherit'};font-weight:${v >= 80 ? 700 : 400}">${v ? ar(v) + '٪' : '–'}</td>`; };
   const paint = () => {
     const list = rows.filter(r => TL === 'all' || r.class === TL);
     const inn = list.filter(r => r.last_at), mast = list.filter(r => r.pct && core.every(L => (r.pct[L.id] || 0) >= MASTER));
     $('#tbl').innerHTML = `<div class="teams" style="margin:0 0 14px"><div class="team"><div class="mute">دخلن المعمل</div><div class="s">${ar(inn.length)} / ${ar(list.length)}</div></div><div class="team"><div class="mute">لم يدخلن</div><div class="s">${ar(list.length - inn.length)}</div></div><div class="team"><div class="mute">أتقنّ الوحدة</div><div class="s">${ar(mast.length)}</div></div><div class="team"><div class="mute">متوسط النقاط</div><div class="s">${ar(inn.length ? Math.round(inn.reduce((x, r) => x + r.score, 0) / inn.length) : 0)}</div></div></div>
-    <div style="overflow-x:auto"><table class="skills" style="min-width:900px"><tr><th>الطالبة</th><th>الفصل</th><th>آخر دخول</th><th>مرات</th><th>النقاط</th>${LESSONS.map(L => `<th style="text-align:center;font-size:12px">${L.project ? 'المشروع' : L.exam ? 'الاختبار' : 'م' + ar(L.n)}</th>`).join('')}</tr>
+    <div style="overflow-x:auto"><table class="skills" style="min-width:900px"><tr><th>الطالبة</th><th>الفصل</th><th>آخر دخول</th><th>مرات</th><th>النقاط</th>${LESSONS.map(L => `<th style="text-align:center;font-size:12px">${lname(L)}</th>`).join('')}</tr>
     ${list.map(r => `<tr style="${r.last_at ? '' : 'opacity:.55'}"><td>${r.last_at ? `<a href="#" onclick="showStu(${r.id});return false" style="color:var(--plum);font-weight:700">${esc(r.name)}</a>` : esc(r.name)}</td><td>${esc(r.class)}</td><td style="font-size:13px">${r.last_at ? fmt(r.last_at) : '<span class="badge wait">لم تدخل</span>'}</td><td>${ar(r.visits || 0)}</td><td><b>${ar(r.score || 0)}</b></td>${LESSONS.map(L => cell(r.pct && r.pct[L.id])).join('')}</tr>`).join('')}</table></div>`;
   };
   main().innerHTML = `<div class="row" style="justify-content:space-between"><h1 class="h1">الطالبات في المعمل 👩‍🎓</h1><div class="row"><select class="in" id="cf" style="width:auto"><option value="all">كل الفصول</option>${classes.map(c => `<option>${esc(c)}</option>`).join('')}</select><button class="btn plum" onclick="hardQ()">📊 أصعب الأسئلة</button><button class="btn ghost" id="rf">↻ تحديث</button><button class="btn ghost" id="ex">⬇ Excel</button></div></div><p class="mute" style="margin-top:0">اضغطي اسم الطالبة لرؤية إجاباتها: آراؤها، وثقتها، والكود، وأخطاؤها. م١…م٦ = نسبة الإتقان (الأخضر = متقنة ٨٠٪ فأكثر).</p><div id="tbl"></div>`;

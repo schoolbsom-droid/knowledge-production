@@ -206,6 +206,7 @@ def _lab_exec(code):
     global _lab_ns
     import tkinter
     tkinter._shapes.clear()
+    sys.modules.pop('turtle', None)
     _lab_ns = {'__name__': '__main__'}
     n = [0]
     def tr(frame, ev, arg):
@@ -264,6 +265,7 @@ def _lab_check(expr):
       p.FS.mkdirTree('/labmods');
       p.FS.writeFile('/labmods/tkinter.py', TK_PY);
       p.FS.writeFile('/labmods/pygame.py', PG_PY);
+      if (window.TURTLE_PY) p.FS.writeFile('/labmods/turtle.py', TURTLE_PY);
       p.FS.chdir('/home/pyodide');
       py = p; writeFiles(true);
       p.runPython(BOOT_PY);
@@ -302,6 +304,7 @@ def _lab_check(expr):
     sink = outEl; tkHost = tkEl; outEl.innerHTML = ''; if (tkEl) tkEl.innerHTML = ''; TK.cur = null;
     let p;
     try { p = await load(onState); } catch (e) { out(e.message, 'err'); return { ok: false, err: e.message, out: '' }; }
+    outEl.innerHTML = '';
     p.globals.set('_lab_code', code);
     const r = p.runPython('_lab_exec(_lab_code)');
     const text = outEl.textContent;
