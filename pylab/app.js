@@ -68,7 +68,7 @@ function maxOf(a) {
     case 'turtlepad': return 30;
     case 'book': return a.items.length * 10;
     case 'fshapes': return 25;
-    case 'fplay': return FLOWS.length * 8;
+    case 'fplay': return FLOWS.length * 13;
     case 'fhunt': return 25;
     case 'ffix': return FIX.length * 10;
     default: return 0;
@@ -125,7 +125,7 @@ const IC = {
   back: '<path d="M9 5l7 7-7 7"/>', home: '<path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/>', board: '<path d="M3 4h18v12H3zM8 20h8M12 16v4"/>', moon: '<path d="M20 14A8 8 0 1 1 10 4a6 6 0 0 0 10 10z"/>', out: '<path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9"/>',
 };
 const icon = (n, s = 22) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[n] || ''}</svg>`;
-const TYPE = { comic: ['قصة مصورة', 'COMIC'], run: ['جرّبي بنفسك', 'CODE LAB'], traffic: ['إشارة المرور', 'TRAFFIC LIGHT'], tpr: ['استجيبي', 'TPR'], mission: ['المهمة السرية', 'SECRET MISSION'], prints: ['لغز البصمات', 'FINGERPRINT'], match: ['طابقي', 'MATCH IT'], quiz: ['اختاري', 'QUIZ'], code: ['تحدي البرمجة', 'CHALLENGE'], explore: ['استكشفي', 'EXPLORE'], master: ['بطاقة الإتقان', 'MASTERY'], story: ['حكاية', 'STORY'], tools: ['ورشة الدوال', 'TOOLS'], turtlepad: ['ورشة السلحفاة', 'TURTLE'], book: ['تمارين الكتاب', 'BOOK'], fshapes: ['بطاقات الأشكال', 'SHAPES'], fplay: ['عشرة أمثلة حيّة', 'LIVE EXAMPLES'], fhunt: ['صيّاد الأشكال', 'GAME'], ffix: ['أصلحي المخطط', 'GAME'] };
+const TYPE = { comic: ['قصة مصورة', 'COMIC'], run: ['جرّبي بنفسك', 'CODE LAB'], traffic: ['إشارة المرور', 'TRAFFIC LIGHT'], tpr: ['استجيبي', 'TPR'], mission: ['المهمة السرية', 'SECRET MISSION'], prints: ['لغز البصمات', 'FINGERPRINT'], match: ['طابقي', 'MATCH IT'], quiz: ['اختاري', 'QUIZ'], code: ['تحدي البرمجة', 'CHALLENGE'], explore: ['استكشفي', 'EXPLORE'], master: ['بطاقة الإتقان', 'MASTERY'], story: ['حكاية', 'STORY'], tools: ['ورشة الدوال', 'TOOLS'], turtlepad: ['ورشة السلحفاة', 'TURTLE'], book: ['تمارين الكتاب', 'BOOK'], fshapes: ['بطاقات الأشكال', 'SHAPES'], fplay: ['المراحل العشر', 'LEVELS'], fhunt: ['صيّاد الأشكال', 'GAME'], ffix: ['أصلحي المخطط', 'GAME'] };
 
 /* ---------- عام ---------- */
 function toast(t) { const d = h(`<div class="toast">${t}</div>`); document.body.appendChild(d); setTimeout(() => d.remove(), 2200); }

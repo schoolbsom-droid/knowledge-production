@@ -407,6 +407,25 @@ input.nof{border-color:var(--r)!important;background:var(--r2)!important}
 .fex button small{font-size:11px;line-height:1.3}
 .fex button.on{border-color:var(--plum);background:var(--yel2);box-shadow:3px 3px 0 var(--yel)}
 .fex button.done:after{content:"✔";position:absolute;top:2px;left:6px;color:var(--g);font-weight:700}
+.flv{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.flv .chip{background:var(--yel2);color:var(--ink);font-weight:700}
+.fex button em{font-style:normal;font-size:10.5px;line-height:1.5;background:var(--lilac3);color:var(--ink);border-radius:999px;padding:0 6px;margin-top:3px}
+.fex button.lock{opacity:.5;filter:grayscale(1);cursor:not-allowed}
+.fst{color:#E6A800;font-size:14px;letter-spacing:1px;white-space:nowrap}.fst i{font-style:normal;color:var(--line)}
+.fms{display:flex;gap:12px;align-items:flex-start;border:3px solid var(--plum);background:var(--yel2);border-radius:16px;padding:10px 14px;margin-bottom:12px;box-shadow:4px 4px 0 var(--yel)}
+.fms.won{border-color:var(--g);background:var(--g2);box-shadow:none}
+.fmsi{font-size:34px;line-height:1}.fmst{flex:1;min-width:0}.fms .fst{font-size:22px}
+.fmrow{margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#fmc .fpick{margin-top:6px}
+.fgoal{border:2px solid var(--line);background:var(--card);border-radius:999px;padding:2px 12px;font-weight:600}
+.fgoal.ok{border-color:var(--g);background:var(--g2)}
+.fcds{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.fcd{border:2px solid var(--plum);background:var(--card);color:var(--ink);border-radius:12px;padding:6px 12px;font:600 14px Rubik,sans-serif}
+.fcd:hover:not(:disabled){transform:translateY(-2px);background:var(--lilac3)}
+.fcd:disabled{opacity:.35;text-decoration:line-through}
+.fchart.clk .fn{cursor:pointer}
+.fchart .fn.blank .fnb{stroke-dasharray:7 5}
+.fchart .fn.pick .fnb{stroke:#6c5ce7;stroke-width:6}
 .fxh{display:flex;gap:10px;align-items:center;margin-bottom:10px}
 .ficon{font-size:38px}
 .fxw{display:grid;grid-template-columns:auto minmax(260px,1fr);gap:16px;align-items:start}

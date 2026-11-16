@@ -28,7 +28,7 @@ function eachItem(p, cb) {
       else if (a.t === 'explore') { q = a.w === 'coords' ? `النقطة (${a.targets[i]})` : `list[${a.targets[i][0]}][${a.targets[i][1]}]`; if (v.s < 5) wrong = true; }
       else if (a.t === 'story') q = k === 'q' ? a.quiz.q : a.steps[i]?.ask?.q;
       else if (a.t === 'tools' || a.t === 'turtlepad') q = a.missions?.[i]?.goal || ('مهمة ' + (i + 1));
-      else if (a.t === 'fplay') { if (k[0] !== 'q') continue; q = 'مثال ' + FLOWS[i].title + ': ' + FLOWS[i].quiz.q; }
+      else if (a.t === 'fplay') { if (k[0] === 'm') q = 'مرحلة ' + FLOWS[i].title + ' · مهارة «' + FLOWS[i].sk.n + '»'; else if (k[0] !== 'q') continue; else q = 'مرحلة ' + FLOWS[i].title + ': ' + FLOWS[i].quiz.q; }
       else if (a.t === 'ffix') q = 'أصلحي المخطط ' + (i + 1) + ': ' + FIX[i].why;
       else if (a.t === 'fhunt') continue;
       else if (a.t === 'book') { if (k.includes('_')) continue; const it = a.items[i]; q = it.n + ' (ص' + it.p + '): ' + it.q; code = it.code || ''; }
