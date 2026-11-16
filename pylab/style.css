@@ -358,3 +358,72 @@ code{background:var(--lilac3);color:var(--plum);border-radius:6px;padding:0 5px;
 
 .vbox .ty{display:block;font-size:10px;margin-top:4px;border-radius:4px;padding:0 4px;background:var(--plum);color:var(--yel)}.vbox.t-int{background:#E3EEF8}.vbox.t-float{background:#E9F5EE}.vbox.t-str{background:#FFF0DA}.vbox.t-bool{background:#F3ECF6}
 .inbox{display:flex;gap:10px;align-items:center;direction:rtl;background:var(--b2);border:2px dashed var(--b);border-radius:12px;padding:8px 12px;margin-bottom:10px}.inbox .kb{font-size:30px}.inbox .arrow{margin-right:auto;font-weight:700;color:var(--b)}
+
+/* تمارين الكتاب */
+.bk{border:2px solid var(--line);border-radius:18px;padding:14px;margin:0 0 16px;background:var(--card);box-shadow:4px 4px 0 var(--yel2)}
+.bkh{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.bkh .sp{flex:1}
+.bkn{background:var(--plum);color:var(--yel);border-radius:10px;padding:2px 12px;font-weight:700}
+.bkq{font-weight:700;margin-bottom:8px}
+.bkdone{margin:0;padding-inline-start:22px}
+.bkfill{display:grid;gap:8px}
+.bkf{display:grid;grid-template-columns:minmax(140px,auto) 1fr;gap:8px;align-items:center}
+@media(max-width:560px){.bkf{grid-template-columns:1fr}}
+.bkf input.mono{direction:ltr;text-align:left}
+input.okf{border-color:var(--g)!important;background:var(--g2)!important}
+input.nof{border-color:var(--r)!important;background:var(--r2)!important}
+.bkflow{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;align-items:start}
+@media(max-width:700px){.bkflow{grid-template-columns:1fr}}
+.bkst{display:flex;gap:6px;align-items:center;border:2px solid var(--line);border-radius:12px;padding:6px 8px;margin:6px 0;background:var(--bg);flex-wrap:wrap}
+.bkpos{width:26px;height:26px;border-radius:50%;background:var(--plum);color:var(--yel);display:grid;place-items:center;font-weight:700;font-size:13px}
+.bkdraw{display:flex;flex-direction:column;align-items:center;background:var(--bg);border:2px dashed var(--lilac);border-radius:14px;padding:10px}
+.bkarrow{font-size:20px;line-height:1;color:var(--plum)}
+.bkph{border:2px dashed var(--line);border-radius:10px;padding:6px 10px;text-align:center;font-size:13px;color:var(--mute);width:230px}
+.fst{display:flex;align-items:center;justify-content:center;height:42px;text-align:center;font:600 12.5px/1.3 Rubik,sans-serif;color:#2B2030}
+
+/* عالم المخططات الانسيابية */
+.fcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.fcard{border:0;background:none;padding:0;perspective:900px;min-height:230px;font:inherit;color:inherit;text-align:center}
+.fcard .fin{position:relative;height:100%;min-height:230px;transition:transform .5s;transform-style:preserve-3d}
+.fcard.flip .fin{transform:rotateY(180deg)}
+.fcard .ff,.fcard .fb2{position:absolute;inset:0;backface-visibility:hidden;border-radius:20px;border:3px solid #534057;padding:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:linear-gradient(160deg,#fff,var(--fc));color:#2B2030;box-shadow:5px 5px 0 var(--fc)}
+.fcard .ff b{font-family:Lalezar;font-weight:400;font-size:22px}
+.fcard .ff small{font-size:11px;opacity:.7}
+.fcard .fb2{transform:rotateY(180deg);background:var(--fc)}
+.fcard .fb2 b{font-family:Lalezar;font-weight:400;font-size:24px}
+.fcard .fb2 p{margin:0;font-size:14px;line-height:1.6}
+.fcard .fb2 .mono{background:rgba(255,255,255,.7);border-radius:8px;padding:2px 8px;font-size:12px;direction:rtl;font-family:Rubik}
+.fpick{display:flex;gap:8px;flex-wrap:wrap}
+.fpick button{border:3px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:6px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px}
+.fpick button:hover:not(:disabled){border-color:var(--plum);transform:translateY(-2px)}
+.fpick button.ok{border-color:var(--g);background:var(--g2)}
+.fpick button.no{border-color:var(--r);background:var(--r2);opacity:.6}
+.fpick.big{justify-content:center;gap:12px}
+.fpick.big button{font-size:14px;padding:10px 14px}
+.fex{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-bottom:14px}
+.fex button{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;position:relative}
+.fex button span{font-size:24px}
+.fex button b{position:absolute;top:4px;right:6px;font-size:11px;background:var(--plum);color:var(--yel);border-radius:50%;width:18px;height:18px;display:grid;place-items:center}
+.fex button small{font-size:11px;line-height:1.3}
+.fex button.on{border-color:var(--plum);background:var(--yel2);box-shadow:3px 3px 0 var(--yel)}
+.fex button.done:after{content:"✔";position:absolute;top:2px;left:6px;color:var(--g);font-weight:700}
+.fxh{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.ficon{font-size:38px}
+.fxw{display:grid;grid-template-columns:auto minmax(260px,1fr);gap:16px;align-items:start}
+@media(max-width:820px){.fxw{grid-template-columns:1fr}}
+.fxc{background:var(--bg);border:2px dashed var(--lilac);border-radius:16px;padding:8px;text-align:center;overflow-x:auto}
+.fxbox{border:2px solid var(--line);border-radius:12px;padding:8px;margin-bottom:8px;background:var(--card)}
+.fchart .fnb{stroke:#534057;stroke-width:2.5;transition:.2s}
+.fchart .fnt{display:flex;align-items:center;justify-content:center;height:100%;text-align:center;font:600 13px/1.3 Rubik,sans-serif;color:#2B2030;direction:rtl}
+.fchart .fel{font:700 13px Rubik,sans-serif}
+.fchart .fel.y{fill:#1E7A3C}.fchart .fel.n{fill:#C0392B}
+.fchart .fn.seen .fnb{stroke-width:3.5}
+.fchart .fn.act .fnb{stroke:#D64545;stroke-width:5;filter:drop-shadow(0 0 8px rgba(236,213,113,.95))}
+.fchart .fn.bad .fnb{stroke:#D64545;stroke-width:5;stroke-dasharray:8 5}
+.fchart .fn.shake{animation:shake .3s}
+.fchart .fe.walk{stroke:#D64545;stroke-width:4}
+.fhq{font-size:30px;font-weight:700;text-align:center;margin:18px 0;padding:18px;border-radius:18px;background:var(--yel2);border:3px solid var(--yel);color:#3D3000}
+.fhq.mono{direction:ltr}
+.fstreak{background:var(--org);color:#4A2E00;border-radius:999px;padding:0 10px}
+
+.st.stx{background:linear-gradient(150deg,var(--card) 40%,var(--yel2));outline:2px solid var(--yel)}.st.stx .num{background:linear-gradient(135deg,#534057,#AC88B7);font-size:26px}

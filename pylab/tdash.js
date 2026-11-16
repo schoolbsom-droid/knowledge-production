@@ -28,6 +28,10 @@ function eachItem(p, cb) {
       else if (a.t === 'explore') { q = a.w === 'coords' ? `النقطة (${a.targets[i]})` : `list[${a.targets[i][0]}][${a.targets[i][1]}]`; if (v.s < 5) wrong = true; }
       else if (a.t === 'story') q = k === 'q' ? a.quiz.q : a.steps[i]?.ask?.q;
       else if (a.t === 'tools' || a.t === 'turtlepad') q = a.missions?.[i]?.goal || ('مهمة ' + (i + 1));
+      else if (a.t === 'fplay') { if (k[0] !== 'q') continue; q = 'مثال ' + FLOWS[i].title + ': ' + FLOWS[i].quiz.q; }
+      else if (a.t === 'ffix') q = 'أصلحي المخطط ' + (i + 1) + ': ' + FIX[i].why;
+      else if (a.t === 'fhunt') continue;
+      else if (a.t === 'book') { if (k.includes('_')) continue; const it = a.items[i]; q = it.n + ' (ص' + it.p + '): ' + it.q; code = it.code || ''; }
       else if (a.t === 'code') continue;
       cb({ L, a, ai, k, v, d, q: q || a.title, code, wrong, key: L.id + '|' + ai + '|' + k });
     }
@@ -49,13 +53,13 @@ async function showStu(id) {
     if (x.a.t === 'tpr' && x.k[0] === 'c') confs.push(x);
     if (x.wrong) wrongs.push(x);
   });
-  LESSONS.forEach(L => L.acts.forEach((a, ai) => { if (a.t === 'code') { const st = p?.[L.id]?.[ai]; if (st) codes.push({ L, a, st }); } }));
+  LESSONS.forEach(L => L.acts.forEach((a, ai) => { if (a.t === 'code') { const st = p?.[L.id]?.[ai]; if (st) codes.push({ L, a, st }); } if (a.t === 'book') a.items.forEach((it, i) => { const g = p?.[L.id]?.[ai]?.it?.['b' + i]; if (g && (g.d?.code || g.d?.text)) codes.push({ L, a: { title: it.n + ' (ص' + it.p + ')' }, st: { it: { done: { d: { code: g.d.code || g.d.text } } } } }); }); }));
   const sec = (t, n, body) => `<h3 style="margin:18px 0 6px;border-bottom:2px solid var(--line);padding-bottom:4px">${t} <span class="badge wait">${ar(n)}</span></h3>${n ? body : '<p class="mute">لا يوجد بعد.</p>'}`;
   box.innerHTML += `<div class="row" style="gap:14px"><div style="width:70px">${koda('happy')}</div><div style="flex:1"><h2 class="h1" style="font-size:28px;margin:0">${esc(r.name)}</h2><div class="mute">${esc(r.class)} · النقاط ${ar(r.score || 0)} · دخلت ${ar(r.visits || 0)} مرة</div></div></div>
   <div class="row" style="gap:6px;margin-top:8px">${LESSONS.map(L => { const v = Math.round(((r.pct || {})[L.id] || 0) * 100); return `<span class="badge ${v >= 80 ? '' : v ? 'go' : 'wait'}">${esc(lname(L))}: ${ar(v)}٪</span>`; }).join('')}</div>
   ${sec('🗣 آراؤها وأسبابها (إشارة المرور)', ops.length, ops.map(x => `<div class="q" style="margin:6px 0"><div>${rich(x.q)}</div><div style="margin-top:4px"><b style="color:${CL[x.d.c]?.[1]}">● ${OPN[x.d.c] || ''}</b> — «${esc(x.d.why || '')}»</div></div>`).join(''))}
   ${sec('✋ إجابتها ودرجة ثقتها', confs.length, `<table class="skills"><tr><th>السؤال</th><th>إجابتها</th><th>الثقة</th><th></th></tr>${confs.map(x => { const c = x.a.conf[+x.k.slice(1)], ok = x.d.p === c.a; return `<tr><td><pre class="mono" style="margin:0;font-size:12px;white-space:pre-wrap">${esc(c.code)}</pre></td><td class="mono" style="color:${ok ? 'var(--g)' : 'var(--r)'}">${ok ? '✔' : '✘'} ${esc(c.o[x.d.p] ?? '')}</td><td>${ar(x.d.n)} · ${CONFN[x.d.n] || ''}</td><td>${!ok && x.d.n >= 4 ? '<span class="badge" style="background:var(--r2);color:var(--r)">واثقة وأخطأت</span>' : ok && x.d.n <= 2 ? '<span class="badge go">أصابت بالتخمين</span>' : ''}</td></tr>`; }).join('')}</table>`)}
-  ${sec('💻 الكود الذي كتبته', codes.length, codes.map(c => { const done = c.st.it?.done; return `<div class="q" style="margin:6px 0"><b>${esc(c.a.title)}</b> <span class="mute">(${esc(c.L.title)})</span> ${done ? '<span class="badge">✔ حلّته</span>' : '<span class="badge wait">لم تكمله</span>'} ${c.st.sol ? '<span class="badge go">شاهدت الحل</span>' : ''}${done?.d?.code ? `<pre class="mono codeblk" style="font-size:13px">${esc(done.d.code)}</pre>` : ''}</div>`; }).join(''))}
+  ${sec('💻 الكود والإجابات المكتوبة', codes.length, codes.map(c => { const done = c.st.it?.done; return `<div class="q" style="margin:6px 0"><b>${esc(c.a.title)}</b> <span class="mute">(${esc(c.L.title)})</span> ${done ? '<span class="badge">✔ حلّته</span>' : '<span class="badge wait">لم تكمله</span>'} ${c.st.sol ? '<span class="badge go">شاهدت الحل</span>' : ''}${done?.d?.code ? `<pre class="mono codeblk" style="font-size:13px">${esc(done.d.code)}</pre>` : ''}</div>`; }).join(''))}
   ${sec('❌ أسئلة أخطأت فيها أول مرة', wrongs.length, `<table class="skills"><tr><th>المحطة</th><th>النشاط</th><th>السؤال</th></tr>${wrongs.map(x => `<tr><td style="white-space:nowrap">${lname(x.L)}</td><td style="white-space:nowrap">${TYPE[x.a.t][0]}</td><td>${rich(x.q)}${x.code ? `<pre class="mono" style="margin:4px 0 0;font-size:12px;white-space:pre-wrap">${esc(x.code)}</pre>` : ''}</td></tr>`).join('')}</table>`)}
   ${sec('🪞 تقييمها الذاتي (جدول المهارات)', Object.keys(D.self || {}).length, LESSONS.filter(L => D.self?.[L.id]).map(L => L.skills.map((s, i) => D.self[L.id][i] == null ? '' : `<div>• ${rich(s)}: <b style="color:${D.self[L.id][i] === 0 ? 'var(--g)' : 'var(--r)'}">${D.self[L.id][i] === 0 ? 'أتقنت' : 'لم أتقن بعد'}</b></div>`).join('')).join(''))}`;
 }

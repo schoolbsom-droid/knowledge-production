@@ -9,7 +9,7 @@ function barq(m = 'happy') {
   <path d="M64 0 L52 14 h9 l-5 12 16-16 h-9z" fill="#ECD571" stroke="#534057" stroke-width="2"/>
   <path d="M40 112 l-8 26 M80 112 l10 24" stroke="#534057" stroke-width="6" stroke-linecap="round"/><ellipse cx="28" cy="142" rx="10" ry="5" fill="#D64545"/><ellipse cx="94" cy="140" rx="10" ry="5" fill="#D64545"/></svg>`;
 }
-const lname = L => L.extra ? 'القصة' : L.project ? 'المشروع' : L.exam ? 'الاختبار' : 'م' + ar(L.n);
+const lname = L => L.extra ? (L.short || 'القصة') : L.project ? 'المشروع' : L.exam ? 'الاختبار' : 'م' + ar(L.n);
 const cname = w => w === 'b' ? 'بيثو' : w === 'q' ? 'برق' : 'كودة';
 const fv = v => v === null ? 'None' : typeof v === 'string' ? `"${v}"` : String(v);
 

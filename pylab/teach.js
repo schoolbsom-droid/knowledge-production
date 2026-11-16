@@ -55,6 +55,9 @@ function teachSlides(L) {
       a.prints.forEach((pr, j) => pr.forEach((q, i) => add(`البصمة ${ar(j + 1)} · سؤال ${ar(i + 1)}`, 'FINGERPRINT', el => { el.innerHTML = `<h2 class="th2">البصمة ${ar(j + 1)} · سؤال ${ar(i + 1)}</h2>`; tAsk(el, q); })));
       add('فتح القضية', 'FINAL CASE', el => { el.innerHTML = '<h2 class="th2">فتح القضية <span class="mode">FINAL CASE</span></h2>'; tAsk(el, a.final); });
     }
+    if (a.t === 'fplay') FLOWS.forEach((f, i) => add(`${f.icon} المثال ${ar(i + 1)}: ${f.title}`, 'LIVE', el => { el.innerHTML = '<div class="tex"></div>'; fPlay({ a: { ...a, only: i }, body: $('.tex', el), rec: () => true, got: () => null }); }));
+    if (['fshapes', 'fhunt', 'ffix'].includes(a.t)) add(a.title, 'FLOW', el => { el.innerHTML = `<h2 class="th2">${esc(a.title)}</h2><div class="tex"></div>`; R[a.t]({ a, body: $('.tex', el), rec: () => true, got: () => null }); });
+    if (a.t === 'book') a.items.forEach(it => add(`${it.n} · ص${it.p}`, 'BOOK', el => { el.innerHTML = `<h2 class="th2">📘 ${esc(it.n)} <span class="mute" style="font-size:16px">الكتاب ص${esc(it.p)}</span></h2><div class="tex"></div>`; bookAct({ a: { items: [it] }, body: $('.tex', el), rec: () => true, got: () => null }); }));
     if (a.t === 'turtlepad') add(a.title, 'TURTLE', el => { el.innerHTML = `<h2 class="th2">${esc(a.title)}</h2><div class="tex"></div>`; turtlePad({ a, body: $('.tex', el), rec: () => true, got: () => null }); });
     if (a.t === 'story' || a.t === 'tools') add(a.title, a.t === 'story' ? 'STORY' : 'TOOLS', el => { el.innerHTML = `<h2 class="th2">${esc(a.title)}</h2><div class="tex"></div>`; (a.t === 'story' ? storyAct : toolsAct)({ a, body: $('.tex', el), rec: () => true, got: () => null }); });
     if (a.t === 'explore') add(a.title, 'EXPLORE', el => { el.innerHTML = `<h2 class="th2">${esc(a.title)}</h2><div class="tex"></div>`; const fake = { a, body: $('.tex', el), rec: () => true, got: () => null }; R.explore(fake); });
@@ -79,7 +82,7 @@ let TS = { L: 0, i: 0 };
 function vTeach() {
   if (CUR.L == null) {
     main().innerHTML = `<div class="greet"><div class="avatar">${koda('happy')}</div><div class="bubble">أهلًا أ. ابتسام! اختاري المحطة التي ستشرحينها اليوم. تُعرض كشرائح على السبورة، والكود يعمل مباشرة.</div></div>
-    <div class="stations">${LESSONS.map((L, i) => `<button class="st" onclick="go('teach',${i})"><span class="num">${L.extra ? '⚡' : L.project ? icon('trophy', 24) : L.exam ? icon('star', 24) : ar(L.n)}</span><span class="t">${esc(L.title)}</span><span class="meta">ص${L.pages} · ${ar(teachSlides(L).length)} شريحة</span></button>`).join('')}</div>`;
+    <div class="stations">${LESSONS.map((L, i) => `<button class="st" onclick="go('teach',${i})"><span class="num">${L.extra ? (L.badge || '⚡') : L.project ? icon('trophy', 24) : L.exam ? icon('star', 24) : ar(L.n)}</span><span class="t">${esc(L.title)}</span><span class="meta">ص${L.pages} · ${ar(teachSlides(L).length)} شريحة</span></button>`).join('')}</div>`;
     return;
   }
   const L = LESSONS[CUR.L], sl = teachSlides(L);

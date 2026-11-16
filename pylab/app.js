@@ -13,7 +13,7 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const ar = x => String(x ?? '').replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 // يعزل الكود الإنجليزي داخل الجمل العربية حتى لا تنقلب رموزه
-const rich = s => esc(s).replace(/[\x21-\x7E](?:[\x20-\x7E]*[\x21-\x7E])?/g, m => { const tail = (m.match(/[.,:]+$/) || [''])[0]; const core = tail ? m.slice(0, -tail.length) : m; return /[A-Za-z\[\]()=<>]/.test(core) ? '<code dir="ltr">' + core + '</code>' + tail : m; }).replace(/\n/g, '<br>');
+const rich = s => esc(s).replace(/[\x21-\x7E](?:[\x20-\x7E]*[\x21-\x7E])?/g, m => { const tail = (m.match(/[.,:]+$/) || [''])[0]; const core = tail ? m.slice(0, -tail.length) : m; return (/[A-Za-z=<>]/.test(core) || (/[\[\]()]/.test(core) && core.length > 2)) ? '<code dir="ltr">' + core + '</code>' + tail : m; }).replace(/\n/g, '<br>');
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const h = (html) => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; };
 async function rpc(fn, body) {
@@ -66,6 +66,11 @@ function maxOf(a) {
     case 'story': return a.steps.filter(s => s.ask).length * 5 + 10;
     case 'tools': return a.missions.length * 5;
     case 'turtlepad': return 30;
+    case 'book': return a.items.length * 10;
+    case 'fshapes': return 25;
+    case 'fplay': return FLOWS.length * 8;
+    case 'fhunt': return 25;
+    case 'ffix': return FIX.length * 10;
     default: return 0;
   }
 }
@@ -120,7 +125,7 @@ const IC = {
   back: '<path d="M9 5l7 7-7 7"/>', home: '<path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/>', board: '<path d="M3 4h18v12H3zM8 20h8M12 16v4"/>', moon: '<path d="M20 14A8 8 0 1 1 10 4a6 6 0 0 0 10 10z"/>', out: '<path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9"/>',
 };
 const icon = (n, s = 22) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[n] || ''}</svg>`;
-const TYPE = { comic: ['قصة مصورة', 'COMIC'], run: ['جرّبي بنفسك', 'CODE LAB'], traffic: ['إشارة المرور', 'TRAFFIC LIGHT'], tpr: ['استجيبي', 'TPR'], mission: ['المهمة السرية', 'SECRET MISSION'], prints: ['لغز البصمات', 'FINGERPRINT'], match: ['طابقي', 'MATCH IT'], quiz: ['اختاري', 'QUIZ'], code: ['تحدي البرمجة', 'CHALLENGE'], explore: ['استكشفي', 'EXPLORE'], master: ['بطاقة الإتقان', 'MASTERY'], story: ['حكاية', 'STORY'], tools: ['ورشة الدوال', 'TOOLS'], turtlepad: ['ورشة السلحفاة', 'TURTLE'] };
+const TYPE = { comic: ['قصة مصورة', 'COMIC'], run: ['جرّبي بنفسك', 'CODE LAB'], traffic: ['إشارة المرور', 'TRAFFIC LIGHT'], tpr: ['استجيبي', 'TPR'], mission: ['المهمة السرية', 'SECRET MISSION'], prints: ['لغز البصمات', 'FINGERPRINT'], match: ['طابقي', 'MATCH IT'], quiz: ['اختاري', 'QUIZ'], code: ['تحدي البرمجة', 'CHALLENGE'], explore: ['استكشفي', 'EXPLORE'], master: ['بطاقة الإتقان', 'MASTERY'], story: ['حكاية', 'STORY'], tools: ['ورشة الدوال', 'TOOLS'], turtlepad: ['ورشة السلحفاة', 'TURTLE'], book: ['تمارين الكتاب', 'BOOK'], fshapes: ['بطاقات الأشكال', 'SHAPES'], fplay: ['عشرة أمثلة حيّة', 'LIVE EXAMPLES'], fhunt: ['صيّاد الأشكال', 'GAME'], ffix: ['أصلحي المخطط', 'GAME'] };
 
 /* ---------- عام ---------- */
 function toast(t) { const d = h(`<div class="toast">${t}</div>`); document.body.appendChild(d); setTimeout(() => d.remove(), 2200); }
@@ -163,7 +168,8 @@ async function vLogin() {
   $('#lc').innerHTML = '<option value="">اختاري فصلكِ</option>' + classes.map((c, i) => `<option value="${i}">${esc(c.name)}</option>`).join('');
   if (!online) $('#lmsg').textContent = 'تعذّر الاتصال، تأكدي من الإنترنت ثم أعيدي فتح الصفحة.';
   $('#lc').onchange = async () => {
-    const c = classes[$('#lc').value]; if (!c || !online) return;
+    if (!online) { try { const p = await rpc('api_project', { p_slug: SLUG }); if (p && p.classes?.length) { const i = +$('#lc').value; classes = p.classes; online = true; $('#lmsg').textContent = ''; $('#lc').value = String(i); } } catch (e) {} }
+    const c = classes[$('#lc').value]; if (!c) return; if (!online) return $('#lmsg').textContent = 'تعذّر تحميل الأسماء، حدّثي الصفحة ثم أعيدي المحاولة.';
     $('#ln').innerHTML = '<option>جارٍ التحميل…</option>';
     try { const st = await rpc('api_class_students', { p_slug: SLUG, p_class: c.id }); $('#ln').innerHTML = '<option value="">اختاري اسمكِ</option>' + st.map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join(''); $('#ln').disabled = false; }
     catch (e) { $('#lmsg').textContent = 'تعذّر تحميل الأسماء، أعيدي المحاولة.'; }
@@ -187,7 +193,7 @@ function vMap() {
   const all = LESSONS.filter(L => !L.exam && !L.project && !L.extra).every(L => lessonStat(L).pct >= MASTER);
   const next = LESSONS.find(L => lessonStat(L).pct < MASTER);
   main().innerHTML = `<div class="greet"><div class="avatar">${koda(all ? 'wow' : 'happy')}</div><div class="bubble">أهلًا ${esc(u.name.split(' ')[0])}! ${all ? 'أتقنتِ كل المحطات 🎉 شهادتكِ جاهزة!' : next ? `محطتكِ التالية: <b>${esc(next.title)}</b>. لتصبحي «متقنة» في أي محطة اجمعي ${ar(80)}٪ من نقاطها.` : ''}</div></div>
-  <div class="stations">${LESSONS.map((L, i) => { const st = lessonStat(L); return `<button class="st" onclick="go('lesson',${i})">${ring(st.pct)}<span class="num">${L.extra ? '⚡' : L.project ? icon('trophy', 24) : L.exam ? icon('star', 24) : ar(L.n)}</span><span class="t">${esc(L.title)}</span><span class="meta">ص${L.pages} · ${ar(L.acts.filter(a => a.t !== 'master').length)} أنشطة</span><span>${st.pct >= MASTER ? '<span class="badge">✔ متقنة</span>' : st.s ? '<span class="badge go">قيد الإنجاز</span>' : '<span class="badge wait">لم تبدئي</span>'}</span></button>`; }).join('')}</div>
+  <div class="stations">${LESSONS.map((L, i) => { const st = lessonStat(L); return `<button class="st${L.extra ? ' stx' : ''}" onclick="go('lesson',${i})">${ring(st.pct)}<span class="num">${L.extra ? (L.badge || '⚡') : L.project ? icon('trophy', 24) : L.exam ? icon('star', 24) : ar(L.n)}</span><span class="t">${esc(L.title)}</span><span class="meta">ص${L.pages} · ${ar(L.acts.filter(a => a.t !== 'master').length)} أنشطة</span><span>${st.pct >= MASTER ? '<span class="badge">✔ متقنة</span>' : st.s ? '<span class="badge go">قيد الإنجاز</span>' : '<span class="badge wait">لم تبدئي</span>'}</span></button>`; }).join('')}</div>
   <div class="card" style="margin-top:22px"><div class="row"><div style="flex:1"><h2 class="h2">شهادة إتقان الوحدة</h2><p class="mute" style="margin:0">تُفتح عندما تصلين إلى ${ar(80)}٪ في المحطات الست.</p></div><button class="btn ${all ? 'g' : 'ghost'}" ${all ? '' : 'disabled'} onclick="go('cert')">🎓 شهادتي</button></div></div>`;
 }
 
@@ -195,7 +201,7 @@ function vMap() {
 function vLesson() {
   const L = LESSONS[CUR.L], ai = CUR.ai, a = L.acts[ai];
   main().innerHTML = `<div class="lhead"><button class="iconbtn" style="background:var(--plum)" onclick="go('map')" title="رجوع">${icon('back')}</button><div><h1 class="h1" style="font-size:24px;margin:0">${esc(L.title)}</h1><div class="mute" style="font-size:13px">الكتاب ص${L.pages}</div></div></div>
-  <div class="steps">${L.acts.map((x, i) => { const mx = maxOf(x), sc = scoreOf(L.id, i); return `<button class="${i === ai ? 'on' : ''} ${mx && sc >= mx * .6 ? 'ok' : ''}" onclick="go('lesson',${CUR.L},${i})"><span class="dot"></span>${ar(i + 1)}. ${x.t === 'story' ? esc(x.title.split(':')[1] || x.title).trim() : TYPE[x.t][0]}</button>`; }).join('')}</div>
+  <div class="steps">${L.acts.map((x, i) => { const mx = maxOf(x), sc = scoreOf(L.id, i); return `<button class="${i === ai ? 'on' : ''} ${mx && sc >= mx * .6 ? 'ok' : ''}" onclick="go('lesson',${CUR.L},${i})"><span class="dot"></span>${ar(i + 1)}. ${x.t === 'story' ? esc(x.title.split(':')[1] || x.title).trim() : x.t === 'book' && L.extra ? 'ابني المخطط' : TYPE[x.t][0]}</button>`; }).join('')}</div>
   <div class="card act" id="act"></div>
   <div class="nav"><button class="btn ghost" ${ai ? '' : 'disabled'} onclick="go('lesson',${CUR.L},${ai - 1})">→ السابق</button><button class="btn" onclick="${ai < L.acts.length - 1 ? `go('lesson',${CUR.L},${ai + 1})` : `go('map')`}">${ai < L.acts.length - 1 ? 'التالي ←' : 'إلى الخريطة'}</button></div>`;
   const box = $('#act');
@@ -261,6 +267,8 @@ const R = {};
 R.story = ctx => storyAct(ctx);
 R.tools = ctx => toolsAct(ctx);
 R.turtlepad = ctx => turtlePad(ctx);
+R.book = ctx => bookAct(ctx);
+R.fshapes = ctx => fShapes(ctx); R.fplay = ctx => fPlay(ctx); R.fhunt = ctx => fHunt(ctx); R.ffix = ctx => fFix(ctx);
 
 R.comic = ({ a, body, rec, got }) => {
   body.innerHTML = `<div class="comic">${a.panels.map((p, i) => `<div class="panel ${p.w === 'b' ? 'flip' : ''} ${p.blank ? 'blank' : ''}" style="background:${['#FFF8E1', '#F3ECF6', '#E9F5EE', '#FFF0E0', '#EAF2FA', '#FBEFF3'][i % 6]}"><span class="pn">${ar(i + 1)}</span>${p.fx ? `<span class="fx">${esc(p.fx)}</span>` : ''}<div class="who">${char(p.w, p.m)}</div><div class="say"><b style="color:var(--plum)">${cname(p.w)}:</b> ${rich(p.s)}${p.code ? `<pre class="mono">${esc(p.code)}</pre>` : ''}${p.blank ? '<div id="blank" style="margin-top:6px;font-weight:700">… ؟</div>' : ''}</div></div>`).join('')}</div><div id="cq"></div>`;
