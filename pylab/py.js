@@ -207,7 +207,10 @@ def _lab_exec(code):
     import tkinter
     tkinter._shapes.clear()
     sys.modules.pop('turtle', None)
+    sys.modules.pop('vex', None)
     _lab_ns = {'__name__': '__main__'}
+    pre = getattr(js.window, 'LAB_PRELUDE', None)
+    if pre: exec(str(pre), _lab_ns)
     n = [0]
     def tr(frame, ev, arg):
         if frame.f_code.co_filename == '<الكود>':
@@ -230,6 +233,10 @@ def _lab_exec(code):
         return (str(ln) if ln else '?') + '|' + type(e).__name__ + '|' + msg
     finally:
         sys.settrace(None)
+        fin = _lab_ns.pop('_lab_finish', None)
+        if fin:
+            try: fin(_lab_ns)
+            except BaseException: pass
 def _lab_check(expr):
     ns = dict(_lab_ns); ns['_lab_code'] = _lab_code
     try: return bool(eval(expr, ns))
@@ -266,6 +273,7 @@ def _lab_check(expr):
       p.FS.writeFile('/labmods/tkinter.py', TK_PY);
       p.FS.writeFile('/labmods/pygame.py', PG_PY);
       if (window.TURTLE_PY) p.FS.writeFile('/labmods/turtle.py', TURTLE_PY);
+      if (window.VEX_PY) p.FS.writeFile('/labmods/vex.py', VEX_PY);
       p.FS.chdir('/home/pyodide');
       py = p; writeFiles(true);
       p.runPython(BOOT_PY);

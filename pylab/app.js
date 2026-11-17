@@ -66,6 +66,7 @@ function maxOf(a) {
     case 'story': return a.steps.filter(s => s.ask).length * 5 + 10;
     case 'tools': return a.missions.length * 5;
     case 'turtlepad': return 30;
+    case 'robopad': return 35;
     case 'book': return a.items.length * 10;
     case 'fshapes': return 25;
     case 'fplay': return FLOWS.length * 13;
@@ -125,7 +126,7 @@ const IC = {
   back: '<path d="M9 5l7 7-7 7"/>', home: '<path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/>', board: '<path d="M3 4h18v12H3zM8 20h8M12 16v4"/>', moon: '<path d="M20 14A8 8 0 1 1 10 4a6 6 0 0 0 10 10z"/>', out: '<path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9"/>',
 };
 const icon = (n, s = 22) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[n] || ''}</svg>`;
-const TYPE = { comic: ['قصة مصورة', 'COMIC'], run: ['جرّبي بنفسك', 'CODE LAB'], traffic: ['إشارة المرور', 'TRAFFIC LIGHT'], tpr: ['استجيبي', 'TPR'], mission: ['المهمة السرية', 'SECRET MISSION'], prints: ['لغز البصمات', 'FINGERPRINT'], match: ['طابقي', 'MATCH IT'], quiz: ['اختاري', 'QUIZ'], code: ['تحدي البرمجة', 'CHALLENGE'], explore: ['استكشفي', 'EXPLORE'], master: ['بطاقة الإتقان', 'MASTERY'], story: ['حكاية', 'STORY'], tools: ['ورشة الدوال', 'TOOLS'], turtlepad: ['ورشة السلحفاة', 'TURTLE'], book: ['تمارين الكتاب', 'BOOK'], fshapes: ['بطاقات الأشكال', 'SHAPES'], fplay: ['المراحل العشر', 'LEVELS'], fhunt: ['صيّاد الأشكال', 'GAME'], ffix: ['أصلحي المخطط', 'GAME'] };
+const TYPE = { comic: ['قصة مصورة', 'COMIC'], run: ['جرّبي بنفسك', 'CODE LAB'], traffic: ['إشارة المرور', 'TRAFFIC LIGHT'], tpr: ['استجيبي', 'TPR'], mission: ['المهمة السرية', 'SECRET MISSION'], prints: ['لغز البصمات', 'FINGERPRINT'], match: ['طابقي', 'MATCH IT'], quiz: ['اختاري', 'QUIZ'], code: ['تحدي البرمجة', 'CHALLENGE'], explore: ['استكشفي', 'EXPLORE'], master: ['بطاقة الإتقان', 'MASTERY'], story: ['حكاية', 'STORY'], tools: ['ورشة الدوال', 'TOOLS'], turtlepad: ['ورشة السلحفاة', 'TURTLE'], robopad: ['ورشة الروبوت', 'ROBOT'], book: ['تمارين الكتاب', 'BOOK'], fshapes: ['بطاقات الأشكال', 'SHAPES'], fplay: ['المراحل العشر', 'LEVELS'], fhunt: ['صيّاد الأشكال', 'GAME'], ffix: ['أصلحي المخطط', 'GAME'] };
 
 /* ---------- عام ---------- */
 function toast(t) { const d = h(`<div class="toast">${t}</div>`); document.body.appendChild(d); setTimeout(() => d.remove(), 2200); }
@@ -194,7 +195,7 @@ function vMap() {
   const next = LESSONS.find(L => lessonStat(L).pct < MASTER);
   main().innerHTML = `<div class="greet"><div class="avatar">${koda(all ? 'wow' : 'happy')}</div><div class="bubble">أهلًا ${esc(u.name.split(' ')[0])}! ${all ? 'أتقنتِ كل المحطات 🎉 شهادتكِ جاهزة!' : next ? `محطتكِ التالية: <b>${esc(next.title)}</b>. لتصبحي «متقنة» في أي محطة اجمعي ${ar(80)}٪ من نقاطها.` : ''}</div></div>
   <div class="stations">${LESSONS.map((L, i) => { const st = lessonStat(L); return `<button class="st${L.extra ? ' stx' : ''}" onclick="go('lesson',${i})">${ring(st.pct)}<span class="num">${L.extra ? (L.badge || '⚡') : L.project ? icon('trophy', 24) : L.exam ? icon('star', 24) : ar(L.n)}</span><span class="t">${esc(L.title)}</span><span class="meta">ص${L.pages} · ${ar(L.acts.filter(a => a.t !== 'master').length)} أنشطة</span><span>${st.pct >= MASTER ? '<span class="badge">✔ متقنة</span>' : st.s ? '<span class="badge go">قيد الإنجاز</span>' : '<span class="badge wait">لم تبدئي</span>'}</span></button>`; }).join('')}</div>
-  <div class="card" style="margin-top:22px"><div class="row"><div style="flex:1"><h2 class="h2">شهادة إتقان الوحدة</h2><p class="mute" style="margin:0">تُفتح عندما تصلين إلى ${ar(80)}٪ في المحطات الست.</p></div><button class="btn ${all ? 'g' : 'ghost'}" ${all ? '' : 'disabled'} onclick="go('cert')">🎓 شهادتي</button></div></div>`;
+  <div class="card" style="margin-top:22px"><div class="row"><div style="flex:1"><h2 class="h2">شهادة إتقان الوحدة</h2><p class="mute" style="margin:0">تُفتح عندما تصلين إلى ${ar(80)}٪ في المحطات ${({ 4: 'الأربع', 5: 'الخمس', 6: 'الست', 7: 'السبع' })[LESSONS.filter(L => !L.exam && !L.project && !L.extra).length] || 'الأساسية'}.</p></div><button class="btn ${all ? 'g' : 'ghost'}" ${all ? '' : 'disabled'} onclick="go('cert')">🎓 شهادتي</button></div></div>`;
 }
 
 /* ---------- صفحة الدرس ---------- */
@@ -267,6 +268,7 @@ const R = {};
 R.story = ctx => storyAct(ctx);
 R.tools = ctx => toolsAct(ctx);
 R.turtlepad = ctx => turtlePad(ctx);
+R.robopad = ctx => roboPad(ctx);
 R.book = ctx => bookAct(ctx);
 R.fshapes = ctx => fShapes(ctx); R.fplay = ctx => fPlay(ctx); R.fhunt = ctx => fHunt(ctx); R.ffix = ctx => fFix(ctx);
 
