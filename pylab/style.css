@@ -446,3 +446,14 @@ input.nof{border-color:var(--r)!important;background:var(--r2)!important}
 .fstreak{background:var(--org);color:#4A2E00;border-radius:999px;padding:0 10px}
 
 .st.stx{background:linear-gradient(150deg,var(--card) 40%,var(--yel2));outline:2px solid var(--yel)}.st.stx .num{background:linear-gradient(135deg,#534057,#AC88B7);font-size:26px}
+/* الجوال: الكود الطويل داخل الخيارات والفقاعات ينكسر بدل أن يخرج من البطاقة */
+.opt,.topt,.q,.bkq,.fb,.tstate,.bubble,.bub,.tmis,.tsay,.mcard{min-width:0;overflow-wrap:anywhere}
+.opt code,.topt code,.q code,.bkq code,.fb code,.tstate code,.bubble code,.bub code,.tmis code,.tsay code,.task code{display:inline-block;max-width:100%;white-space:normal;overflow-wrap:anywhere;vertical-align:bottom}
+.topt.mono,.opt.mono{white-space:normal;overflow-wrap:anywhere}
+.topts{grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr))}
+.opts{grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr))}
+pre.codeblk,.codeblk,.q pre,.panel .say pre,.tsay pre{max-width:100%;overflow-x:auto;white-space:pre}
+.bar{scrollbar-width:none}.bar::-webkit-scrollbar{display:none}
+@media(max-width:640px){.topt{font-size:15px}.topt.mono{font-size:13px}.opt.mono{font-size:13px}.tslide pre.codeblk{font-size:14px!important}.tslide .ide textarea.code{font-size:14px}.panel .say pre{font-size:12px}.tsay pre{font-size:14px}.bar{overflow-x:auto;flex-wrap:nowrap}.bar .btn,.bar .chip{white-space:nowrap}}
+.comic,.panel,.panel .say,.tpanel,.tsay,.q,.bk,.bkb{min-width:0;max-width:100%}.panel .say pre,.tsay pre{width:auto;box-sizing:border-box}
+@media(max-width:640px){.panel{min-height:0;padding:10px 8px;gap:6px}.panel .who{width:54px}.panel .say{font-size:14px;padding:8px 10px}.panel .say pre{font-size:12px;padding:6px 8px}}

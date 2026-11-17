@@ -2,7 +2,7 @@
 'use strict';
 window.LABCFG = { grade: 2, gname: 'ثاني متوسط', slug: 'video-1448', lab: 'pylab-g2', store: 'pylab-g2-v1', unit: 'الوحدة الخامسة «برمجة الروبوت»', sub: 'المهارات الرقمية · ثاني متوسط · الوحدة الخامسة' };
 const VX = '__import__("vex")';
-const GRID = '# الملعب: شبكة خريطة\n', ART = '# الملعب: الفن قماش\n';
+const GRID = '# Playground: Grid Map\n', ART = '# Playground: Art Canvas\n';
 const PETAL = 'def Petal():\n    for repeat_count in range(3):\n        drivetrain.drive_for(FORWARD, 180, MM)\n        drivetrain.turn_for(RIGHT, 30, DEGREES)\n    drivetrain.turn_for(RIGHT, 90, DEGREES)\n    for repeat_count in range(3):\n        drivetrain.drive_for(FORWARD, 180, MM)\n        drivetrain.turn_for(RIGHT, 30, DEGREES)\n';
 const PETALP = 'def Petal(Petal_side_length):\n    for repeat_count in range(3):\n        drivetrain.drive_for(FORWARD, Petal_side_length, MM)\n        drivetrain.turn_for(RIGHT, 30, DEGREES)\n    drivetrain.turn_for(RIGHT, 90, DEGREES)\n    for repeat_count in range(3):\n        drivetrain.drive_for(FORWARD, Petal_side_length, MM)\n        drivetrain.turn_for(RIGHT, 30, DEGREES)\n';
 const ZIG = 'def one_step_zigzag():\n    drivetrain.drive_for(FORWARD, 200, MM)\n    drivetrain.turn_for(RIGHT, 90, DEGREES)\n    drivetrain.drive_for(FORWARD, 200, MM)\n    drivetrain.turn_for(LEFT, 90, DEGREES)\n';
