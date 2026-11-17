@@ -146,7 +146,7 @@ function bar() {
   $('#bar').innerHTML = `<div class="brand">معمل بايثون<small>${CFG.sub}</small></div><span class="sp"></span>
   ${u ? `<span class="chip" title="${esc(u.cls)}">👩‍💻 <b>${esc(u.name.split(' ')[0])}</b></span><span class="chip xp" id="xp"></span>` : ''}
   ${TEACHER ? `<button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('teach')">📖 الشرح</button><button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('board')">🎯 لوحة التحدي</button><button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('students')">👩‍🎓 الطالبات</button>` : ''}
-  <a class="chip" href="../esp32/" title="معمل ESP32: الليد والكود + تعلّمي توصيل الليد" style="text-decoration:none;color:#fff;background:#ff8c1a">💡 معمل ESP32</a>
+  <a class="chip" href="../esp32/g1.html" title="مغامرة المنارة: برمجي الليد على لوحة ESP32" style="text-decoration:none;color:#fff;background:#ff8c1a">💡 مغامرة المنارة</a>
   ${u ? `<button class="iconbtn" title="الخريطة" onclick="go('map')">${icon('home')}</button>` : ''}
   <button class="iconbtn" title="الوضع الليلي" onclick="theme()">${icon('moon')}</button>
   ${u ? `<button class="iconbtn" title="خروج" onclick="logout()">${icon('out')}</button>` : ''}`;

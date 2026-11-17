@@ -28,10 +28,12 @@ const LESSONS = [
   {g: 1, u: 2, kind: 'أداة', title: 'السبورة التفاعلية', url: 'lessons/whiteboard.html'},
   {g: 1, u: 0, kind: 'مشروع', title: 'مشاريع تصميم الفيديو', url: 'video.html'},
   {g: 2, u: 2, kind: 'مشروع', title: 'مشاريع المتجر الإلكتروني', url: 'store.html'}
-  {g: 0, u: 3, kind: 'معمل', title: 'معمل ESP32: الليد والكود', url: 'esp32/'},
+  {g: 0, u: 3, kind: 'معمل', title: 'مغامرة المنارة: برمجة الليد باللبنات', url: 'esp32/g1.html'},
   {g: 0, u: 3, kind: 'معمل', title: 'تعلّمي توصيل الليد وجرّبي', url: 'esp32/wire.html'},
+  {g: 1, u: 2, kind: 'معمل', title: 'مغامرة المنارة: برمجة الليد باللبنات', url: 'esp32/g1.html'},
   {g: 1, u: 2, kind: 'معمل', title: 'معمل ESP32: الليد والكود', url: 'esp32/'},
   {g: 1, u: 2, kind: 'معمل', title: 'تعلّمي توصيل الليد وجرّبي', url: 'esp32/wire.html'},
+  {g: 2, u: 3, kind: 'معمل', title: 'مغامرة المنارة: برمجة الليد باللبنات', url: 'esp32/g1.html'},
   {g: 2, u: 3, kind: 'معمل', title: 'معمل ESP32: الليد والكود', url: 'esp32/'},
   {g: 2, u: 3, kind: 'معمل', title: 'تعلّمي توصيل الليد وجرّبي', url: 'esp32/wire.html'},];
 
