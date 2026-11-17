@@ -48,6 +48,23 @@ h1{margin:0;font:34px/1.3 Lalezar,Rubik,sans-serif;color:var(--brand)}
 .strip .off{background:#26314f}
 .strip .inf{flex:0 0 34px;display:grid;place-items:center;font-size:12px;color:#fff}
 .strip.empty{display:grid;place-items:center;color:#8e88b0;font-size:13px}
+.tiles{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:52px}
+.tiles.empty{color:var(--mute);font-size:14px;background:var(--bg);border:2px dashed var(--line);border-radius:12px;justify-content:center}
+.tl{position:relative;display:inline-flex;flex-direction:column;align-items:center;min-width:66px;padding:5px 8px;border-radius:12px;font-size:13px;line-height:1.35}
+.tl span{font-size:20px}
+.tl.on{background:#ffd54a;color:#3a2a00}
+.tl.off{background:#26314f;color:#fff}
+.tl.x{outline:3px solid var(--bad);outline-offset:1px}
+.tl em{position:absolute;top:-8px;left:-7px;font-style:normal;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.tl em.y{color:var(--ok)}.tl em.n{color:var(--bad)}
+.arw{color:var(--mute);font-style:normal;font-size:18px}
+.how{display:flex;gap:6px;flex-wrap:wrap;list-style:none;padding:0;margin:12px 0 0}
+.how li{flex:1 1 140px;border-radius:12px;padding:6px 10px;font-size:14px;background:var(--bg);color:var(--mute);border:2px solid transparent}
+.how li.now{border-color:var(--brand);color:var(--ink);font-weight:700;background:var(--card)}
+.how li.ok{color:var(--ok)}
+.pulse{animation:pulse 1.1s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(108,92,231,.7)}50%{box-shadow:0 0 0 9px rgba(108,92,231,0)}}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none;outline:3px solid var(--brand)}}
 .blocks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:6px}
 .blk{font:inherit;font-size:16px;font-weight:700;border:0;border-radius:14px;padding:12px 10px;cursor:pointer;color:#fff;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 4px 0 rgba(0,0,0,.2);transition:transform .08s}
 .blk:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
@@ -100,10 +117,11 @@ h1{margin:0;font:34px/1.3 Lalezar,Rubik,sans-serif;color:var(--brand)}
     <section class="card">
       <div class="story"><svg class="av" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#ffe7a3"/><rect x="16" y="22" width="32" height="26" rx="8" fill="#534057"/><circle cx="25" cy="34" r="4" fill="#ffd54a"/><circle cx="39" cy="34" r="4" fill="#ffd54a"/><path d="M26 42 q6 4 12 0" stroke="#ffd54a" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M14 22 q18-16 36 0" fill="#1e88e5"/><rect x="12" y="20" width="40" height="5" rx="2" fill="#1565c0"/></svg>
         <div class="bubble" id="story"></div></div>
-      <div class="lbl">🎯 المطلوب (الأصفر = المصباح مضاء، الأزرق = مطفأ)</div>
-      <div class="strip" id="target"></div>
+      <ol class="how" id="how"><li>① اضغطي على اللبنات لتبني الكود</li><li>② اضغطي «▶ شغّلي» وراقبي المنارة</li><li>③ قارني: هل يشبه كودك المطلوب؟</li></ol>
+      <div class="lbl">🎯 المطلوب من المصباح (بالترتيب)</div>
+      <div class="tiles" id="target"></div>
       <div class="lbl">👩‍💻 ما فعله كودك</div>
-      <div class="strip empty" id="mine">شغّلي الكود ليظهر هنا</div>
+      <div class="tiles empty" id="mine">شغّلي الكود ليظهر هنا</div>
 
       <div class="lbl" style="margin-top:16px">🧱 اضغطي على اللبنة لتضيفها إلى الكود</div>
       <div class="blocks" id="blocks"></div>
@@ -162,10 +180,10 @@ function map() {
 function open(i) {
   stop(); M = i; prog = []; inLoop = false; const m = MIS[i];
   $('story').innerHTML = `<b>${m.t}</b><br>${m.story}`;
-  strip($('target'), m.free ? null : m.segs, m.fin);
-  $('mine').className = 'strip empty'; $('mine').textContent = 'شغّلي الكود ليظهر هنا';
-  msg('اختاري لبنة 🧱 ثم اضغطي «▶ شغّلي».'); ship(0); lamp(0);
-  blocks(); code(); map();
+  tiles($('target'), m.free ? null : m.segs, m.fin);
+  mineReset(); ran = false;
+  msg('ابدئي من الخطوة ①: اضغطي على اللبنة المضيئة 🧱'); ship(0); lamp(0);
+  blocks(); code(); map(); guide();
 }
 
 // ---------- اللبنات ----------
@@ -178,6 +196,7 @@ function blocks() {
   $('blocks').innerHTML = h.join('');
   $('blocks').querySelectorAll('[data-s]').forEach(b => b.onclick = e => { e.stopPropagation(); sleepV = +b.dataset.s; blocks(); });
   $('blocks').querySelectorAll('[data-n]').forEach(b => b.onclick = e => { e.stopPropagation(); loopN = +b.dataset.n; blocks(); });
+  setTimeout(() => { if ($('how')) guide(); });
   $('blocks').querySelectorAll('.blk').forEach(b => { b.onclick = () => add(b.dataset.a); b.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); add(b.dataset.a); } }; });
 }
 function add(a) {
@@ -186,7 +205,18 @@ function add(a) {
   if (a === 'for') { prog.push({ a, n: loopN, in: 0 }); inLoop = true; }
   else if (a === 'end') { inLoop = false; }
   else prog.push({ a, v: sleepV, in: inLoop ? 1 : 0 });
-  blocks(); code();
+  ran = false; mineReset(); blocks(); code(); guide();
+  msg(prog.length === 1 ? '👍 ظهرت اللبنة في الكود بالأسفل. أضيفي غيرها أو اضغطي «▶ شغّلي».' : 'أضيفي لبنة أخرى، أو اضغطي «▶ شغّلي» لتجربي.');
+}
+let ran = false;
+function mineReset() { $('mine').className = 'tiles empty'; $('mine').textContent = 'شغّلي الكود ليظهر هنا'; }
+function guide() { // يوضح للطالبة ماذا تفعل الآن
+  const step = !prog.length ? 0 : !ran ? 1 : 2;
+  $('how').querySelectorAll('li').forEach((li, i) => { li.className = i === step ? 'now' : i < step ? 'ok' : ''; });
+  $('blocks').querySelectorAll('.blk').forEach(b => b.classList.remove('pulse'));
+  const first = $('blocks').querySelector('.blk');
+  if (step === 0 && first) first.classList.add('pulse');
+  $('run').classList.toggle('pulse', step === 1);
 }
 const PRE = ['<span class="k">from</span> machine <span class="k">import</span> Pin', '<span class="k">from</span> time <span class="k">import</span> sleep', 'led = Pin(<span class="n">2</span>, Pin.OUT)'];
 function line(p) {
@@ -202,11 +232,11 @@ function code(cur = -1) {
   if (!prog.length) h += `<div class="ph">← هنا يظهر كودك</div>`;
   else if (inLoop) h += `<div class="ph">… اللبنات التالية داخل التكرار</div>`;
   $('code').innerHTML = h;
-  $('code').querySelectorAll('[data-d]').forEach(b => b.onclick = () => { const i = +b.dataset.d; if (prog[i].a === 'for') { for (let j = i + 1; j < prog.length && prog[j].in; j++) prog[j].in = 0; } prog.splice(i, 1); if (!prog.some(p => p.a === 'for')) inLoop = false; blocks(); code(); });
+  $('code').querySelectorAll('[data-d]').forEach(b => b.onclick = () => { const i = +b.dataset.d; if (prog[i].a === 'for') { for (let j = i + 1; j < prog.length && prog[j].in; j++) prog[j].in = 0; } prog.splice(i, 1); if (!prog.some(p => p.a === 'for')) inLoop = false; ran = false; mineReset(); blocks(); code(); guide(); });
   if (cur >= 0 && $('L' + cur)) $('L' + cur).scrollIntoView({ block: 'nearest' });
 }
-$('undo').onclick = () => { stop(); prog.pop(); const L = prog[prog.length - 1]; inLoop = !!L && (L.a === 'for' || L.in === 1); blocks(); code(); };
-$('clear').onclick = () => { stop(); prog = []; inLoop = false; blocks(); code(); };
+$('undo').onclick = () => { stop(); prog.pop(); const L = prog[prog.length - 1]; inLoop = !!L && (L.a === 'for' || L.in === 1); ran = false; mineReset(); blocks(); code(); guide(); };
+$('clear').onclick = () => { stop(); prog = []; inLoop = false; ran = false; mineReset(); blocks(); code(); guide(); };
 $('hint').onclick = () => msg(MIS[M].free ? 'لا يوجد مطلوب هنا — جرّبي أي شيء تحبينه! 🎨' : '💡 ' + MIS[M].hint);
 
 // ---------- التنفيذ ----------
@@ -233,11 +263,16 @@ function timeline(st) { // [حالة, مدة] بعد الدمج
   while (segs.length && segs[segs.length - 1][0] === fin) segs.pop();
   return { segs, fin, T: t };
 }
-function strip(el, segs, fin) {
-  if (!segs) { el.className = 'strip empty'; el.textContent = 'حرّة — بلا مطلوب'; return; }
-  const tot = segs.reduce((a, s) => a + s[1], 0) || 1;
-  el.className = 'strip';
-  el.innerHTML = segs.map(([s, d]) => `<span class="${s ? 'on' : 'off'}" style="flex:${d / tot * 10} 1 0" title="${s ? 'مضاء' : 'مطفأ'} ${d} ث"></span>`).join('') + `<span class="inf ${fin ? 'on' : 'off'}" title="في النهاية" style="color:${fin ? '#222' : '#fff'}">${fin ? '∞💡' : '∞'}</span>`;
+const seq = (segs, fin) => [...segs.map(([st, d]) => ({ st, d })), { st: fin, end: 1 }];
+function tiles(el, segs, fin, ref) {
+  if (!segs) { el.className = 'tiles empty'; el.textContent = '🎨 حرّة — صمّمي ما تحبين'; return; }
+  const a = seq(segs, fin), r = ref ? seq(ref.segs, ref.fin) : null;
+  el.className = 'tiles';
+  el.innerHTML = a.map((x, i) => {
+    const y = r && r[i], ok = r ? !!y && y.st === x.st && (x.end ? !!y.end : !y.end && Math.abs(y.d - x.d) < 1e-6) : null;
+    const t = x.end ? (i ? 'و' : '') + (x.st ? 'يبقى مضاءً' : 'يبقى مطفأً') : (x.st ? 'مضاء ' : 'مطفأ ') + ar(x.d) + ' ث';
+    return `<span class="tl ${x.st ? 'on' : 'off'}${ok === false ? ' x' : ''}"><span>${x.st ? '💡' : '🌑'}</span>${t}${ok === true ? '<em class="y">✔</em>' : ok === false ? '<em class="n">✘</em>' : ''}</span>`;
+  }).join('<i class="arw">←</i>');
 }
 const same = (a, b) => a.length === b.length && a.every((x, i) => x[0] === b[i][0] && Math.abs(x[1] - b[i][1]) < 1e-6);
 function run() {
@@ -248,7 +283,7 @@ function run() {
   const tl = timeline(st);
   // التشغيل بالوقت الحقيقي
   let k = 0, base = 0, sStart = 0, sLen = 0;
-  lamp(0); $('mine').className = 'strip empty'; $('mine').textContent = '…';
+  lamp(0); $('mine').className = 'tiles empty'; $('mine').textContent = '… يعمل الآن';
   msg('▶ يعمل الآن… راقبي المنارة 👀');
   tick = setInterval(() => { const e = Math.min(sLen, (performance.now() - sStart) / 1000); $('clock').textContent = ar((base + e).toFixed(1)) + ' ث'; }, 100);
   const step = () => {
@@ -265,7 +300,8 @@ function run() {
 let tick = null;
 function stop() { clearTimeout(playing); clearInterval(tick); playing = null; tick = null; }
 function done(tl) {
-  strip($('mine'), tl.segs, tl.fin);
+  const m0 = MIS[M]; ran = true; guide();
+  tiles($('mine'), tl.segs, tl.fin, m0.free ? null : { segs: m0.segs, fin: m0.fin });
   $('clock').textContent = ar(tl.T.toFixed(1)) + ' ث';
   const m = MIS[M];
   if (m.free) { ship(1); confetti(); return msg(`🎨 رائع! إشارتك استغرقت ${ar(tl.T)} ثانية. السفينة ترقص على ضوئك 🚢`, 'ok'); }
@@ -279,10 +315,12 @@ function done(tl) {
   // تلميحات ذكية
   const on = a => a.filter(s => s[0] === 1).length;
   let h;
-  if (tl.fin !== m.fin && same(tl.segs, m.segs)) h = m.fin ? 'قريب جدًا! في النهاية يجب أن يبقى المصباح <b>مضاءً</b>.' : 'قريب جدًا! لكن المصباح بقي مضاءً في النهاية — أضيفي <b>🌑 أطفئي</b>.';
-  else if (on(tl.segs) + (tl.fin ? 1 : 0) !== on(m.segs) + (m.fin ? 1 : 0)) h = `عدد الومضات مختلف: المطلوب <b>${ar(on(m.segs) + (m.fin ? 1 : 0))}</b> وكودك أعطى <b>${ar(on(tl.segs) + (tl.fin ? 1 : 0))}</b>. قارني الشريطين ⬆️`;
+  const flat = prog.map(p => p.a).join(' ');
+  if (tl.fin !== m.fin && same(tl.segs, m.segs)) h = m.fin ? (flat.includes('off') ? 'أشعلتِ المصباح ثم <b>أطفأتِه مباشرة</b>، فبقي مطفأً ولم ترَ السفينة شيئًا. احذفي لبنات «أطفئي» بالضغط على ✕ بجانبها، ثم شغّلي مرة أخرى.' : 'في النهاية يجب أن يبقى المصباح <b>مضاءً</b> — استخدمي «💡 أشعلي».') : 'قريب جدًا! لكن المصباح بقي مضاءً في النهاية — أضيفي <b>🌑 أطفئي</b> في آخر الكود.';
+  else if (/(on on|off off)/.test(flat) && !flat.includes('for')) h = 'كتبتِ نفس الأمر مرتين وراء بعض (مثل «أطفئي» ثم «أطفئي») — المرة الثانية لا تغيّر شيئًا. بين كل أمرين ضعي «⏱️ انتظري».';
+  else if (on(tl.segs) + (tl.fin ? 1 : 0) !== on(m.segs) + (m.fin ? 1 : 0)) h = `عدد الومضات مختلف: المطلوب <b>${ar(on(m.segs) + (m.fin ? 1 : 0))}</b> وكودك أعطى <b>${ar(on(tl.segs) + (tl.fin ? 1 : 0))}</b>. انظري إلى البطاقات ⬆️ — البطاقة ذات ✘ هي مكان الاختلاف.`;
   else if (prog.filter(p => p.a === 'sleep').length === 0) h = 'المصباح أضاء وانطفأ بسرعة لم ترها السفينة! أضيفي <b>⏱️ انتظري</b> بعد الإشعال.';
-  else h = 'عدد الومضات صحيح ✔️ لكن <b>المدة</b> مختلفة — انظري لطول الأجزاء في الشريطين وغيّري رقم الانتظار.';
+  else h = 'عدد الومضات صحيح ✔️ لكن <b>المدة</b> مختلفة — انظري إلى البطاقة ذات ✘ وغيّري رقم «انتظري».';
   ship(0);
   msg('🤔 ' + h, 'bad');
 }
