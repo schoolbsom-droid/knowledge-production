@@ -196,10 +196,19 @@ sys.path.insert(0, '/labmods')
 time.sleep = lambda s=0: None
 def _lab_input(p=''):
     v = js.window.prompt(str(p) or 'أدخلي قيمة:')
-    v = '' if v is None else str(v)
+    if v is None: raise _Limit('توقف البرنامج: ألغيتِ الإدخال')
+    v = str(v)
     js.window.PYECHO(str(p), v)
     return v
 builtins.input = _lab_input
+# يتذكر آخر حرف طُبع حتى نُظهر السطر الأخير إذا انتهى بـ end=' '
+class _Track:
+    def __init__(self, w): self.w = w; self.last = '\n'
+    def write(self, t):
+        if t: self.last = t[-1]
+        return self.w.write(t)
+    def __getattr__(self, n): return getattr(self.w, n)
+sys.stdout = _Track(sys.stdout)
 _lab_ns = {}
 class _Limit(Exception): pass
 def _lab_exec(code):
@@ -233,12 +242,39 @@ def _lab_exec(code):
         return (str(ln) if ln else '?') + '|' + type(e).__name__ + '|' + msg
     finally:
         sys.settrace(None)
+        if getattr(sys.stdout, 'last', '\n') != '\n': print()
         fin = _lab_ns.pop('_lab_finish', None)
         if fin:
             try: fin(_lab_ns)
             except BaseException: pass
+# يشغّل كود الطالبة من جديد بمدخلات تجريبية ويرجع ما طُبع (للتحقق من البرامج التي فيها input)
+def _lab_try(*inputs):
+    import contextlib
+    it = iter([str(v) for v in inputs])
+    def fake(p=''):
+        try: v = next(it)
+        except StopIteration: raise _Limit('no more input')
+        print(str(p) + v)
+        return v
+    buf = io.StringIO(); ns = {'__name__': '__main__'}; old = builtins.input; builtins.input = fake
+    n = [0]
+    def tr(frame, ev, arg):
+        if frame.f_code.co_filename == '<الكود>':
+            n[0] += 1
+            if n[0] > 200000: raise _Limit('loop')
+        return tr
+    try:
+        with contextlib.redirect_stdout(buf):
+            sys.settrace(tr)
+            try: exec(compile(_lab_code, '<الكود>', 'exec'), ns)
+            finally: sys.settrace(None)
+    except BaseException as e:
+        buf.write(' !ERR ' + type(e).__name__)
+    finally:
+        builtins.input = old
+    return buf.getvalue()
 def _lab_check(expr):
-    ns = dict(_lab_ns); ns['_lab_code'] = _lab_code
+    ns = dict(_lab_ns); ns['_lab_code'] = _lab_code; ns['_lab_try'] = _lab_try
     try: return bool(eval(expr, ns))
     except Exception: return False
 `;
@@ -274,6 +310,7 @@ def _lab_check(expr):
       p.FS.writeFile('/labmods/pygame.py', PG_PY);
       if (window.TURTLE_PY) p.FS.writeFile('/labmods/turtle.py', TURTLE_PY);
       if (window.VEX_PY) p.FS.writeFile('/labmods/vex.py', VEX_PY);
+      if (window.OPENPYXL_PY) p.FS.writeFile('/labmods/openpyxl.py', OPENPYXL_PY);
       p.FS.chdir('/home/pyodide');
       py = p; writeFiles(true);
       p.runPython(BOOT_PY);
@@ -303,6 +340,7 @@ def _lab_check(expr):
     if (type === 'FileNotFoundError') return 'الملف غير موجود. افتحيه بالوضع "w" أو "a" لإنشائه، أو تأكدي من اسم الملف.';
     if (type === 'AttributeError') return 'هذه الدالة أو الخاصية غير موجودة لهذا النوع. راجعي اسمها بعد النقطة.';
     if (type === 'ZeroDivisionError') return 'لا يمكن القسمة على صفر.';
+    if (type === '_Limit' && /ألغيت/.test(m)) return 'ضغطتِ «إلغاء» في نافذة الإدخال فتوقف البرنامج. شغّليه من جديد واكتبي قيمة.';
     if (type === '_Limit') return 'البرنامج لم يتوقف. في حلقة while تأكدي أن الشرط يتغير، مثل قراءة السطر التالي داخل الحلقة.';
     if (type === 'ModuleNotFoundError') return 'هذه المكتبة غير متوفرة في المعمل.';
     return '';
@@ -321,6 +359,7 @@ def _lab_check(expr):
       out((ln !== '?' ? `السطر ${ln}: ` : '') + msg, 'err');
       return { ok: false, type, msg, line: ln, hint: explain(type, msg), out: text };
     }
+    if (window.LAB_AFTER_RUN) { try { window.LAB_AFTER_RUN(p, code, tkEl); } catch (e) {} }
     if (!text.trim() && !(tkEl && tkEl.children.length)) out('(تم التشغيل بلا مخرجات)', 'sys');
     return { ok: true, out: text };
   }
