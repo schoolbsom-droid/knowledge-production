@@ -29,6 +29,10 @@ function eachItem(p, cb) {
       else if (a.t === 'story') q = k === 'q' ? a.quiz.q : a.steps[i]?.ask?.q;
       else if (a.t === 'tools' || a.t === 'turtlepad' || a.t === 'robopad') q = a.missions?.[i]?.goal || ('مهمة ' + (i + 1));
       else if (a.t === 'fplay') { if (k[0] === 'm') q = 'مرحلة ' + (a.flows || FLOWS)[i].title + ' · مهارة «' + (a.flows || FLOWS)[i].sk.n + '»'; else if (k[0] !== 'q') continue; else q = 'مرحلة ' + (a.flows || FLOWS)[i].title + ': ' + (a.flows || FLOWS)[i].quiz.q; }
+      else if (a.t === 'rush') { q = a.items[i].q; code = a.items[i].code || ''; }
+      else if (a.t === 'trap') q = 'Mr. Trap: ' + a.items[i].say;
+      else if (a.t === 'cyber') { if (k === 'rb') { q = 'إعادة بناء الدرس (الاختراق السيبراني)'; code = d.text || ''; } else q = 'الاختراق السيبراني: ' + a.items[i].s; }
+      else if (a.t === 'exit') { q = 'التذكرة الختامية: ' + a.ticket.mcq.q + ' — سببها: «' + (d.r || '') + '» · الأصعب: ' + (d.hs || '') + ' · الفهم ' + (d.c || '') + '/5'; wrong = !!d.wrong || !d.ok2; }
       else if (a.t === 'ifplay') { if (k[0] === 'k') q = 'مرحلة ' + a.stages[i].title + ' · ' + a.stages[i].n; else if (k[0] === 'c') { q = 'كود: ' + a.stages[i].title; code = d.code || ''; } else continue; }
       else if (a.t === 'ffix') q = 'أصلحي المخطط ' + (i + 1) + ': ' + FIX[i].why;
       else if (a.t === 'fhunt') continue;
@@ -78,5 +82,6 @@ async function hardQ() {
   box.innerHTML += `<h2 class="h1" style="font-size:28px">📊 أصعب الأسئلة ${TL === 'all' ? 'على كل الفصول' : 'في ' + esc(TL)}</h2><p class="mute">من ${ar(ids.length)} طالبة دخلن المعمل. النسبة = من أخطأن أول مرة ÷ من أجبن.</p>
   ${top.length ? `<table class="skills"><tr><th>النسبة</th><th>المحطة</th><th>السؤال</th></tr>${top.map(g => `<tr><td style="white-space:nowrap"><b style="color:var(--r)">${ar(Math.round(g.w / g.n * 100))}٪</b> <span class="mute">(${ar(g.w)}/${ar(g.n)})</span></td><td style="white-space:nowrap">${lname(g.L)} · ${TYPE[g.a.t][0]}</td><td>${rich(g.q)}${g.code ? `<pre class="mono" style="margin:4px 0 0;font-size:12px;white-space:pre-wrap">${esc(g.code)}</pre>` : ''}</td></tr>`).join('')}</table>` : '<p class="mute">لا توجد أخطاء مسجّلة بعد.</p>'}
   <h3 style="margin-top:18px">🗣 آراء الفصل في «إشارة المرور»</h3>${Object.values(ops).length ? Object.values(ops).map(o => { const t = o.g + o.y + o.r; return `<div class="q" style="margin:6px 0"><div>${rich(o.q)}</div><div class="row" style="gap:12px;margin-top:4px"><b style="color:var(--g)">أوافق ${ar(o.g)}</b><b style="color:#C99700">غير متأكدة ${ar(o.y)}</b><b style="color:var(--r)">لا أوافق ${ar(o.r)}</b><div class="progress" style="flex:1;min-width:120px;display:flex"><i style="width:${o.g / t * 100}%;background:var(--g);border-radius:0"></i><i style="width:${o.y / t * 100}%;background:#F2C200;border-radius:0"></i><i style="width:${o.r / t * 100}%;background:var(--r);border-radius:0"></i></div></div></div>`; }).join('') : '<p class="mute">لا توجد آراء بعد.</p>'}
+  ${typeof exitSummary === 'function' ? exitSummary(all, ids) : ''}
   ${cw.length ? `<h3>⚠ طالبات كنّ واثقات وأخطأن (يحتجن متابعة)</h3><p>${[...new Set(cw)].map(n => `<span class="badge" style="background:var(--r2);color:var(--r);margin:2px">${esc(n)}</span>`).join('')}</p>` : ''}`;
 }

@@ -478,3 +478,38 @@ pre.codeblk,.codeblk,.q pre,.panel .say pre,.tsay pre{max-width:100%;overflow-x:
 .isl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0}.isl input[type=range]{flex:1;min-width:160px;accent-color:var(--plum);direction:ltr}
 .iopt{display:block;width:100%;text-align:left;direction:ltr;margin:8px 0;border:3px solid var(--line);border-radius:12px;background:var(--code);color:var(--codeink);padding:8px 12px;font:14px/1.7 "JetBrains Mono",monospace;font-variant-ligatures:none;white-space:pre;overflow-x:auto;cursor:pointer}
 .iopt:hover:not(:disabled){border-color:var(--lilac)}.iopt.no{border-color:var(--r);opacity:.5}.iopt.ok{border-color:var(--g);box-shadow:0 0 0 3px var(--g2)}
+/* تحدي 30 ثانية */
+.rush .rhead{display:flex;flex-direction:column;gap:4px;background:linear-gradient(135deg,#FFF3C4,#FFE0B2);border-radius:14px;padding:10px 14px;margin-bottom:10px}
+.rbadge{align-self:flex-start;background:var(--plum);color:var(--yel);border-radius:999px;padding:2px 12px;font-weight:700}
+.rbig{font-size:64px;line-height:1.2}
+.rtop{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.rclock{font:700 30px Lalezar,Rubik,sans-serif;color:var(--plum);min-width:48px;text-align:center;border-radius:12px;background:var(--lilac3)}
+.rclock.hot{color:#fff;background:var(--r);animation:ipblink 1s steps(1) infinite}
+.rbar{height:10px;background:var(--lilac3);border-radius:999px;overflow:hidden;margin:6px 0 10px}.rbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--g),#F2C200,var(--r));transition:width 1s linear}
+/* Mr. Trap */
+.trapsay{display:flex;gap:10px;align-items:center;background:#EFE6F7;border:2px dashed #6E4A8E;border-radius:16px;padding:8px 12px;margin-bottom:10px}
+.trapsay .who{width:76px;flex:none}.trapsay .bub{font-size:15px}
+.trapc{border:2px solid var(--line);border-radius:14px;padding:10px 12px;margin:10px 0;background:var(--card)}.trapc.ok{border-color:var(--g)}
+.trq{display:flex;gap:8px;align-items:flex-start;font-weight:600}.trq>div{flex:1;min-width:0}
+.trn{background:#6E4A8E;color:#fff;border-radius:50%;min-width:28px;height:28px;display:grid;place-items:center;font-size:14px}
+.trb{margin-top:8px}.icode .ln.shk{animation:ipshk .35s;background:rgba(214,69,69,.4)}
+/* الاختراق السيبراني */
+.cyber{background:radial-gradient(circle at 20% 0,#2A1450,#0B0B1E 60%);color:#E6E6FF;border-radius:18px;padding:14px;border:2px solid #7B5CFF;box-shadow:0 0 18px rgba(123,92,255,.35) inset}
+.cyber .chead{display:flex;gap:12px;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.cglitch{font:700 22px "JetBrains Mono",monospace;color:#FF4FD8;text-shadow:2px 0 #00E5FF,-2px 0 #FF4FD8;letter-spacing:1px;direction:ltr;text-align:start}
+.cmut{color:#A8A6D9;font-size:13px}
+.cstat{min-width:150px;background:rgba(0,229,255,.06);border:1px solid #00E5FF;border-radius:12px;padding:8px 10px;text-align:center}
+.cpct{font:700 30px "JetBrains Mono",monospace;color:#00E5FF}
+.cmeter{height:8px;background:#22224A;border-radius:999px;overflow:hidden;margin:4px 0}.cmeter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#FF4FD8,#00E5FF);transition:width .5s}
+.crow{display:flex;gap:10px;border:1px solid #3B3B7A;border-radius:12px;padding:10px;margin:8px 0;background:rgba(255,255,255,.03)}.crow.fixed{border-color:#5EF2B0;background:rgba(94,242,176,.06)}
+.cn{font:700 18px "JetBrains Mono",monospace;color:#FF4FD8;min-width:24px}.cs{flex:1;min-width:0}
+.cyber code{background:#22224A;color:#00E5FF}
+.cbtn{border:2px solid #5EF2B0;background:transparent;color:#5EF2B0;border-radius:10px;padding:5px 14px;font:700 14px Rubik,sans-serif;cursor:pointer}.cbtn.bad{border-color:#FF4FD8;color:#FF4FD8}.cbtn:disabled{opacity:.35}
+.cok{color:#5EF2B0;font-weight:700;margin-top:6px}.cno{color:#FF7A9C;margin-top:6px}
+.cyber .opt{background:#16163A;color:#E6E6FF;border-color:#3B3B7A}.cyber .opt.no{border-color:#FF4FD8}
+.cyber .in{background:#16163A;color:#E6E6FF;border-color:#3B3B7A}
+.cwin{margin-top:12px;border:2px solid #5EF2B0;border-radius:14px;padding:12px;background:rgba(94,242,176,.07)}
+/* التذكرة الختامية */
+.ticket{border:3px dashed var(--plum);border-radius:18px;padding:12px;background:repeating-linear-gradient(135deg,var(--card),var(--card) 18px,var(--lilac3) 18px,var(--lilac3) 20px)}
+.ticket .q{background:var(--card)}
+.tkh{font:700 20px Lalezar,Rubik,sans-serif;color:var(--plum);margin-bottom:6px}
