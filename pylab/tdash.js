@@ -29,6 +29,7 @@ function eachItem(p, cb) {
       else if (a.t === 'story') q = k === 'q' ? a.quiz.q : a.steps[i]?.ask?.q;
       else if (a.t === 'tools' || a.t === 'turtlepad' || a.t === 'robopad') q = a.missions?.[i]?.goal || ('مهمة ' + (i + 1));
       else if (a.t === 'fplay') { if (k[0] === 'm') q = 'مرحلة ' + (a.flows || FLOWS)[i].title + ' · مهارة «' + (a.flows || FLOWS)[i].sk.n + '»'; else if (k[0] !== 'q') continue; else q = 'مرحلة ' + (a.flows || FLOWS)[i].title + ': ' + (a.flows || FLOWS)[i].quiz.q; }
+      else if (a.t === 'ifplay') { if (k[0] === 'k') q = 'مرحلة ' + a.stages[i].title + ' · ' + a.stages[i].n; else if (k[0] === 'c') { q = 'كود: ' + a.stages[i].title; code = d.code || ''; } else continue; }
       else if (a.t === 'ffix') q = 'أصلحي المخطط ' + (i + 1) + ': ' + FIX[i].why;
       else if (a.t === 'fhunt') continue;
       else if (a.t === 'book') { if (k.includes('_')) continue; const it = a.items[i]; q = it.n + ' (ص' + it.p + '): ' + it.q; code = it.code || ''; }
