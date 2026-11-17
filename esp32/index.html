@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>معمل ESP32</title>
+<meta name="description" content="معمل إلكترونيات افتراضي: اكتبي كود بايثون وشاهدي الليد على لوحة ESP32 كأنها أمامك">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='10' y='14' width='44' height='36' rx='5' fill='%2320232a'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ff3b3b'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f3fb; --card:#ffffff; --ink:#2b2340; --mute:#6c6488; --line:#e2dcef;
+  --brand:#6c5ce7; --brand2:#ffd54a; --stage:#e9e5f3; --ok:#1f9d55; --bad:#d64545;
+  --code:#1e1b2e; --codeInk:#ece8ff; --gut:#8a83a8; --hl:rgba(255,213,74,.22);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15121f; --card:#1f1b2e; --ink:#ece8ff; --mute:#a59fc2; --line:#332c4a;
+    --brand:#9d8fff; --stage:#110e1a; --code:#100d1a; --hl:rgba(255,213,74,.18);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15121f; --card:#1f1b2e; --ink:#ece8ff; --mute:#a59fc2; --line:#332c4a;
+  --brand:#9d8fff; --stage:#110e1a; --code:#100d1a; --hl:rgba(255,213,74,.18);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 Rubik,Tahoma,sans-serif}
+header{padding:18px 16px 6px;max-width:1280px;margin:auto}
+h1{margin:0;font-size:24px}
+h1 b{color:var(--brand)}
+header p{margin:2px 0 0;color:var(--mute)}
+main{max-width:1280px;margin:auto;padding:10px 16px 30px;display:grid;gap:16px;grid-template-columns:minmax(0,5fr) minmax(0,6fr)}
+@media (max-width:980px){main{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;min-width:0}
+.card h2{margin:0 0 10px;font-size:16px;display:flex;align-items:center;gap:8px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+button,select{font:inherit;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 14px;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}
+.run{background:var(--ok);border-color:var(--ok);color:#fff;font-weight:700}
+.stop{background:var(--bad);border-color:var(--bad);color:#fff}
+.sp{margin-inline-start:auto;color:var(--mute);font-size:13px}
+.ed{position:relative;direction:ltr;background:var(--code);border-radius:12px;overflow:hidden;height:440px;display:flex}
+.gut{width:42px;flex:none;padding:12px 0;color:var(--gut);text-align:right;font:14px/22px "JetBrains Mono",monospace;user-select:none;overflow:hidden}
+.gut div{padding-right:8px}
+.gut .on{color:var(--brand2);font-weight:600}
+.area{position:relative;flex:1;min-width:0}
+.hlbar{position:absolute;left:0;right:0;height:22px;background:var(--hl);border-left:3px solid var(--brand2);display:none;pointer-events:none}
+textarea{position:absolute;inset:0;width:100%;height:100%;resize:none;border:0;outline:0;background:transparent;color:var(--codeInk);font:14px/22px "JetBrains Mono",monospace;padding:12px 10px;white-space:pre;tab-size:4;overflow:auto}
+.status{margin-top:8px;font-size:13px;color:var(--mute);min-height:20px}
+.err{background:rgba(214,69,69,.1);border:1px solid rgba(214,69,69,.4);color:var(--ink);border-radius:10px;padding:8px 12px;margin-top:8px;display:none}
+.err code{direction:ltr;display:inline-block;font-family:"JetBrains Mono",monospace;font-size:13px}
+.stage{background:var(--stage);border-radius:12px;padding:6px;position:relative}
+.stage svg{display:block;width:100%;height:auto}
+.clock{position:absolute;top:12px;left:14px;direction:ltr;font:600 14px "JetBrains Mono",monospace;background:rgba(0,0,0,.6);color:#fff;border-radius:8px;padding:2px 10px}
+.done{position:absolute;top:12px;right:14px;font-size:13px;background:var(--brand);color:#fff;border-radius:8px;padding:2px 10px;display:none}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-top:12px}
+@media (max-width:600px){.row2{grid-template-columns:minmax(0,1fr)}}
+.mon{background:#0c0a12;color:#7dffa1;font:13px/1.5 "JetBrains Mono",monospace;border-radius:10px;padding:8px 10px;height:150px;overflow:auto;direction:ltr;white-space:pre-wrap;margin:0}
+.mon .ev{color:#8e88b0}
+.mon .on{color:#ff8a8a}
+.mon .off{color:#6d6890}
+.sum{font-size:14px;height:150px;overflow:auto;margin:0;padding:0;list-style:none}
+.sum li{padding:4px 0;border-bottom:1px dashed var(--line)}
+.lbl{font-size:13px;color:var(--mute);margin:0 0 4px}
+canvas.tl{width:100%;height:auto;display:block;background:#0c0a12;border-radius:10px;margin-top:12px}
+.tip{font-size:13px;color:var(--mute);margin-top:10px}
+.tip code{direction:ltr;display:inline-block;font-family:"JetBrains Mono",monospace;background:var(--stage);border-radius:6px;padding:0 6px}
+.led-dome,.glow,.pinpt,.obglow{transition:all 60ms linear}
+.types{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px;font-size:14px}
+.types button{display:flex;align-items:center;gap:6px;padding:4px 12px 4px 10px}
+.types button[aria-pressed="true"]{border-color:var(--brand);box-shadow:0 0 0 2px var(--brand) inset;font-weight:700}
+.types i{width:14px;height:14px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.25)}
+.types small{color:var(--mute)}
+.hd{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+a.go{display:inline-block;text-decoration:none;background:var(--brand);color:#fff;border-radius:999px;padding:8px 16px;font-weight:700}
+</style>
+</head>
+<body>
+<header>
+  <div class="hd"><div>
+  <h1>معمل <b>ESP32</b> الافتراضي</h1>
+  <p>اكتبي كود بايثون (MicroPython) واضغطي «تشغيل» — الليد على اللوحة يضيء وينطفئ بنفس التوقيت الحقيقي.</p>
+  </div><a class="go" href="wire.html">🔧 تعلّمي توصيل الليد وجرّبي</a></div>
+</header>
+<main>
+  <section class="card">
+    <h2>💻 المحرّر</h2>
+    <div class="tools">
+      <button class="run" id="run" disabled>▶ تشغيل</button>
+      <button class="stop" id="stop" disabled>■ إيقاف</button>
+      <select id="ex" aria-label="أمثلة"></select>
+      <span class="sp">السرعة
+        <select id="speed" aria-label="السرعة"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select>
+      </span>
+    </div>
+    <div class="ed">
+      <div class="gut" id="gut"></div>
+      <div class="area"><div class="hlbar" id="hl"></div><textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea></div>
+    </div>
+    <div class="status" id="status">⏳ جاري تجهيز اللوحة…</div>
+    <div class="err" id="err"></div>
+    <div class="tip">جاهز بدون كتابة: <code>led</code> = الليد الأحمر على المنفذ D2 و<code>sleep</code>. ويمكن الكتابة بالطريقة الحقيقية: <code>from machine import Pin</code> ثم <code>led = Pin(2, Pin.OUT)</code>. الليد موصول بالمنفذ D2 (رقمه 2). اختصار التشغيل: Ctrl + Enter.</div>
+  </section>
+  <section class="card">
+    <h2>🔌 اللوحة</h2>
+    <div class="types" id="types"><span>نوع الليد:</span></div>
+    <div class="stage"><div id="board"></div><span class="clock" id="clock">0.00 s</span><span class="done" id="done">انتهى البرنامج</span></div>
+    <canvas class="tl" id="tl" width="900" height="90"></canvas>
+    <div class="row2">
+      <div><p class="lbl">شاشة المراقبة (Serial Monitor)</p><pre class="mon" id="mon"></pre></div>
+      <div><p class="lbl">ماذا حدث؟</p><ul class="sum" id="sum"><li>شغّلي الكود لتظهر النتيجة هنا.</li></ul></div>
+    </div>
+  </section>
+</main>
+<script>
+'use strict';
+// ================= أمثلة =================
+const EXAMPLES = [
+['كود الدرس: وميض ثم تكرار for', `led.on()
+sleep(0.5)
+led.off()
+sleep(0.5)
+led.on()
+sleep(0.5)
+led.off()
+sleep(0.5)
+led.on()
+sleep(0.5)
+led.off()
+sleep(0.5)
+led.on()
+sleep(0.5)
+led.off()
+sleep(0.5)
+led.on()
+sleep(0.5)
+led.off()
+sleep(0.5)
+
+for i in range(5):
+    led.on()
+    sleep(0.5)
+    led.off()
+    sleep(0.5)
+    led.on()
+`],
+['الطريقة الحقيقية MicroPython', `from machine import Pin
+from time import sleep
+
+led = Pin(2, Pin.OUT)
+
+for i in range(6):
+    led.on()
+    print("مرة", i + 1, "- مضاء")
+    sleep(0.5)
+    led.off()
+    sleep(0.5)
+`],
+['نبضة القلب', `for beat in range(6):
+    led.on()
+    sleep(0.12)
+    led.off()
+    sleep(0.12)
+    led.on()
+    sleep(0.12)
+    led.off()
+    sleep(0.7)
+    print("نبضة", beat + 1)
+`],
+['تبديل الحالة toggle', `from machine import Pin
+from time import sleep
+
+led = Pin(2, Pin.OUT)
+for i in range(10):
+    led.toggle()
+    print("الحالة الآن:", led.value())
+    sleep(0.3)
+`],
+['إشارة استغاثة SOS', `def flash(t):
+    led.on()
+    sleep(t)
+    led.off()
+    sleep(0.2)
+
+for i in range(3): flash(0.2)   # S
+for i in range(3): flash(0.6)   # O
+for i in range(3): flash(0.2)   # S
+`],
+['تدرّج السطوع PWM', `from machine import Pin, PWM
+from time import sleep
+
+pwm = PWM(Pin(2), freq=1000)
+for r in range(2):
+    for d in range(0, 1024, 16):
+        pwm.duty(d)
+        sleep(0.02)
+    for d in range(1023, -1, -16):
+        pwm.duty(d)
+        sleep(0.02)
+`],
+['حلقة لا نهائية while True', `from machine import Pin
+from time import sleep
+
+led = Pin(2, Pin.OUT)
+count = 0
+while True:
+    led.on()
+    sleep(0.25)
+    led.off()
+    sleep(0.75)
+    count += 1
+    print("نبضة رقم", count)
+`],
+];
+
+// ================= محرك بايثون =================
+const PRELUDE = String.raw`
+import sys, types, json
+_ev = []
+_st = {'t': 0.0, 'lines': 0}
+class _Cap(Exception): pass
+def _ln():
+    f = sys._getframe(1)
+    while f is not None:
+        if f.f_code.co_filename == '<lab>': return f.f_lineno
+        f = f.f_back
+    return 0
+def _push(e):
+    _ev.append(e)
+    if len(_ev) > 20000: raise _Cap('events')
+def _sleep(s):
+    s = float(s)
+    if s < 0: raise ValueError('sleep length must be non-negative')
+    _push(['s', _st['t'], _ln(), s])
+    _st['t'] += s
+    if _st['t'] > 60: raise _Cap('time')
+def _sleep_ms(ms): _sleep(ms / 1000)
+def _sleep_us(us): _sleep(us / 1000000)
+class Pin:
+    OUT = 3; IN = 1; OPEN_DRAIN = 7; PULL_UP = 2; PULL_DOWN = 1
+    def __init__(self, id, mode=-1, pull=-1, value=None):
+        self.id = int(id); self._v = 0
+        _push(['m', _st['t'], _ln(), self.id])
+        if value is not None: self.value(value)
+    def value(self, v=None):
+        if v is None: return self._v
+        self._v = 1 if v else 0
+        _push(['p', _st['t'], _ln(), self.id, self._v])
+    __call__ = value
+    def on(self): self.value(1)
+    def off(self): self.value(0)
+    def high(self): self.value(1)
+    def low(self): self.value(0)
+    def toggle(self): self.value(1 - self._v)
+    def init(self, *a, **k): pass
+    def __repr__(self): return 'Pin(%d)' % self.id
+class PWM:
+    def __init__(self, pin, freq=1000, duty=0, duty_u16=None):
+        self.pin = pin if isinstance(pin, Pin) else Pin(pin); self._d = 0; self._f = freq
+        if duty_u16 is not None: self.duty_u16(duty_u16)
+        else: self.duty(duty)
+    def freq(self, f=None):
+        if f is None: return self._f
+        self._f = f
+    def duty(self, d=None):
+        if d is None: return self._d
+        self._d = max(0, min(1023, int(d)))
+        _push(['p', _st['t'], _ln(), self.pin.id, self._d / 1023])
+    def duty_u16(self, d=None):
+        if d is None: return self._d * 64
+        self.duty(int(d) // 64)
+    def deinit(self): self.duty(0)
+class LED(Pin):
+    def __init__(self, pin): Pin.__init__(self, pin, 3)
+    @property
+    def is_lit(self): return bool(self._v)
+_machine = types.ModuleType('machine'); _machine.Pin = Pin; _machine.PWM = PWM
+_machine.reset = lambda: None; _machine.freq = lambda *a: 240000000
+_time = types.ModuleType('time')
+_time.sleep = _sleep; _time.sleep_ms = _sleep_ms; _time.sleep_us = _sleep_us
+_time.time = lambda: _st['t']; _time.monotonic = lambda: _st['t']
+_time.ticks_ms = lambda: int(_st['t'] * 1000); _time.ticks_us = lambda: int(_st['t'] * 1000000)
+_time.ticks_diff = lambda a, b: a - b
+_gz = types.ModuleType('gpiozero'); _gz.LED = LED
+class _W:
+    def write(self, s):
+        if s: _push(['o', _st['t'], 0, s])
+        return len(s)
+    def flush(self): pass
+def _tr(frame, event, arg):
+    if frame.f_code.co_filename != '<lab>': return None
+    def _tl(fr, ev, a):
+        if ev == 'line':
+            _st['lines'] += 1
+            if _st['lines'] > 400000: raise _Cap('loop')
+        return _tl
+    return _tl
+def _run(src):
+    _ev.clear(); _st['t'] = 0.0; _st['lines'] = 0
+    saved = {k: sys.modules.get(k) for k in ('machine', 'time', 'utime', 'gpiozero')}
+    sys.modules['machine'] = _machine; sys.modules['time'] = _time
+    sys.modules['utime'] = _time; sys.modules['gpiozero'] = _gz
+    ns = {'__name__': '__main__', 'Pin': Pin, 'PWM': PWM, 'sleep': _sleep, 'sleep_ms': _sleep_ms}
+    ns['led'] = Pin(2, Pin.OUT)
+    old = sys.stdout; sys.stdout = _W(); trunc = ''; err = None
+    try:
+        code = compile(src, '<lab>', 'exec')
+        sys.settrace(_tr)
+        exec(code, ns)
+    except _Cap as c:
+        trunc = str(c)
+    except SyntaxError as e:
+        err = [type(e).__name__, str(e.msg), e.lineno or 0]
+    except BaseException as e:
+        tb = e.__traceback__; ln = 0
+        while tb is not None:
+            if tb.tb_frame.f_code.co_filename == '<lab>': ln = tb.tb_lineno
+            tb = tb.tb_next
+        err = [type(e).__name__, str(e), ln]
+    finally:
+        sys.settrace(None); sys.stdout = old
+        for k, v in saved.items():
+            if v is None: sys.modules.pop(k, None)
+            else: sys.modules[k] = v
+    return json.dumps({'ev': _ev, 't': _st['t'], 'trunc': trunc, 'err': err})
+`;
+let py = null;
+async function boot() {
+  try {
+    await new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/pyodide/v0.28.3/full/pyodide.js'; s.onload = ok; s.onerror = no; document.head.appendChild(s); });
+    py = await loadPyodide();
+    py.runPython(PRELUDE);
+    $('run').disabled = false;
+    status('✅ اللوحة جاهزة — اضغطي «تشغيل».');
+    if (location.hash === '#run') { $('speed').value = '4'; run(); }
+  } catch (e) { status('⚠️ تعذّر تحميل محرك بايثون — تحققي من الإنترنت ثم حدّثي الصفحة.'); }
+}
+
+// ================= أدوات =================
+const $ = id => document.getElementById(id);
+const status = t => { $('status').textContent = t; };
+const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+const ar = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+
+// ================= اللوحة (SVG) =================
+const BOT = ['3V3', 'GND', 'D15', 'D2', 'D4', 'RX2', 'TX2', 'D5', 'D18', 'D19', 'D21', 'RX0', 'TX0', 'D22', 'D23'];
+const BOTG = [null, null, 15, 2, 4, 16, 17, 5, 18, 19, 21, 3, 1, 22, 23];
+const TOP = ['VIN', 'GND', 'D13', 'D12', 'D14', 'D27', 'D26', 'D25', 'D33', 'D32', 'D35', 'D34', 'VN', 'VP', 'EN'];
+const TOPG = [null, null, 13, 12, 14, 27, 26, 25, 33, 32, 35, 34, 39, 36, null];
+const px = i => 174 + 18 * i;
+const LEDS = {
+  red: { n: 'أحمر', on: '#ff3b3b', off: '#7a1d1d', g: '#ff3b3b', v: '2.0' },
+  green: { n: 'أخضر', on: '#3dff7a', off: '#155c2c', g: '#3dff7a', v: '2.2' },
+  blue: { n: 'أزرق', on: '#4ab8ff', off: '#14476b', g: '#4ab8ff', v: '3.0' },
+  yellow: { n: 'أصفر', on: '#ffe14a', off: '#7a6a14', g: '#ffe14a', v: '2.1' },
+  orange: { n: 'برتقالي', on: '#ff9a2e', off: '#7a4310', g: '#ff9a2e', v: '2.0' },
+  white: { n: 'أبيض', on: '#ffffff', off: '#b9b6c4', g: '#fff3b0', v: '3.0' },
+};
+let LT = 'red'; try { const s = localStorage.getItem('esp32-led'); if (LEDS[s]) LT = s; } catch (e) {}
+const LX = 330;
+function boardSVG() {
+  const o = LEDS[LT];
+  let s = `<svg viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="لوحة ESP32 موصولة بليدات على لوحة توصيل">
+<defs>
+ <pattern id="holes" x="-6" y="-6" width="12" height="12" patternUnits="userSpaceOnUse"><rect x="4.4" y="4.4" width="3.2" height="3.2" rx=".6" fill="#8d8778"/></pattern>
+ <linearGradient id="shield" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e9ecef"/><stop offset=".5" stop-color="#b7bcc2"/><stop offset="1" stop-color="#d9dde1"/></linearGradient>
+ <linearGradient id="usb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f2f2f2"/><stop offset="1" stop-color="#9aa0a6"/></linearGradient>
+ <filter id="soft" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity=".35"/></filter>`;
+  s += `<radialGradient id="g2"><stop offset="0" stop-color="${o.g}" stop-opacity=".95"/><stop offset=".3" stop-color="${o.g}" stop-opacity=".5"/><stop offset="1" stop-color="${o.g}" stop-opacity="0"/></radialGradient>
+ <linearGradient id="body2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".25"/><stop offset=".4" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient>`;
+  s += `<radialGradient id="gob"><stop offset="0" stop-color="#5ab0ff" stop-opacity=".95"/><stop offset="1" stop-color="#5ab0ff" stop-opacity="0"/></radialGradient></defs>`;
+  // لوحة التوصيل
+  s += `<g filter="url(#soft)"><rect x="14" y="222" width="692" height="188" rx="8" fill="#f3efe4" stroke="#d8d1bf"/></g>
+<line x1="24" y1="231" x2="696" y2="231" stroke="#d33" stroke-width="1.5"/><line x1="24" y1="261" x2="696" y2="261" stroke="#2f6fd6" stroke-width="1.5"/>
+<text x="20" y="244" font-size="10" fill="#d33" text-anchor="middle">+</text><text x="20" y="256" font-size="12" fill="#2f6fd6" text-anchor="middle">−</text>
+<rect x="24" y="234" width="676" height="24" fill="url(#holes)"/>
+<rect x="24" y="270" width="676" height="60" fill="url(#holes)"/>
+<rect x="18" y="333" width="684" height="6" rx="3" fill="#e2dccb"/>
+<rect x="24" y="342" width="676" height="60" fill="url(#holes)"/>`;
+  // الأسلاك والدوائر
+  s += `<path d="M${px(1)} 156 V252" stroke="#222" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="${px(1)}" cy="252" r="3" fill="#222"/>`;
+  {
+    const X = LX, D = X + 72;
+    s += `<g id="slot2">
+<path d="M${px(3)} 156 V190 H${X} V288" stroke="#ff8c1a" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${X}" cy="288" r="3" fill="#ff8c1a"/>
+<line x1="${X}" y1="312" x2="${X + 60}" y2="312" stroke="#9aa0a6" stroke-width="1.8"/>
+<rect x="${X + 14}" y="306" width="32" height="12" rx="6" fill="#d9c7a0" stroke="#b59f73" stroke-width=".8"/>
+<rect x="${X + 19}" y="306" width="3" height="12" fill="#c62828"/><rect x="${X + 25}" y="306" width="3" height="12" fill="#c62828"/><rect x="${X + 31}" y="306" width="3" height="12" fill="#6d4c41"/><rect x="${X + 39}" y="306" width="3" height="12" fill="#c9a227"/>
+<text x="${X + 30}" y="332" font-size="9" fill="#6c6488" text-anchor="middle" font-family="JetBrains Mono,monospace">220Ω</text>
+<circle cx="${X}" cy="312" r="2.2" fill="#777"/><circle cx="${X + 60}" cy="312" r="2.2" fill="#777"/>
+<path d="M${X + 84} 324 C ${X + 112} 324, ${X + 108} 296, ${X + 108} 252" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="${X + 84}" cy="324" r="2.4" fill="#222"/><circle cx="${X + 108}" cy="252" r="2.4" fill="#222"/>
+<path d="M${D - 8} 281 L${X + 60} 300" stroke="#a7acb2" stroke-width="2.4" stroke-linecap="round"/><path d="M${D + 8} 281 L${X + 84} 300" stroke="#a7acb2" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="${X + 60}" cy="300" r="2.4" fill="#777"/><circle cx="${X + 84}" cy="300" r="2.4" fill="#777"/>
+<circle class="glow" id="glow2" cx="${D}" cy="258" r="100" fill="url(#g2)" opacity="0"/>
+<ellipse cx="${D}" cy="280" rx="24" ry="6" fill="${o.off}" stroke="rgba(0,0,0,.3)" stroke-width=".8"/>
+<path class="led-dome" id="dome2" d="M${D - 20} 280 V254 A20 20 0 0 1 ${D + 20} 254 V280 Z" fill="${o.off}" stroke="rgba(0,0,0,.35)" stroke-width=".8"/>
+<path d="M${D - 20} 280 V254 A20 20 0 0 1 ${D + 20} 254 V280 Z" fill="url(#body2)" pointer-events="none"/>
+<ellipse cx="${D - 8}" cy="250" rx="5" ry="10" fill="#fff" opacity=".5" pointer-events="none"/>
+<text x="${X + 56}" y="296" font-size="9" fill="#c62828" text-anchor="end" font-weight="700">+</text><text x="${X + 92}" y="296" font-size="11" fill="#2f6fd6" font-weight="700">−</text>
+<text x="${D}" y="392" font-size="12" fill="#5b5470" text-anchor="middle">ليد ${o.n} 10mm · GPIO2</text>
+</g>`;
+  }
+  // لوحة ESP32
+  s += `<g filter="url(#soft)"><rect x="150" y="34" width="300" height="130" rx="6" fill="#20232a"/></g>
+<rect x="132" y="86" width="26" height="30" rx="3" fill="url(#usb)" stroke="#777"/><rect x="136" y="96" width="10" height="10" rx="1" fill="#555"/>
+<rect x="163" y="78" width="14" height="14" rx="2" fill="#cfd3d6"/><circle cx="170" cy="85" r="4" fill="#333"/><text x="170" y="100" font-size="5.5" fill="#fff" text-anchor="middle">EN</text>
+<rect x="163" y="108" width="14" height="14" rx="2" fill="#cfd3d6"/><circle cx="170" cy="115" r="4" fill="#333"/><text x="170" y="130" font-size="5.5" fill="#fff" text-anchor="middle">BOOT</text>
+<rect x="232" y="88" width="24" height="24" rx="2" fill="#111" stroke="#333"/><text x="244" y="102" font-size="4.5" fill="#888" text-anchor="middle">CP2102</text>
+<rect x="268" y="80" width="16" height="10" fill="#111"/><rect x="268" y="112" width="12" height="6" fill="#111"/>
+<rect x="196" y="84" width="8" height="5" rx="1" fill="#ff3030"/><text x="200" y="80" font-size="5" fill="#ccc" text-anchor="middle">PWR</text>
+<circle class="obglow" id="obglow" cx="200" cy="116" r="16" fill="url(#gob)" opacity="0"/>
+<rect id="ob" x="196" y="114" width="8" height="5" rx="1" fill="#24405e"/><text x="200" y="126" font-size="5" fill="#ccc" text-anchor="middle">LED·D2</text>
+<rect x="298" y="72" width="114" height="58" rx="2" fill="url(#shield)" stroke="#8f959b"/>
+<text x="355" y="96" font-size="8.5" fill="#444" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="600">ESP32-WROOM-32</text>
+<text x="355" y="108" font-size="6" fill="#555" text-anchor="middle" font-family="JetBrains Mono,monospace">Wi-Fi · Bluetooth</text>
+<rect x="412" y="72" width="32" height="58" fill="#1d2c4a"/><path d="M418 80 h20 v6 h-20 v6 h20 v6 h-20 v6 h20 v6 h-20 v6 h20" stroke="#c9a227" stroke-width="1.4" fill="none"/>
+<text x="250" y="129" font-size="6.5" fill="#fff" opacity=".7" text-anchor="middle" font-family="JetBrains Mono,monospace">ESP32 DEVKIT V1</text>
+<rect x="165" y="40" width="270" height="16" rx="2" fill="#0d0d0f"/><rect x="165" y="144" width="270" height="16" rx="2" fill="#0d0d0f"/>`;
+  for (let i = 0; i < 15; i++) {
+    s += `<circle class="pinpt" id="pt${TOPG[i] ?? ('t' + i)}" cx="${px(i)}" cy="48" r="3.2" fill="#c9a227"/><text x="${px(i)}" y="66" font-size="6.2" fill="#fff" text-anchor="middle" font-family="JetBrains Mono,monospace">${TOP[i]}</text>`;
+    s += `<circle class="pinpt" id="pb${BOTG[i] ?? ('b' + i)}" cx="${px(i)}" cy="152" r="3.2" fill="#c9a227"/><text x="${px(i)}" y="139" font-size="6.2" fill="#fff" text-anchor="middle" font-family="JetBrains Mono,monospace">${BOT[i]}</text>`;
+  }
+  s += `</svg>`;
+  return s;
+}
+$('board').innerHTML = boardSVG();
+
+const SLOTBY = { get 2() { return LEDS[LT]; } };
+function types() {
+  const h = $('types');
+  h.innerHTML = '<span>نوع الليد:</span>' + Object.entries(LEDS).map(([k, o]) => `<button type="button" data-k="${k}" aria-pressed="${k === LT}" title="جهد التشغيل ${o.v} فولت"><i style="background:${o.on}"></i>${o.n}</button>`).join('') + `<small>جهد الليد ال${LEDS[LT].n}: ${ar(LEDS[LT].v)} فولت</small>`;
+  h.querySelectorAll('button').forEach(b => b.onclick = () => {
+    LT = b.dataset.k; try { localStorage.setItem('esp32-led', LT); } catch (e) {}
+    $('board').innerHTML = boardSVG(); types();
+    if (P) { setPin(2, P.lv[2] || 0); drawTL(raf ? Math.min(P.T, (performance.now() - P.start) / 1000 * P.sp) : P.T); if (!raf) summary(); }
+  });
+}
+types();
+function mix(a, b, t) { // لون بين حالتي الإطفاء والإضاءة
+  const h = c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16)), A = h(a), B = h(b);
+  return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join('');
+}
+function setPin(pin, lv) {
+  const o = SLOTBY[pin];
+  if (o) { $('dome' + pin).setAttribute('fill', mix(o.off, o.on, lv)); $('glow' + pin).setAttribute('opacity', lv); }
+  if (pin === 2 && $('ob')) { $('ob').setAttribute('fill', mix('#24405e', '#7cc4ff', lv)); $('obglow').setAttribute('opacity', lv); }
+  const pt = $('pb' + pin) || $('pt' + pin);
+  if (pt) { pt.setAttribute('fill', lv > 0 ? '#ffd54a' : '#c9a227'); pt.setAttribute('r', lv > 0 ? 4.2 : 3.2); }
+}
+function resetBoard() { setPin(2, 0); document.querySelectorAll('.pinpt').forEach(p => { p.setAttribute('fill', '#c9a227'); p.setAttribute('r', 3.2); }); }
+
+// ================= المحرّر =================
+const ta = $('code');
+function gutter() {
+  const n = ta.value.split('\n').length; let h = '';
+  for (let i = 1; i <= n; i++) h += `<div id="ln${i}">${i}</div>`;
+  $('gut').innerHTML = h; $('gut').scrollTop = ta.scrollTop;
+}
+let curLine = 0;
+function hlLine(n) {
+  if (curLine && $('ln' + curLine)) $('ln' + curLine).className = '';
+  curLine = n; const bar = $('hl');
+  if (!n) { bar.style.display = 'none'; return; }
+  bar.style.display = 'block'; bar.style.top = (12 + (n - 1) * 22 - ta.scrollTop) + 'px';
+  if ($('ln' + n)) $('ln' + n).className = 'on';
+  const top = 12 + (n - 1) * 22;
+  if (top < ta.scrollTop || top > ta.scrollTop + ta.clientHeight - 30) { ta.scrollTop = top - ta.clientHeight / 2; bar.style.top = (top - ta.scrollTop) + 'px'; }
+}
+ta.addEventListener('input', () => { gutter(); try { localStorage.setItem('esp32-code', ta.value); } catch (e) {} });
+ta.addEventListener('scroll', () => { $('gut').scrollTop = ta.scrollTop; if (curLine) $('hl').style.top = (12 + (curLine - 1) * 22 - ta.scrollTop) + 'px'; });
+ta.addEventListener('keydown', e => {
+  if (e.key === 'Tab') { e.preventDefault(); const a = ta.selectionStart; ta.setRangeText('    ', a, ta.selectionEnd, 'end'); gutter(); }
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); if (!$('run').disabled) run(); }
+});
+EXAMPLES.forEach(([t], i) => { const o = document.createElement('option'); o.value = i; o.textContent = '📂 ' + t; $('ex').appendChild(o); });
+$('ex').onchange = () => { stop(); ta.value = EXAMPLES[$('ex').value][1]; gutter(); hlLine(0); };
+let saved = null; try { saved = localStorage.getItem('esp32-code'); } catch (e) {}
+ta.value = saved || EXAMPLES[0][1]; gutter();
+
+// ================= التشغيل =================
+const HINTS = {
+  NameError: 'استخدمتِ اسمًا غير معروف — تأكدي من الكتابة الصحيحة (led وليس Led) أو عرّفيه أولاً.',
+  SyntaxError: 'خطأ في كتابة الجملة — تحققي من النقطتين «:» بعد for و while و def، ومن إغلاق الأقواس.',
+  IndentationError: 'المسافات في بداية السطر غير صحيحة — الأسطر داخل for تُزاح ٤ مسافات بالتساوي.',
+  AttributeError: 'هذا الأمر غير موجود — الليد يفهم on() و off() و toggle() و value().',
+  TypeError: 'نوع القيمة أو عدد ما بين القوسين غير صحيح — مثال صحيح: sleep(0.5).',
+  ValueError: 'القيمة غير مقبولة — مثلاً لا يكون زمن sleep سالبًا.',
+  ZeroDivisionError: 'لا يمكن القسمة على صفر.',
+};
+const TRUNC = {
+  time: '⏱️ عرضنا أول ٦٠ ثانية فقط — على اللوحة الحقيقية يستمر البرنامج.',
+  events: '📦 البرنامج طويل جدًا — عرضنا أول ٢٠٠٠٠ أمر.',
+  loop: '🔁 حلقة تدور بلا توقف وبدون sleep — على اللوحة الحقيقية سيبدو الليد متجمّدًا! أضيفي sleep داخل الحلقة.',
+};
+let P = null, raf = null;
+function run() {
+  if (!py) return;
+  stop(); resetBoard(); $('err').style.display = 'none'; $('mon').innerHTML = ''; $('done').style.display = 'none';
+  let r;
+  try { r = JSON.parse(py.globals.get('_run')(ta.value)); }
+  catch (e) { status('⚠️ حدث خطأ داخلي — حدّثي الصفحة.'); return; }
+  if (r.err) {
+    const [name, msg, ln] = r.err;
+    $('err').innerHTML = `❌ <b>خطأ${ln ? ' في السطر ' + ar(ln) : ''}:</b> ${esc(HINTS[name] || 'راجعي هذا السطر.')}<br><code>${esc(name + ': ' + msg)}</code>`;
+    $('err').style.display = 'block';
+    if (ln) hlLine(ln);
+  }
+  const pins = [...new Set(r.ev.filter(e => e[0] === 'p' || e[0] === 'm').map(e => e[3]))];
+  const used = pins.filter(p => r.ev.some(e => e[0] === 'p' && e[3] === p));
+  P = { ev: r.ev, T: r.t, i: 0, start: performance.now(), sp: +$('speed').value, lv: {}, hist: {}, used: used.length ? used : [2], trunc: r.trunc, err: !!r.err };
+  P.used.forEach(p => { P.lv[p] = 0; P.hist[p] = [[0, 0]]; });
+  $('stop').disabled = false; $('run').disabled = true;
+  status(r.err ? '⚠️ تم تشغيل الأسطر التي قبل الخطأ.' : '▶ يعمل الآن…');
+  raf = requestAnimationFrame(tick);
+}
+function logLine(cls, t) { const m = $('mon'); m.insertAdjacentHTML('beforeend', `<span class="${cls}">${t}</span>`); m.scrollTop = m.scrollHeight; }
+function tick(now) {
+  if (!P) return;
+  const t = Math.min(P.T, (now - P.start) / 1000 * P.sp);
+  while (P.i < P.ev.length && P.ev[P.i][1] <= t + 1e-9) {
+    const e = P.ev[P.i++];
+    if (e[0] === 'p') {
+      const prev = P.lv[e[3]] ?? 0; P.lv[e[3]] = e[4]; setPin(e[3], e[4]);
+      (P.hist[e[3]] = P.hist[e[3]] || [[0, 0]]).push([e[1], e[4]]);
+      if ((e[4] > 0) !== (prev > 0) && (e[4] === 0 || e[4] === 1)) logLine(e[4] ? 'ev on' : 'ev off', `[${e[1].toFixed(2)}s] GPIO${e[3]} → ${e[4] ? 'ON  ●' : 'OFF ○'}\n`);
+    }
+    if (e[0] === 'o') logLine('', esc(e[3]));
+    if (e[2]) hlLine(e[2]);
+  }
+  $('clock').textContent = t.toFixed(2) + ' s';
+  drawTL(t);
+  if (t >= P.T && P.i >= P.ev.length) return finish();
+  raf = requestAnimationFrame(tick);
+}
+function finish() {
+  cancelAnimationFrame(raf); raf = null;
+  $('stop').disabled = true; $('run').disabled = false; hlLine(0);
+  $('done').style.display = 'block';
+  if (P.trunc === 'events' && P.T < 0.001) P.trunc = 'loop';
+  if (!P.err) status(P.trunc ? TRUNC[P.trunc] : '✅ انتهى البرنامج.');
+  else status('⚠️ توقف البرنامج عند الخطأ.');
+  summary();
+}
+function stop() {
+  if (raf) cancelAnimationFrame(raf); raf = null;
+  if (P && P.i < P.ev.length) { status('■ تم الإيقاف.'); }
+  $('stop').disabled = true; if (py) $('run').disabled = false; hlLine(0);
+}
+$('run').onclick = run; $('stop').onclick = () => { stop(); };
+$('speed').onchange = () => { if (P && raf) { const now = performance.now(), t = (now - P.start) / 1000 * P.sp; P.sp = +$('speed').value; P.start = now - t / P.sp * 1000; } };
+
+function summary() {
+  const li = [];
+  li.push(`⏱️ مدة البرنامج: <b>${ar(P.T.toFixed(1))}</b> ثانية`);
+  P.used.forEach(p => {
+    const h = P.hist[p] || [[0, 0]], o = SLOTBY[p];
+    let ups = 0, lit = 0;
+    for (let i = 1; i < h.length; i++) if (h[i][1] > 0 && !(h[i - 1][1] > 0)) ups++;
+    for (let i = 0; i < h.length; i++) { const end = i + 1 < h.length ? h[i + 1][0] : P.T; lit += (end - h[i][0]) * h[i][1]; }
+    const last = h[h.length - 1][1];
+    const nm = o ? `الليد ال${o.n} (المنفذ D2)` : `المنفذ D${ar(p)} (لا يوجد ليد موصول عليه — الليد على D2)`;
+    li.push(`💡 ${nm}: أضاء <b>${ar(ups)}</b> مرة، مدة الإضاءة ${ar(lit.toFixed(1))} ث، ويبقى في النهاية <b>${last > 0 ? 'مضاءً' : 'مطفأً'}</b>`);
+  });
+  const ex = P.used.find(p => P.hist[p] && P.hist[p][P.hist[p].length - 1][1] > 0);
+  if (ex !== undefined && !P.trunc) li.push('ℹ️ في اللوحة الحقيقية يبقى المنفذ على آخر حالة بعد انتهاء البرنامج — لذلك يظل الليد مضاءً.');
+  $('sum').innerHTML = li.map(x => `<li>${x}</li>`).join('');
+}
+
+// ================= المخطط الزمني =================
+function drawTL(t) {
+  const c = $('tl'), x = c.getContext('2d'), pins = P ? P.used.slice(0, 4) : [2];
+  const rowH = 30, H = 22 + pins.length * rowH;
+  if (c.height !== H) c.height = H;
+  x.clearRect(0, 0, c.width, c.height);
+  const L = 70, R = c.width - 14, span = Math.max(2, P ? P.T : 2), X = s => L + (R - L) * s / span;
+  x.font = '11px JetBrains Mono, monospace'; x.fillStyle = '#6d6890'; x.textAlign = 'center';
+  const step = span > 30 ? 10 : span > 10 ? 2 : span > 4 ? 1 : .5;
+  for (let s = 0; s <= span + 1e-9; s += step) { x.fillText(s + 's', X(s), H - 6); x.fillRect(X(s), 6, 1, H - 22); }
+  pins.forEach((p, k) => {
+    const y0 = 12 + k * rowH, hi = y0 + 2, lo = y0 + rowH - 10, o = SLOTBY[p];
+    x.textAlign = 'left'; x.fillStyle = o ? o.on : '#ccc'; x.fillText('GPIO' + p, 8, y0 + 14);
+    const h = (P && P.hist[p]) || [[0, 0]];
+    x.strokeStyle = o ? o.on : '#ccc'; x.lineWidth = 2; x.beginPath();
+    let lv = 0; x.moveTo(X(0), lo);
+    for (const [s, v] of h) { if (s > t) break; x.lineTo(X(s), lo - (lo - hi) * lv); lv = v; x.lineTo(X(s), lo - (lo - hi) * lv); }
+    x.lineTo(X(t), lo - (lo - hi) * lv); x.stroke();
+  });
+  x.fillStyle = '#ffd54a'; x.fillRect(X(t) - 1, 4, 2, H - 20);
+}
+drawTL(0);
+boot();
+</script>
+</body>
+</html>
