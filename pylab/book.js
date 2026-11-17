@@ -4,7 +4,12 @@ const SHAPES = { oval: ['بيضاوي', 'البداية / النهاية'], para
 function shapeSVG(k, text, w = 230) {
   const h = 54, t = esc(text);
   const body = k === 'oval' ? `<ellipse cx="${w / 2}" cy="27" rx="${w / 2 - 4}" ry="23" fill="#ECD571"/>` : k === 'para' ? `<path d="M22 4h${w - 26}l-18 46H4z" fill="#B9DDF5"/>` : k === 'dia' ? `<path d="M${w / 2} 2L${w - 4} 27L${w / 2} 52L4 27z" fill="#FFCB7D"/>` : `<rect x="4" y="4" width="${w - 8}" height="46" rx="3" fill="#C9EBD3"/>`;
-  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" class="fs">${body.replace('/>', ' stroke="#534057" stroke-width="2.5"/>')}<foreignObject x="18" y="6" width="${w - 36}" height="42"><div xmlns="http://www.w3.org/1999/xhtml" class="fst">${t}</div></foreignObject></svg>`;
+  // نص SVG أصلي بدل foreignObject (سفاري الآيفون يقصّه عند التصغير)
+  const cv = shapeSVG.c || (shapeSVG.c = document.createElement('canvas').getContext('2d')), mw = w - (k === 'dia' ? 104 : 40), mh = k === 'dia' ? 34 : 42;
+  const fit = f => { cv.font = `600 ${f}px Rubik, sans-serif`; const L = []; let cur = ''; String(text).split(/\s+/).filter(Boolean).forEach(x => { const s = cur ? cur + ' ' + x : x; if (cur && cv.measureText(s).width > mw) { L.push(cur); cur = x; } else cur = s; }); if (cur) L.push(cur); return L; };
+  let f = 13, L = fit(f); while (f > 9 && (L.length * f * 1.25 > mh || L.some(l => cv.measureText(l).width > mw))) { f -= 0.5; L = fit(f); }
+  const lh = f * 1.25, y0 = 27 - (L.length - 1) * lh / 2;
+  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" class="fs" style="max-width:100%;height:auto">${body.replace('/>', ' stroke="#534057" stroke-width="2.5"/>')}<text text-anchor="middle" direction="rtl" font-family="Rubik, sans-serif" font-weight="600" font-size="${f}" fill="#2B2030">${L.map((l, i) => `<tspan x="${w / 2}" y="${(y0 + i * lh).toFixed(1)}" dy="0.35em">${esc(l)}</tspan>`).join('')}</text></svg>`;
 }
 const normA = s => String(s).trim().replace(/\s+/g, '').replace(/[“”«»]/g, '"').replace(/'/g, '"').replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).toLowerCase();
 function bookAct({ a, body, rec, got }) {

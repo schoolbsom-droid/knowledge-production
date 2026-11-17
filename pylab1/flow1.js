@@ -15,6 +15,17 @@ function nodeShape(s, x, y, fill, cls = '') {
   if (s === 'dia') return `<path class="${cls}" d="M${x} ${y - h / 2 - 6}L${x + w / 2 + 4} ${y}L${x} ${y + h / 2 + 6}L${x - w / 2 - 4} ${y}Z" fill="${fill}"/>`;
   return `<rect class="${cls}" x="${x - w / 2 + 6}" y="${y - h / 2 + 3}" width="${w - 12}" height="${h - 6}" rx="5" fill="${fill}"/>`;
 }
+// نص SVG أصلي (بدل foreignObject الذي يقصّه سفاري الآيفون عند تصغير المخطط): يلفّ الأسطر ويصغّر الخط إن لزم
+function svgWrap(text, cx, cy, maxW, maxH, fs = 13.5) {
+  const cv = svgWrap.c || (svgWrap.c = document.createElement('canvas').getContext('2d'));
+  const fit = f => { cv.font = `600 ${f}px Rubik, sans-serif`; const L = []; let cur = '';
+    String(text).split(/\s+/).filter(Boolean).forEach(w => { const t = cur ? cur + ' ' + w : w; if (cur && cv.measureText(t).width > maxW) { L.push(cur); cur = w; } else cur = t; });
+    if (cur) L.push(cur); return L; };
+  let f = fs, L = fit(f);
+  while (f > 9 && (L.length * f * 1.25 > maxH || L.some(l => cv.measureText(l).width > maxW))) { f -= 0.5; L = fit(f); }
+  const lh = f * 1.25, y0 = cy - (L.length - 1) * lh / 2;
+  return `<text x="${cx}" text-anchor="middle" direction="rtl" font-family="Rubik, sans-serif" font-weight="600" font-size="${f}" fill="#2B2030" style="pointer-events:none">${L.map((l, i) => `<tspan x="${cx}" y="${(y0 + i * lh).toFixed(1)}" dy="0.35em">${esc(l)}</tspan>`).join('')}</text>`;
+}
 function miniShape(s, size = 64) { return `<svg viewBox="-104 -40 208 80" width="${size}" height="${size * 80 / 208}">${nodeShape(s, 0, 0, FK[s].c).replace('/>', ' stroke="#534057" stroke-width="5"/>')}</svg>`; }
 
 /* ---------- رسم المخطط ومسارات الأسهم ---------- */
@@ -39,7 +50,7 @@ function chartSVG(ex, G, o = {}) {
   const id = 'ar' + Math.random().toString(36).slice(2, 7);
   return `<svg viewBox="0 0 ${G.W} ${G.H}" width="${G.W}" class="fchart" style="max-width:100%;height:auto"><defs><marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="13" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#534057"/></marker></defs>
   ${G.edges.map(e => `<path class="fe" data-e="${e.a}>${e.b}" d="M${e.p.map(q => q.join(' ')).join('L')}" fill="none" stroke="#534057" stroke-width="2.5" marker-end="url(#${id})"/>${e.lab ? `<text x="${e.p[0][0] + (e.p[1][0] > e.p[0][0] ? 14 : e.p[1][0] < e.p[0][0] ? -14 : 24)}" y="${e.p[0][1] + (e.p[1][1] > e.p[0][1] ? 15 : -7)}" text-anchor="middle" class="fel ${e.lab === 'نعم' ? 'y' : 'n'}">${e.lab}</text>` : ''}`).join('')}
-  ${ex.nodes.map(n => { const bl = !!(o.blank && o.blank.has(n.id)), s = bl ? 'rect' : o.shapes ? o.shapes[n.id] : K2S[n.k], x = G.X(n.c || 0), y = G.Y(n.r), t = o.hide && o.hide.has(n.id) ? '؟' : (o.text && o.text[n.id]) || n.t; return `<g class="fn${bl ? ' blank' : ''}" data-id="${n.id}">${nodeShape(s, x, y, bl ? '#EEE8F1' : FK[s].c, 'fnb')}<foreignObject x="${x - NW / 2 + (s === 'dia' ? 34 : 22)}" y="${y - NH / 2 + 4}" width="${NW - (s === 'dia' ? 68 : 44)}" height="${NH - 8}"><div xmlns="http://www.w3.org/1999/xhtml" class="fnt">${esc(t)}</div></foreignObject></g>`; }).join('')}
+  ${ex.nodes.map(n => { const bl = !!(o.blank && o.blank.has(n.id)), s = bl ? 'rect' : o.shapes ? o.shapes[n.id] : K2S[n.k], x = G.X(n.c || 0), y = G.Y(n.r), t = o.hide && o.hide.has(n.id) ? '؟' : (o.text && o.text[n.id]) || n.t; return `<g class="fn${bl ? ' blank' : ''}" data-id="${n.id}">${nodeShape(s, x, y, bl ? '#EEE8F1' : FK[s].c, 'fnb')}${svgWrap(t, x, y, NW - (s === 'dia' ? 68 : 44), NH - (s === 'dia' ? 14 : 8))}</g>`; }).join('')}
   <g class="ftok" style="display:none"><circle r="13" fill="#534057"/><text y="6" text-anchor="middle" font-size="16">⚡</text></g></svg>`;
 }
 
