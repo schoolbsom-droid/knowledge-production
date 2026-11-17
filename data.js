@@ -24,6 +24,7 @@ const LESSONS = [
   {g: 1, u: 2, kind: 'درس', title: 'الجمل الشرطية الثلاث والمسافة البادئة', url: 'lessons/conditional-statements.html'},
   {g: 1, u: 2, kind: 'درس تفاعلي', title: 'جدول الحقيقة التفاعلي', url: 'lessons/truth-table.html'},
   {g: 1, u: 2, kind: 'درس تفاعلي', title: 'حلقة for ودالة range', url: 'https://ammaal20131-prog.github.io/For-loop/#home'},
+  {g: 1, u: 2, kind: 'درس', title: 'حلقة for: لماذا نحتاج الحلقة؟', url: 'https://ammaal20131-prog.github.io/For-loop/#learn1'},
   {g: 1, u: 2, kind: 'أداة', title: 'السبورة التفاعلية', url: 'lessons/whiteboard.html'},
   {g: 1, u: 0, kind: 'مشروع', title: 'مشاريع تصميم الفيديو', url: 'video.html'},
   {g: 2, u: 2, kind: 'مشروع', title: 'مشاريع المتجر الإلكتروني', url: 'store.html'},];
