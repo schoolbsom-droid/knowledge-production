@@ -69,7 +69,7 @@ function maxOf(a) {
     case 'robopad': return 35;
     case 'book': return a.items.length * 10;
     case 'fshapes': return 25;
-    case 'fplay': return FLOWS.length * 13;
+    case 'fplay': return (a.flows || FLOWS).length * 13;
     case 'fhunt': return 25;
     case 'ffix': return FIX.length * 10;
     default: return 0;

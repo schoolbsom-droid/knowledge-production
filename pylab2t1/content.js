@@ -1,5 +1,6 @@
 // معمل ثاني متوسط · الفصل الأول: الوحدة الثالثة «البرمجة مع بايثون» — كتاب المهارات الرقمية ثاني متوسط ف١ (ص١٠٨–١٩٣)
 'use strict';
+window.FLOW_LIB = 1; // نستخدم محرك المراحل من معمل أول دون محطته
 window.LABCFG = { grade: 2, gname: 'ثاني متوسط', slug: 'video-1448', lab: 'pylab-g2t1', store: 'pylab-g2t1-v1', unit: 'الوحدة الثالثة «البرمجة مع بايثون»', sub: 'المهارات الرقمية · ثاني متوسط · الفصل الأول · الوحدة الثالثة' };
 const T = (...a) => `_lab_try(${a.map(v => JSON.stringify(String(v))).join(',')})`;
 const NUMS = s => `[float(v) for v in __import__("re").findall(r"-?\\d+(?:\\.\\d+)?", ${s})]`;

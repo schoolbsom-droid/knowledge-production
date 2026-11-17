@@ -121,19 +121,20 @@ FLOWS.forEach((f, i) => f.sk = SKILLS[i]);
 function flowWalk(ex, mem = {}, ans = {}) { const by = {}; ex.nodes.forEach(n => by[n.id] = n); const path = []; let at = 's', g = 0; while (at && g++ < 60) { const n = by[at]; path.push(at); if (n.f) n.f(mem); at = n.k === 'dec' ? ((n.ask ? ans[at] : n.cond(mem)) ? n.y : n.no) : n.n; } return path; }
 const fStars = n => `<span class="fst">${'★'.repeat(n)}<i>${'★'.repeat(3 - n)}</i></span>`;
 function fPlay({ a, body, rec, got }) {
+  const FL = a.flows || FLOWS;
   const solo = a.only != null; let cur = a.only ?? 0;
   const mdone = j => got('m' + j);
   const isOpen = j => solo || !a.lock || j === 0 || !!mdone(j - 1) || (!!got('e' + (j - 1)) && !!got('q' + (j - 1)));
   body.innerHTML = `${solo ? '' : `<div class="flv"><b>🗺️ خريطة المراحل: كل مرحلة مهارة جديدة</b><span class="chip" id="ftot"></span></div><div class="fex"></div>`}<div id="fx"></div>`;
   const paintTiles = () => {
     const box = $('.fex', body); if (!box) return; let tot = 0;
-    box.innerHTML = FLOWS.map((f, j) => { const m = mdone(j), st = m ? (m.d?.stars || 3) : 0, lk = !isOpen(j); tot += st;
+    box.innerHTML = FL.map((f, j) => { const m = mdone(j), st = m ? (m.d?.stars || 3) : 0, lk = !isOpen(j); tot += st;
       return `<button data-i="${j}" class="${j === cur ? 'on ' : ''}${m && got('q' + j) ? 'done ' : ''}${lk ? 'lock' : ''}" ${lk ? 'disabled title="أتمّي المرحلة السابقة أولًا"' : ''}><span>${lk ? '🔒' : f.icon}</span><b>${ar(j + 1)}</b><small>${esc(f.title)}</small><em>${f.sk.i} ${esc(f.sk.n)}</em>${fStars(st)}</button>`; }).join('');
     $$('button', box).forEach(b => b.onclick = () => { open(+b.dataset.i); $('#fx', body).scrollIntoView({ behavior: 'smooth', block: 'start' }); });
-    $('#ftot', body).innerHTML = `★ ${ar(tot)} / ${ar(FLOWS.length * 3)}`;
+    $('#ftot', body).innerHTML = `★ ${ar(tot)} / ${ar(FL.length * 3)}`;
   };
   const open = i => {
-    cur = i; const ex = FLOWS[i], sk = ex.sk, G = chartGeo(ex), host = $('#fx', body); paintTiles();
+    cur = i; const ex = FL[i], sk = ex.sk, G = chartGeo(ex), host = $('#fx', body); paintTiles();
     host.innerHTML = `<div class="fxh"><span class="ficon">${ex.icon}</span><div><b>المرحلة ${ar(i + 1)}: ${esc(ex.title)}</b> <span class="badge wait">${esc(ex.src)}</span><div class="mute">${esc(ex.story)}</div></div></div>
     <div class="fms" id="fms"><span class="fmsi">${sk.i}</span><div class="fmst"><b>مهارة المرحلة: ${esc(sk.n)}</b><div id="fmt">${sk.task}</div><div id="fmc"></div><div id="fmf"></div></div><span id="fmstar"></span></div>
     <div class="fxw"><div class="fxc" id="fxc"></div><div class="fxp">
@@ -156,11 +157,11 @@ function fPlay({ a, body, rec, got }) {
     const win = (msg, redraw) => {
       if (won) return; won = true; wonStars = tries === 0 ? 3 : tries <= 2 ? 2 : 1; beep(1);
       if (rec('m' + i, tries ? 3 : 5, { tries, stars: wonStars })) toast(`${'★'.repeat(wonStars)} أتممتِ مهارة «${sk.n}»`);
-      $('#fmt', host).innerHTML = `<b style="color:var(--g)">✔ أتممتِ مهمة المرحلة!</b> ${msg || ''}${!solo && i < FLOWS.length - 1 ? ' <span class="mute">فُتحت المرحلة التالية 🔓</span>' : ''}`; mc.innerHTML = ''; mf.innerHTML = '';
+      $('#fmt', host).innerHTML = `<b style="color:var(--g)">✔ أتممتِ مهمة المرحلة!</b> ${msg || ''}${!solo && i < FL.length - 1 ? ' <span class="mute">فُتحت المرحلة التالية 🔓</span>' : ''}`; mc.innerHTML = ''; mf.innerHTML = '';
       gate = false; drive = false; preset = null; onEnd = onVisit = onReset = null; setClick(null);
       if (redraw) { dopt = {}; draw(); reset(); }
       paintStar(); paintTiles();
-      if (!solo && FLOWS.every((_, j) => mdone(j))) { confetti(); toast('🏆 لقبكِ الآن: مهندسة المخططات'); }
+      if (!solo && FL.every((_, j) => mdone(j))) { confetti(); toast('🏆 لقبكِ الآن: مهندسة المخططات'); }
     };
     const paintMem = hi => { $('#fm', host).innerHTML = Object.entries(mem).map(([k, v]) => `<span class="vbox${hi === k ? ' hit' : ''}" style="min-width:56px"><span class="tag" style="direction:rtl">${esc(k)}</span><span class="v">${esc(String(v))}</span></span>`).join('') || '<span class="mute" style="font-size:13px;direction:rtl">فارغة</span>'; $('#fs', host).innerHTML = outL.map(l => `<div>${esc(l)}</div>`).join(''); };
     const mark = id => { $$('.fn', svg).forEach(g => g.classList.toggle('act', g.dataset.id === id)); const g = svg.querySelector(`.fn[data-id="${id}"]`); if (g) g.classList.add('seen'); };
@@ -213,7 +214,7 @@ function fPlay({ a, body, rec, got }) {
       else if (sk.t === 'both') {
         const seen = new Set(); let runs = 0;
         const chips = () => mc.innerHTML = `<div class="fmrow">${sk.ends.map(([id, t]) => `<span class="fgoal${seen.has(id) ? ' ok' : ''}">${seen.has(id) ? '✔' : '○'} ${t}</span>`).join('')}</div>`;
-        onEnd = () => { runs++; sk.ends.forEach(([id]) => visits[id] && seen.add(id)); chips(); if (seen.size === sk.ends.length) return win('جرّبتِ الطريقين: القيمة المُدخلة هي التي تحدد الطريق.'); const m = 'بقي الطريق الآخر! اضغطي ↺ وأدخلي عددًا يجعل برق يسلكه.'; runs >= 2 ? miss(m) : note(m); };
+        onEnd = () => { runs++; sk.ends.forEach(([id]) => (id[0] === '!' ? !visits[id.slice(1)] : visits[id]) && seen.add(id)); chips(); if (seen.size === sk.ends.length) return win('جرّبتِ الطريقين: القيمة المُدخلة هي التي تحدد الطريق.'); const m = 'بقي الطريق الآخر! اضغطي ↺ وأدخلي عددًا يجعل برق يسلكه.'; runs >= 2 ? miss(m) : note(m); };
         chips();
       }
       else if (sk.t === 'drive') { preset = sk.inputs; drive = true; onEnd = () => win('قدتِ برق بنفسكِ حتى النهاية.'); }
@@ -244,7 +245,7 @@ function fPlay({ a, body, rec, got }) {
     const qz = $('#fqz', host); qz.innerHTML = `<h3 style="margin:14px 0 0">✏️ سؤال المرحلة ${ar(i + 1)}</h3>`;
     mcq(qz, ex.quiz, { key: 'q' + i, ctx: { rec, got }, pts: 5, retry: 2, onDone: paintTiles });
   };
-  open(solo ? cur : Math.max(0, FLOWS.findIndex((_, j) => isOpen(j) && !(mdone(j) && got('q' + j)))));
+  open(solo ? cur : Math.max(0, FL.findIndex((_, j) => isOpen(j) && !(mdone(j) && got('q' + j)))));
 }
 
 /* ---------- ٣) لعبة صيّاد الأشكال ---------- */
@@ -305,4 +306,4 @@ const FLOWST = { id: 'af', n: 0, title: 'عالم المخططات الانسي�
     ] },
     { t: 'master' },
   ] };
-LESSONS.splice(1, 0, FLOWST);
+if (!window.FLOW_LIB) LESSONS.splice(1, 0, FLOWST); // معامل أخرى تستخدم محرك المراحل فقط

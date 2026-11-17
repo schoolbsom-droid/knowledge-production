@@ -55,7 +55,7 @@ function teachSlides(L) {
       a.prints.forEach((pr, j) => pr.forEach((q, i) => add(`البصمة ${ar(j + 1)} · سؤال ${ar(i + 1)}`, 'FINGERPRINT', el => { el.innerHTML = `<h2 class="th2">البصمة ${ar(j + 1)} · سؤال ${ar(i + 1)}</h2>`; tAsk(el, q); })));
       add('فتح القضية', 'FINAL CASE', el => { el.innerHTML = '<h2 class="th2">فتح القضية <span class="mode">FINAL CASE</span></h2>'; tAsk(el, a.final); });
     }
-    if (a.t === 'fplay') FLOWS.forEach((f, i) => add(`${f.icon} المرحلة ${ar(i + 1)}: ${f.title}`, 'LIVE', el => { el.innerHTML = '<div class="tex"></div>'; fPlay({ a: { ...a, only: i }, body: $('.tex', el), rec: () => true, got: () => null }); }));
+    if (a.t === 'fplay') (a.flows || FLOWS).forEach((f, i) => add(`${f.icon} المرحلة ${ar(i + 1)}: ${f.title}`, 'LIVE', el => { el.innerHTML = '<div class="tex"></div>'; fPlay({ a: { ...a, only: i }, body: $('.tex', el), rec: () => true, got: () => null }); }));
     if (['fshapes', 'fhunt', 'ffix'].includes(a.t)) add(a.title, 'FLOW', el => { el.innerHTML = `<h2 class="th2">${esc(a.title)}</h2><div class="tex"></div>`; R[a.t]({ a, body: $('.tex', el), rec: () => true, got: () => null }); });
     if (a.t === 'book') a.items.forEach(it => add(`${it.n} · ص${it.p}`, 'BOOK', el => { el.innerHTML = `<h2 class="th2">📘 ${esc(it.n)} <span class="mute" style="font-size:16px">الكتاب ص${esc(it.p)}</span></h2><div class="tex"></div>`; bookAct({ a: { items: [it] }, body: $('.tex', el), rec: () => true, got: () => null }); }));
     if (a.t === 'robopad') add(a.title, 'ROBOT', el => { el.innerHTML = `<h2 class="th2">${esc(a.title)}</h2><div class="tex"></div>`; roboPad({ a, body: $('.tex', el), rec: () => true, got: () => null }); });
