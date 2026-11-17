@@ -331,10 +331,10 @@ code{background:var(--lilac3);color:var(--plum);border-radius:6px;padding:0 5px;
 .gate{direction:rtl;text-align:center;margin-bottom:12px}
 .gate .guard{font-weight:700;margin-bottom:6px}
 .roads{display:flex;gap:10px;justify-content:center}
-.road{flex:1;max-width:180px;border:3px dashed var(--line);border-radius:12px;padding:10px;font-weight:700;background:var(--card)}
-.road.open{border:3px solid var(--g);background:var(--g2);color:var(--g)}
-.road.open:after{content:" ⚡ ←"}
-.road.shut{opacity:.45;text-decoration:line-through}
+.roads .road{flex:1;max-width:180px;border:3px dashed var(--line);border-radius:12px;padding:10px;font-weight:700;background:var(--card)}
+.roads .road.open{border:3px solid var(--g);background:var(--g2);color:var(--g)}
+.roads .road.open:after{content:" ⚡ ←"}
+.roads .road.shut{opacity:.45;text-decoration:line-through}
 .stsay{display:flex;gap:10px;align-items:center;margin-top:12px}
 .stsay .who{width:84px;flex:none}
 .stsay .bub{flex:1;background:var(--card);border:3px solid var(--plum);border-radius:18px;padding:10px 14px;font-size:16px;box-shadow:4px 4px 0 var(--yel);min-height:60px}
