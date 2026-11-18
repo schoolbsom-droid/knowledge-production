@@ -125,3 +125,21 @@ function exitSummary(all, ids) {
       ${notes.length ? `<details style="margin-top:4px"><summary class="mute">أسئلتهن وملاحظاتهن (${ar(notes.length)})</summary>${notes.map(n => `<div>• ${esc(n)}</div>`).join('')}</details>` : ''}</div>`); }));
   return `<h3 style="margin-top:18px">🎫 التذاكر الختامية: ما يحتاج إعادة شرح</h3>${rows.length ? rows.join('') : '<p class="mute">لم تُسلَّم تذاكر بعد.</p>'}`;
 }
+
+/* ---------- إضافة الاستراتيجيات إلى محطات أي معمل ---------- */
+// STRAT = { idالمحطة: { rush, trap, exit } } · examId = المحطة التي تأتي قبلها محطة الاختراق · items = عبارات الاختراق
+function addStrategies(STRAT, examId, cyberItems, pages) {
+  LESSONS.forEach(L => {
+    const S_ = STRAT[L.id]; if (!S_) return;
+    const ci = L.acts.findIndex(a => a.t === 'code' || a.t === 'book');
+    L.acts.splice(ci < 0 ? L.acts.length - 1 : ci, 0, { t: 'trap', title: 'Mr. Trap: صائد الأخطاء', goal: 'Mr. Trap يخبّئ فخاخًا في كلامه وكوده. هل فيه فخ؟ أين؟ وكيف نصححه؟', items: S_.trap });
+    const mi = L.acts.findIndex(a => a.t === 'master');
+    L.acts.splice(mi, 0, { t: 'rush', title: 'تحدي 30 ثانية', goal: 'أسئلة سريعة، لكل سؤال 30 ثانية. الدقة أهم من السرعة.', items: S_.rush },
+      { t: 'exit', title: 'التذكرة الختامية', goal: 'قبل أن تغادري: أجيبي مع ذكر السبب، وصحّحي خطأ، وأخبري معلمتكِ بما كان صعبًا.', ticket: S_.exit });
+  });
+  if (!cyberItems) return;
+  const at = LESSONS.findIndex(L => L.id === examId);
+  LESSONS.splice(at < 0 ? LESSONS.length : at, 0, { id: 'cy', n: 0, title: 'الاختراق السيبراني: استعيدي الوحدة', pages: pages || '', icon: 'star', extra: 1, short: 'الاختراق', badge: '🛡',
+    skills: ['أكتشف المعلومات الخاطئة في الوحدة وأصححها', 'أعيد بناء المعرفة الصحيحة بكلماتي'],
+    acts: [{ t: 'cyber', title: 'ملف الوحدة المخترق', min: 10, items: cyberItems }, { t: 'master' }] });
+}
