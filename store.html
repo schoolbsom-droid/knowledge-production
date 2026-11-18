@@ -493,7 +493,7 @@ function media(l) {
   if (m) return `<div class="vframe" style="padding-top:62%"><iframe src="https://drive.google.com/file/d/${m[1]}/preview" allow="autoplay"></iframe></div>`;
   return url(l) ? `<a class="visit" style="max-width:220px" href="${esc(l)}" target="_blank" rel="noopener">فتح الملف ↗</a>` : '';
 }
-const plats = () => `<div class="plat" style="margin-top:10px"><b>منصة متاجر</b><a href="https://mapp.sa/login" target="_blank" rel="noopener">فتح المنصة ↗</a><ol style="margin:8px 0 0;padding-inline-start:20px;line-height:1.9">${MSTEPS.map(x => `<li style="all:revert;list-style:arabic-indic">${x}</li>`).join('')}</ol></div>`;
+const plats = () => `<div class="plat" style="margin-top:10px"><b>منصة متاجر</b><a href="https://mapp.sa/login" target="_blank" rel="noopener">فتح المنصة ↗</a><ol style="margin:8px 0 0;padding-inline-start:20px;line-height:1.9">${MSTEPS.map(x => `<li style="all:revert;list-style:arabic-indic">${x}</li>`).join('')}</ol><b style="display:block;margin-top:12px">▶ شرح تصميم المتجر في منصة متاجر</b>${yt('Gnj2zpA4x6g')}<a href="https://www.youtube.com/watch?v=Gnj2zpA4x6g" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px">فتح الفيديو في يوتيوب ↗</a></div>`;
 function learn() {
   $('lsteps').innerHTML = P.steps.length ? P.steps.map(s => {
     const lines = String(s.body || '').split('\n'), warn = lines.filter(x => /^تنبيه/.test(x)), body = lines.filter(x => !/^تنبيه/.test(x)).join('\n');
