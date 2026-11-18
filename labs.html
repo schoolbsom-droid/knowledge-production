@@ -89,6 +89,7 @@ const TOOLS = [
   ['#wheel', '🎡', 'عجلة الحظ', 'سؤال مفاجئ للفصل'],
   ['#teams', '👥', 'لوحة الفرق', 'أدوار ونقاط جماعية'],
   ['#board', '🎯', 'لوحة التحدي', 'مسابقة الفرق'],
+  ['#films', '🎬', 'أفلام المحطات', 'للعرض على السبورة'],
 ];
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 document.getElementById('sg').innerHTML = LABS.map(L => `<a class="lab" href="${L.url}" style="--c:${L.c}"><span class="ico">${L.i}</span><span class="gr">${esc(L.g)}</span><span class="tm">${esc(L.tm)}</span><span class="un">${esc(L.un)}</span><span class="ds">${esc(L.ds)}</span><span class="go">ادخلي المعمل ←</span></a>`).join('');

@@ -5,6 +5,7 @@ function teachSlides(L) {
   const add = (title, tag, fn) => S_.push({ title, tag, fn });
   add(L.title, 'START', el => { el.innerHTML = `<div class="tcenter"><div style="width:170px;margin:auto">${koda('happy')}</div><div class="mute">الوحدة الرابعة · الكتاب ص${L.pages}</div><h1 class="tbig">${esc(L.title)}</h1><div class="tgoals"><b>🎯 أهداف المحطة</b>${L.skills.map(s => `<div>• ${rich(s)}</div>`).join('')}</div></div>`; });
   if (typeof opSnippet === 'function' && opSnippet(L) && !L.extra && !L.project && !L.exam) add('افتتاحية المحطة', 'OPENER', el => { el.innerHTML = '<h2 class="th2">🎬 افتتاحية المحطة</h2><div class="tex"></div>'; revealBox($('.tex', el), L, null); });
+  if (typeof FILM !== 'undefined') (L.films || []).forEach(f => add('🎬 ' + f.title, 'FILM', el => { el.innerHTML = '<div class="tex"></div>'; FILM.player($('.tex', el), f, { inline: true }); }));
   L.acts.forEach(a => {
     if (a.t === 'comic') {
       a.panels.forEach((p, i) => add(a.title, 'COMIC', el => {

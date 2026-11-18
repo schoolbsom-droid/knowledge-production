@@ -4,7 +4,7 @@ const SB = 'https://uautjfgslrfhceciqwyn.supabase.co/rest/v1/rpc/';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhdXRqZmdzbHJmaGNlY2lxd3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNjI3NzMsImV4cCI6MjEwODgzODc3M30.Dj1dYWNMwhp02hJEko8XnDD23Mi-gK-Q82BkICdrj_Q'; // مفتاح عام: الجداول مقفلة، والوصول عبر الدوال فقط
 const CFG = Object.assign({ grade: 3, gname: 'ثالث متوسط', slug: 'store-1448', lab: 'pylab-g3', store: 'pylab-g3-v1', unit: 'الوحدة الرابعة «البرمجة مع بايثون»', sub: 'المهارات الرقمية · ثالث متوسط · الوحدة الرابعة' }, window.LABCFG || {});
 const SLUG = CFG.slug; // ثالث: نفس طالبات صفحة مشاريع المتاجر
-const TEACHER = ['#teacher', '#students', '#wheel', '#teams', '#board'].includes(location.hash);
+const TEACHER = ['#teacher', '#students', '#wheel', '#teams', '#board', '#films'].includes(location.hash);
 const STORE = CFG.store;
 const MASTER = 0.8;
 
@@ -150,7 +150,7 @@ function bar() {
   const u = S.user;
   $('#bar').innerHTML = `<div class="brand">معمل بايثون<small>${CFG.sub}</small></div><span class="sp"></span>
   ${u ? `<span class="chip" title="${esc(u.cls)}">👩‍💻 <b>${esc(u.name.split(' ')[0])}</b></span><span class="chip xp" id="xp"></span>` : ''}
-  ${TEACHER ? `<button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('teach')">📖 الشرح</button><button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('board')">🎯 لوحة التحدي</button>${typeof vWheel === 'function' ? `<button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('wheel')">🎡 العجلة</button><button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('teams')">👥 الفرق</button>` : ''}<button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('students')">👩‍🎓 الطالبات</button>` : ''}
+  ${TEACHER ? `<button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('teach')">📖 الشرح</button><button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('board')">🎯 لوحة التحدي</button>${typeof vWheel === 'function' ? `<button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('wheel')">🎡 العجلة</button><button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('teams')">👥 الفرق</button>` : ''}${typeof vFilms === 'function' ? `<button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('films')">🎬 الأفلام</button>` : ''}<button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('students')">👩‍🎓 الطالبات</button>` : ''}
   <a class="chip" href="../esp32/g1.html" title="مغامرة المنارة: برمجي الليد على لوحة ESP32" style="text-decoration:none;color:#fff;background:#ff8c1a">💡 مغامرة المنارة</a>
   ${u ? `<button class="iconbtn" title="الخريطة" onclick="go('map')">${icon('home')}</button>` : ''}
   <button class="iconbtn" title="الوضع الليلي" onclick="theme()">${icon('moon')}</button>
@@ -161,7 +161,7 @@ function theme() { const r = document.documentElement, d = r.dataset.theme === '
 function logout() { if (!confirm('تسجيل الخروج؟ يبقى تقدّمكِ محفوظًا على هذا الجهاز.')) return; S.user = null; save(); go('login'); }
 
 let CUR = { view: 'login', L: null, ai: 0 };
-function go(v, L, ai = 0) { CUR = { view: v, L, ai }; bar(); window.scrollTo(0, 0); ({ login: vLogin, map: vMap, lesson: vLesson, cert: vCert, board: vBoard, teach: vTeach, students: vStudents, wheel: window.vWheel, teams: window.vTeams })[v](); }
+function go(v, L, ai = 0) { CUR = { view: v, L, ai }; bar(); window.scrollTo(0, 0); ({ login: vLogin, map: vMap, lesson: vLesson, cert: vCert, board: vBoard, teach: vTeach, students: vStudents, wheel: window.vWheel, teams: window.vTeams, films: window.vFilms })[v](); }
 
 /* ---------- الدخول ---------- */
 async function vLogin() {
@@ -217,6 +217,7 @@ function vLesson() {
   const ctx = { L, ai, a, body: $('#body', box), rec: (k, s, d) => { const r = rec(L.id, ai, k, s, d); paintSc(); return r; }, got: k => got(L.id, ai, k) };
   const paintSc = () => { const mx = maxOf(a); $('#sc').innerHTML = mx ? `⭐ ${ar(Math.min(scoreOf(L.id, ai), mx))} / ${ar(mx)}` : ''; $('#sc').hidden = !mx; };
   paintSc(); R[a.t](ctx);
+  if (typeof FILM !== 'undefined') FILM.button(L);
   if (typeof stationOpener === 'function') stationOpener(L, ai);
 }
 
@@ -610,7 +611,7 @@ function countdown(sec) {
 try { const th = localStorage.getItem('pylab-theme'); if (th) document.documentElement.dataset.theme = th; } catch (e) {}
 if (S.user && !S.user.sid) S.user = null; // دخول قديم باسم مكتوب: تعيد الاختيار من القائمة
 if (S.user && !TEACHER) sync(true);
-go(TEACHER ? ({ '#students': 'students', '#wheel': 'wheel', '#teams': 'teams', '#board': 'board' })[location.hash] || 'teach' : S.user ? 'map' : 'login');
+go(TEACHER ? ({ '#students': 'students', '#wheel': 'wheel', '#teams': 'teams', '#board': 'board', '#films': 'films' })[location.hash] || 'teach' : S.user ? 'map' : 'login');
 
 /* ---------- صفحة «الطالبات» للمعلمة ---------- */
 let TL = null;

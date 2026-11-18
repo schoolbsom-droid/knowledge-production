@@ -30,7 +30,9 @@ function revealBox(host, L, save) {
   paint();
 }
 function stationOpener(L, ai) {
-  if (ai !== 0 || L.extra || L.project || L.exam || TEACHER || !opSnippet(L)) return;
+  if (ai !== 0 || L.extra || L.project || L.exam || TEACHER) return;
+  if (typeof FILM !== 'undefined' && L.films && L.films.length && !S.cele?.['film_' + L.id]) return FILM.open(L, 0); // أول دخول: فيلم المحطة
+  if (!opSnippet(L)) return;
   const k = 'op_' + L.id; if (S.cele?.[k]) return;
   const md = h(`<div class="modal"><div class="card" style="max-width:720px;width:100%"><div class="row" style="justify-content:space-between"><b>🎬 افتتاحية المحطة</b><button class="btn ghost" id="opx" style="padding:4px 12px">✕ إغلاق</button></div><div id="opb"></div></div></div>`);
   document.body.appendChild(md);
