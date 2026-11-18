@@ -1,8 +1,20 @@
 // «فيلم المحطة»: مقاطع قصيرة متحركة على طريقة ساعة البرمجة (مشاهد + شخصيات + كود يُكتب + رواية صوتية عربية + ترجمة)
 'use strict';
 const FILM = (() => {
-  let voice = null;
-  const pickVoice = () => { try { const v = speechSynthesis.getVoices(); voice = v.find(x => /^ar(-|_)SA/i.test(x.lang)) || v.find(x => /^ar/i.test(x.lang)) || null; } catch (e) { voice = null; } };
+  let voice = null, goodVoice = false;
+  // أفضل صوت عربي: الأصوات الطبيعية (Edge) ثم Google ثم أي صوت عربي سعودي ثم أي صوت عربي
+  const pickVoice = () => { try { const v = speechSynthesis.getVoices().filter(x => /^ar/i.test(x.lang)); const nat = v.find(x => /natural|online|neural/i.test(x.name)), goo = v.find(x => /google/i.test(x.name));
+    voice = nat || goo || v.find(x => /^ar(-|_)SA/i.test(x.lang)) || v[0] || null; goodVoice = !!(nat || goo || /maged|majed|tarik|laila|hamed|zariyah/i.test(voice?.name || '')); } catch (e) { voice = null; } };
+  // نطق عربي للكلمات البرمجية والرموز حتى لا يقرأها الصوت خطأ
+  const SAYW = { print: 'برِنت', input: 'إنبُت', int: 'إنْت', float: 'فلوت', str: 'سترِنج', bool: 'بوليان', range: 'رينج', def: 'دِف', return: 'ريتيرن', append: 'أبِند', remove: 'ريموف', if: 'إف', else: 'إلس', elif: 'إل إف', while: 'وايل', for: 'فور', in: 'إن', break: 'بريك', not: 'نوت', and: 'آند', or: 'أور', True: 'ترو', False: 'فولس', None: 'نَن', global: 'جلوبال', import: 'إمبورت', from: 'فروم', math: 'ماث', random: 'راندوم', randint: 'راند إنت', sqrt: 'سكوير روت', turtle: 'تيرتل', forward: 'فوروارد', left: 'لِفت', right: 'رايت', penup: 'بِن أب', pendown: 'بِن داون', circle: 'سيركل', Turtle: 'تيرتل', openpyxl: 'أوبن باي إكسل', value: 'فاليو', get: 'جِت', items: 'آيتمز', tuple: 'تابل', list: 'لِست', len: 'لِن', open: 'أوبن', close: 'كلوز', read: 'ريد', write: 'رايت', readline: 'ريد لاين', speed: 'سبيد', Counter: 'كاونتر', drivetrain: 'درايف ترين', drive_for: 'درايف فور', turn_for: 'تيرن فور', pen: 'بِن', Petal: 'بيتال', Python: 'بايثون', PyCharm: 'باي تشارم', Enter: 'إنتر', Tk: 'تي كي', Canvas: 'كانفاس', iter_rows: 'إتر روز', save: 'سيف', grade: 'جريد', name: 'نيم', end: 'إند', x: 'إكس', y: 'واي', a: 'إيه', b: 'بي', g: 'جي', t: 'تي', m: 'إم', side: 'سايد', area: 'إيريا', square: 'سكوير', Total: 'توتال', wb: 'دبليو بي', pack: 'باك', fill: 'فِل', KeyError: 'كي إيرور', IndexError: 'إندكس إيرور', ValueError: 'فاليو إيرور', TypeError: 'تايب إيرور', IndentationError: 'إندِنتيشن إيرور', Multiplication: 'مَلتِبلِكيشن', sheet: 'شيت', cell: 'سِل', row: 'رو', column: 'كولَم', Hello: 'هلو', world: 'وورلد', load_workbook: 'لود ووركبوك', set_drive_velocity: 'سِت درايف فيلوسيتي', My: 'ماي', Block: 'بلوك', create_line: 'كرييت لاين', create_oval: 'كرييت أوفال', oval: 'أوفال', keys: 'كيز', values: 'فاليوز', create_rectangle: 'كرييت ركتانجل' };
+  const spoken = s => String(s)
+    .replace(/[«»"'`]/g, ' ').replace(/([A-Za-z_][A-Za-z_0-9]*)\.([A-Za-z_][A-Za-z_0-9]*)/g, '$1 نقطة $2')
+    .replace(/==/g, ' يساوي يساوي ').replace(/!=/g, ' لا يساوي ').replace(/>=/g, ' أكبر من أو يساوي ').replace(/<=/g, ' أصغر من أو يساوي ').replace(/\*\*/g, ' أُس ').replace(/\+=/g, ' زائد يساوي ').replace(/-=/g, ' ناقص يساوي ').replace(/\*=/g, ' ضرب يساوي ')
+    .replace(/(\d)\s*\*\s*(\d)/g, '$1 ضرب $2').replace(/(\d)\s*×\s*(\d)/g, '$1 ضرب $2').replace(/(\d)\s*\/\s*(\d)/g, '$1 على $2').replace(/(\d)\s*%\s*(\d)/g, '$1 باقي القسمة على $2').replace(/(\d)\s*\+\s*(\d)/g, '$1 زائد $2').replace(/(\d)\s*-\s*(\d)/g, '$1 ناقص $2')
+    .replace(/\s[*×]\s/g, ' ضرب ').replace(/\s[*×]\s/g, ' ضرب ').replace(/\s\+\s/g, ' زائد ').replace(/\s-\s/g, ' ناقص ').replace(/\s\/\s/g, ' على ')
+    .replace(/(^|\s)=(?=\s|$)/g, '$1يساوي').replace(/\s>\s/g, ' أكبر من ').replace(/\s<\s/g, ' أصغر من ').replace(/%/g, ' باقي القسمة ').replace(/#/g, ' هاش ')
+    .replace(/[A-Za-z_][A-Za-z_0-9]*/g, w => SAYW[w] || w.replace(/_/g, ' ')).replace(/[()\[\]{}:;.,،]+(?=\s|$)/g, m => /[.،,]/.test(m) ? '، ' : ' ').replace(/[()\[\]{}]/g, ' ')
+    .replace(/\s+/g, ' ').trim();
   try { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; } catch (e) {}
   const SH = { oval: ['البيضاوي', '#ECD571'], para: ['متوازي الأضلاع', '#9CCBF0'], rect: ['المستطيل', '#A9DDB8'], dia: ['المعيّن', '#FFB870'] };
   const shapeSVG = k => k === 'oval' ? '<ellipse cx="60" cy="30" rx="54" ry="24"/>' : k === 'para' ? '<path d="M22 6H114L98 54H6Z"/>' : k === 'dia' ? '<path d="M60 2L116 30L60 58L4 30Z"/>' : '<rect x="6" y="8" width="108" height="44" rx="5"/>';
@@ -64,7 +76,7 @@ const FILM = (() => {
 
   /* ---------- المشغّل ---------- */
   function player(host, film, { onEnd, inline } = {}) {
-    let i = 0, playing = true, cur = null, endT = null, speaking = false, sound = !!voice;
+    let i = 0, playing = true, cur = null, endT = null, speaking = false, sound = !!voice && goodVoice;
     host.innerHTML = `<div class="fm ${inline ? 'inline' : ''}" style="--fm1:${film.c1 || '#6C5CE7'};--fm2:${film.c2 || '#A29BFE'}"><div class="fm-stage"></div><div class="fm-cap"></div>
       <div class="fm-bar">${film.scenes.map(() => '<i><b></b></i>').join('')}</div>
       <div class="fm-ctl"><button class="fm-b" data-a="prev" title="السابق">⏮</button><button class="fm-b big" data-a="play" title="تشغيل/إيقاف">⏸</button><button class="fm-b" data-a="next" title="التالي">⏭</button><span class="sp"></span><button class="fm-b" data-a="snd" title="الصوت">${sound ? '🔊' : '🔇'}</button></div></div>`;
@@ -81,7 +93,7 @@ const FILM = (() => {
       let spokeDone = !(sound && voice && s.say), timeDone = false;
       const maybe = () => { if (spokeDone && timeDone) next(); };
       endT = setTimeout(() => { timeDone = true; maybe(); }, dur);
-      if (!spokeDone) { try { const u = new SpeechSynthesisUtterance(s.say.replace(/[«»"]/g, '')); u.lang = voice.lang; u.voice = voice; u.rate = 1; u.onend = () => { spokeDone = true; maybe(); }; u.onerror = () => { spokeDone = true; maybe(); }; speaking = true; speechSynthesis.speak(u); } catch (e) { spokeDone = true; } }
+      if (!spokeDone) { try { const u = new SpeechSynthesisUtterance(spoken(s.say)); u.lang = voice.lang; u.voice = voice; u.rate = 0.95; u.onend = () => { spokeDone = true; maybe(); }; u.onerror = () => { spokeDone = true; maybe(); }; speaking = true; speechSynthesis.speak(u); } catch (e) { spokeDone = true; } }
     };
     const next = () => { if (i < film.scenes.length - 1) { i++; show(); } else finish(); };
     const finish = () => { clear(); playing = false; pb.textContent = '↺'; bars.forEach(b => { $('b', b).style.transition = 'none'; $('b', b).style.width = '100%'; }); if (onEnd) onEnd(); };
