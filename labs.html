@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>معامل البرمجة</title>
+<meta name="description" content="كل معامل البرمجة في صفحة واحدة: أزرار المراحل الدراسية للطالبات، وأدوات المعلمة.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cellipse cx='32' cy='36' rx='22' ry='17' fill='%235BAA5B' stroke='%23534057' stroke-width='4'/%3E%3Ccircle cx='54' cy='30' r='7' fill='%235BAA5B'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F8F5FA;--card:#fff;--ink:#2B2030;--mute:#7A6B80;--line:#E8E0EC;--plum:#534057;--lilac:#C9B3D6;--lilac3:#F1EAF5;--yel:#ECD571;
+  --g1:#2E9E5B;--g2:#6C5CE7;--g3:#E17055;--g4:#0984E3;--g5:#D63384}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#17131A;--card:#221C26;--ink:#F1EAF5;--mute:#B7A8BE;--line:#3A3040;--lilac3:#2E2633;--plum:#C9B3D6}}
+:root[data-theme="dark"]{--bg:#17131A;--card:#221C26;--ink:#F1EAF5;--mute:#B7A8BE;--line:#3A3040;--lilac3:#2E2633;--plum:#C9B3D6}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Rubik,Tahoma,sans-serif;line-height:1.6}
+a{color:inherit;text-decoration:none}
+.top{background:linear-gradient(135deg,#B18BC4,#D9C3E3);color:#fff;padding:22px 16px 56px;text-align:center}
+.top h1{margin:0;font:400 38px Lalezar,Rubik,sans-serif;letter-spacing:.5px;text-shadow:0 2px 0 rgba(0,0,0,.12)}
+.top p{margin:4px 0 0;opacity:.95}
+.wrap{max-width:1080px;margin:-38px auto 40px;padding:0 16px}
+.seg{display:flex;gap:6px;background:var(--card);border:2px solid var(--line);border-radius:999px;padding:5px;max-width:460px;margin:0 auto 18px;box-shadow:0 6px 18px rgba(83,64,87,.12)}
+.seg button{flex:1;border:0;border-radius:999px;padding:10px 12px;font:700 16px Rubik,sans-serif;background:transparent;color:var(--ink);cursor:pointer}
+.seg button.on{background:var(--plum);color:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .seg button.on{color:#17131A}}
+:root[data-theme="dark"] .seg button.on{color:#17131A}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:14px}
+.lab{position:relative;display:flex;flex-direction:column;gap:6px;background:var(--card);border:2px solid var(--line);border-radius:20px;padding:18px 16px 16px;box-shadow:0 4px 0 var(--c);transition:transform .15s,box-shadow .15s;border-top:6px solid var(--c)}
+a.lab:hover{transform:translateY(-3px);box-shadow:0 8px 0 var(--c)}
+.lab .gr{font:400 30px Lalezar,Rubik,sans-serif;color:var(--c);line-height:1.1}
+.lab .tm{display:inline-block;align-self:flex-start;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c);border-radius:999px;padding:1px 10px;font-size:13px;font-weight:700}
+.lab .un{font-weight:700}
+.lab .ds{color:var(--mute);font-size:14px}
+.lab .go{margin-top:auto;align-self:flex-start;background:var(--c);color:#fff;border-radius:999px;padding:7px 18px;font-weight:700}
+.ico{position:absolute;left:14px;top:14px;font-size:34px}
+h2{font-size:20px;margin:26px 0 10px;display:flex;align-items:center;gap:8px}
+.extra{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:10px}
+.extra a{display:flex;align-items:center;gap:10px;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:12px 14px;font-weight:700}
+.extra a:hover{border-color:var(--plum)}
+.extra span{font-size:26px}
+.trow{background:var(--card);border:2px solid var(--line);border-inline-start:8px solid var(--c);border-radius:18px;padding:14px;margin-bottom:12px}
+.trow .hd{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.trow .hd b{font:400 24px Lalezar,Rubik,sans-serif;color:var(--c)}
+.tb{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:8px}
+.tb a,.tb button{display:flex;align-items:center;gap:8px;border:2px solid var(--line);background:var(--lilac3);color:var(--ink);border-radius:14px;padding:10px 12px;font:600 15px Rubik,sans-serif;cursor:pointer;text-align:start}
+.tb a:hover,.tb button:hover{border-color:var(--c)}
+.tb span{font-size:20px}
+.tb small{display:block;color:var(--mute);font-weight:400;font-size:12px}
+.note{color:var(--mute);font-size:14px;text-align:center;margin-top:20px}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--plum);color:#fff;border-radius:999px;padding:8px 18px;font-weight:700;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header class="top"><h1>معامل البرمجة</h1><p>المتوسطة الحادية والعشرون · المهارات الرقمية</p></header>
+<main class="wrap">
+  <div class="seg" role="tablist"><button id="bs" class="on" role="tab">👩‍🎓 للطالبات</button><button id="bt" role="tab">👩‍🏫 للمعلمة</button></div>
+
+  <section id="stu">
+    <div class="grid" id="sg"></div>
+    <h2>🔌 معامل إضافية</h2>
+    <div class="extra">
+      <a href="esp32/g1.html"><span>💡</span><div>مغامرة المنارة<br><small style="color:var(--mute);font-weight:400">برمجة الليد باللبنات</small></div></a>
+      <a href="esp32/"><span>🔌</span><div>معمل ESP32<br><small style="color:var(--mute);font-weight:400">الليد والكود</small></div></a>
+      <a href="esp32/wire.html"><span>🧵</span><div>تعلّمي توصيل الليد<br><small style="color:var(--mute);font-weight:400">خطوة بخطوة</small></div></a>
+    </div>
+  </section>
+
+  <section id="tea" hidden>
+    <div id="tg"></div>
+    <p class="note">«إجابات الطالبات» تطلب رقمكِ السري. لوحة الفرق تُحفظ على الجهاز الذي تعرضين منه.</p>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+'use strict';
+const LABS = [
+  { g: 'أول متوسط', tm: 'الوحدة الرابعة', un: 'البرمجة مع بايثون', ds: 'الخوارزميات والمخططات، المتغيرات، الإدخال، المعاملات، الرسم بالسلحفاة', url: 'pylab1/', c: 'var(--g1)', i: '🐢' },
+  { g: 'ثاني متوسط', tm: 'الفصل الأول', un: 'البرمجة مع بايثون', ds: 'الجمل الشرطية، الحلقات، الدوال، جداول إكسل', url: 'pylab2t1/', c: 'var(--g2)', i: '🔀' },
+  { g: 'ثاني متوسط', tm: 'الفصل الثاني', un: 'برمجة الروبوت', ds: 'المتغيرات والتكرار وعناصر البرمجة الجديدة في فيكس كود في آر', url: 'pylab2/', c: 'var(--g3)', i: '🤖' },
+  { g: 'ثالث متوسط', tm: 'الوحدة الرابعة', un: 'البرمجة مع بايثون', ds: 'القوائم، المكتبات، تكينتر، القواميس، القوائم المتداخلة، الملفات', url: 'pylab/', c: 'var(--g4)', i: '📚' },
+];
+const TOOLS = [
+  ['#teacher', '📖', 'وضع الشرح', 'شرائح على السبورة'],
+  ['#students', '👩‍🎓', 'إجابات الطالبات', 'من دخلت وإجاباتها'],
+  ['#wheel', '🎡', 'عجلة الحظ', 'سؤال مفاجئ للفصل'],
+  ['#teams', '👥', 'لوحة الفرق', 'أدوار ونقاط جماعية'],
+  ['#board', '🎯', 'لوحة التحدي', 'مسابقة الفرق'],
+];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+document.getElementById('sg').innerHTML = LABS.map(L => `<a class="lab" href="${L.url}" style="--c:${L.c}"><span class="ico">${L.i}</span><span class="gr">${esc(L.g)}</span><span class="tm">${esc(L.tm)}</span><span class="un">${esc(L.un)}</span><span class="ds">${esc(L.ds)}</span><span class="go">ادخلي المعمل ←</span></a>`).join('');
+document.getElementById('tg').innerHTML = LABS.map((L, k) => `<div class="trow" style="--c:${L.c}"><div class="hd"><b>${L.i} ${esc(L.g)}</b><span class="tm" style="color:${L.c}">${esc(L.tm)} · ${esc(L.un)}</span></div>
+  <div class="tb">${TOOLS.map(t => `<a href="${L.url}${t[0]}" target="_blank" rel="noopener"><span>${t[1]}</span><div>${t[2]}<small>${t[3]}</small></div></a>`).join('')}
+  <a href="${L.url}" target="_blank" rel="noopener"><span>🎓</span><div>دخول كطالبة<small>لتجربة المعمل</small></div></a>
+  <button data-k="${k}"><span>📋</span><div>نسخ رابط الطالبات<small>لإرساله للفصل</small></div></button></div></div>`).join('');
+const toast = t => { const e = document.getElementById('toast'); e.textContent = t; e.classList.add('on'); setTimeout(() => e.classList.remove('on'), 1800); };
+document.querySelectorAll('#tg button[data-k]').forEach(b => b.onclick = async () => { const u = new URL(LABS[+b.dataset.k].url, location.href).href; try { await navigator.clipboard.writeText(u); toast('✔ نُسخ الرابط'); } catch (e) { prompt('انسخي الرابط:', u); } });
+const show = t => { const T = t === 'tea'; document.getElementById('stu').hidden = T; document.getElementById('tea').hidden = !T; document.getElementById('bs').classList.toggle('on', !T); document.getElementById('bt').classList.toggle('on', T); try { localStorage.setItem('labs-tab', t); } catch (e) {} };
+document.getElementById('bs').onclick = () => show('stu'); document.getElementById('bt').onclick = () => show('tea');
+let t0 = location.hash === '#teacher' ? 'tea' : 'stu'; try { if (!location.hash && localStorage.getItem('labs-tab') === 'tea') t0 = 'tea'; } catch (e) {}
+show(t0);
+</script>
+</body>
+</html>

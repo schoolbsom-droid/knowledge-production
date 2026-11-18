@@ -4,7 +4,7 @@ const SB = 'https://uautjfgslrfhceciqwyn.supabase.co/rest/v1/rpc/';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhdXRqZmdzbHJmaGNlY2lxd3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNjI3NzMsImV4cCI6MjEwODgzODc3M30.Dj1dYWNMwhp02hJEko8XnDD23Mi-gK-Q82BkICdrj_Q'; // مفتاح عام: الجداول مقفلة، والوصول عبر الدوال فقط
 const CFG = Object.assign({ grade: 3, gname: 'ثالث متوسط', slug: 'store-1448', lab: 'pylab-g3', store: 'pylab-g3-v1', unit: 'الوحدة الرابعة «البرمجة مع بايثون»', sub: 'المهارات الرقمية · ثالث متوسط · الوحدة الرابعة' }, window.LABCFG || {});
 const SLUG = CFG.slug; // ثالث: نفس طالبات صفحة مشاريع المتاجر
-const TEACHER = location.hash === '#teacher' || location.hash === '#students';
+const TEACHER = ['#teacher', '#students', '#wheel', '#teams', '#board'].includes(location.hash);
 const STORE = CFG.store;
 const MASTER = 0.8;
 
@@ -610,7 +610,7 @@ function countdown(sec) {
 try { const th = localStorage.getItem('pylab-theme'); if (th) document.documentElement.dataset.theme = th; } catch (e) {}
 if (S.user && !S.user.sid) S.user = null; // دخول قديم باسم مكتوب: تعيد الاختيار من القائمة
 if (S.user && !TEACHER) sync(true);
-go(TEACHER ? (location.hash === '#students' ? 'students' : 'teach') : S.user ? 'map' : 'login');
+go(TEACHER ? ({ '#students': 'students', '#wheel': 'wheel', '#teams': 'teams', '#board': 'board' })[location.hash] || 'teach' : S.user ? 'map' : 'login');
 
 /* ---------- صفحة «الطالبات» للمعلمة ---------- */
 let TL = null;
