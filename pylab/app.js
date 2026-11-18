@@ -72,6 +72,7 @@ function maxOf(a) {
     case 'trap': return a.items.length * 10;
     case 'cyber': return a.items.length * 10 + 10;
     case 'exit': return 30;
+    case 'mind': return 20;
     case 'book': return a.items.length * 10;
     case 'fshapes': return 25;
     case 'fplay': return (a.flows || FLOWS).length * 13;
@@ -131,7 +132,7 @@ const IC = {
   back: '<path d="M9 5l7 7-7 7"/>', home: '<path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/>', board: '<path d="M3 4h18v12H3zM8 20h8M12 16v4"/>', moon: '<path d="M20 14A8 8 0 1 1 10 4a6 6 0 0 0 10 10z"/>', out: '<path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9"/>',
 };
 const icon = (n, s = 22) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[n] || ''}</svg>`;
-const TYPE = { comic: ['قصة مصورة', 'COMIC'], run: ['جرّبي بنفسك', 'CODE LAB'], traffic: ['إشارة المرور', 'TRAFFIC LIGHT'], tpr: ['استجيبي', 'TPR'], mission: ['المهمة السرية', 'SECRET MISSION'], prints: ['لغز البصمات', 'FINGERPRINT'], match: ['طابقي', 'MATCH IT'], quiz: ['اختاري', 'QUIZ'], code: ['تحدي البرمجة', 'CHALLENGE'], explore: ['استكشفي', 'EXPLORE'], master: ['بطاقة الإتقان', 'MASTERY'], story: ['حكاية', 'STORY'], tools: ['ورشة الدوال', 'TOOLS'], turtlepad: ['ورشة السلحفاة', 'TURTLE'], robopad: ['ورشة الروبوت', 'ROBOT'], ifplay: ['مراحل الكود', 'CODE LEVELS'], rush: ['تحدي 30 ثانية', '30 SECONDS'], trap: ['صائد الأخطاء', 'MR. TRAP'], cyber: ['الاختراق السيبراني', 'CYBER ATTACK'], exit: ['التذكرة الختامية', 'EXIT TICKET'], book: ['تمارين الكتاب', 'BOOK'], fshapes: ['بطاقات الأشكال', 'SHAPES'], fplay: ['المراحل العشر', 'LEVELS'], fhunt: ['صيّاد الأشكال', 'GAME'], ffix: ['أصلحي المخطط', 'GAME'] };
+const TYPE = { comic: ['قصة مصورة', 'COMIC'], run: ['جرّبي بنفسك', 'CODE LAB'], traffic: ['إشارة المرور', 'TRAFFIC LIGHT'], tpr: ['استجيبي', 'TPR'], mission: ['المهمة السرية', 'SECRET MISSION'], prints: ['لغز البصمات', 'FINGERPRINT'], match: ['طابقي', 'MATCH IT'], quiz: ['اختاري', 'QUIZ'], code: ['تحدي البرمجة', 'CHALLENGE'], explore: ['استكشفي', 'EXPLORE'], master: ['بطاقة الإتقان', 'MASTERY'], story: ['حكاية', 'STORY'], tools: ['ورشة الدوال', 'TOOLS'], turtlepad: ['ورشة السلحفاة', 'TURTLE'], robopad: ['ورشة الروبوت', 'ROBOT'], ifplay: ['مراحل الكود', 'CODE LEVELS'], rush: ['تحدي 30 ثانية', '30 SECONDS'], trap: ['صائد الأخطاء', 'MR. TRAP'], cyber: ['الاختراق السيبراني', 'CYBER ATTACK'], exit: ['التذكرة الختامية', 'EXIT TICKET'], mind: ['الخريطة الذهنية', 'MIND MAP'], book: ['تمارين الكتاب', 'BOOK'], fshapes: ['بطاقات الأشكال', 'SHAPES'], fplay: ['المراحل العشر', 'LEVELS'], fhunt: ['صيّاد الأشكال', 'GAME'], ffix: ['أصلحي المخطط', 'GAME'] };
 
 /* ---------- عام ---------- */
 function toast(t) { const d = h(`<div class="toast">${t}</div>`); document.body.appendChild(d); setTimeout(() => d.remove(), 2200); }
@@ -149,7 +150,7 @@ function bar() {
   const u = S.user;
   $('#bar').innerHTML = `<div class="brand">معمل بايثون<small>${CFG.sub}</small></div><span class="sp"></span>
   ${u ? `<span class="chip" title="${esc(u.cls)}">👩‍💻 <b>${esc(u.name.split(' ')[0])}</b></span><span class="chip xp" id="xp"></span>` : ''}
-  ${TEACHER ? `<button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('teach')">📖 الشرح</button><button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('board')">🎯 لوحة التحدي</button><button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('students')">👩‍🎓 الطالبات</button>` : ''}
+  ${TEACHER ? `<button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('teach')">📖 الشرح</button><button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('board')">🎯 لوحة التحدي</button>${typeof vWheel === 'function' ? `<button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('wheel')">🎡 العجلة</button><button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('teams')">👥 الفرق</button>` : ''}<button class="chip" style="border:0;cursor:pointer;color:#fff" onclick="go('students')">👩‍🎓 الطالبات</button>` : ''}
   <a class="chip" href="../esp32/g1.html" title="مغامرة المنارة: برمجي الليد على لوحة ESP32" style="text-decoration:none;color:#fff;background:#ff8c1a">💡 مغامرة المنارة</a>
   ${u ? `<button class="iconbtn" title="الخريطة" onclick="go('map')">${icon('home')}</button>` : ''}
   <button class="iconbtn" title="الوضع الليلي" onclick="theme()">${icon('moon')}</button>
@@ -160,7 +161,7 @@ function theme() { const r = document.documentElement, d = r.dataset.theme === '
 function logout() { if (!confirm('تسجيل الخروج؟ يبقى تقدّمكِ محفوظًا على هذا الجهاز.')) return; S.user = null; save(); go('login'); }
 
 let CUR = { view: 'login', L: null, ai: 0 };
-function go(v, L, ai = 0) { CUR = { view: v, L, ai }; bar(); window.scrollTo(0, 0); ({ login: vLogin, map: vMap, lesson: vLesson, cert: vCert, board: vBoard, teach: vTeach, students: vStudents })[v](); }
+function go(v, L, ai = 0) { CUR = { view: v, L, ai }; bar(); window.scrollTo(0, 0); ({ login: vLogin, map: vMap, lesson: vLesson, cert: vCert, board: vBoard, teach: vTeach, students: vStudents, wheel: window.vWheel, teams: window.vTeams })[v](); }
 
 /* ---------- الدخول ---------- */
 async function vLogin() {
@@ -216,6 +217,7 @@ function vLesson() {
   const ctx = { L, ai, a, body: $('#body', box), rec: (k, s, d) => { const r = rec(L.id, ai, k, s, d); paintSc(); return r; }, got: k => got(L.id, ai, k) };
   const paintSc = () => { const mx = maxOf(a); $('#sc').innerHTML = mx ? `⭐ ${ar(Math.min(scoreOf(L.id, ai), mx))} / ${ar(mx)}` : ''; $('#sc').hidden = !mx; };
   paintSc(); R[a.t](ctx);
+  if (typeof stationOpener === 'function') stationOpener(L, ai);
 }
 
 /* ---------- عناصر مشتركة ---------- */
@@ -276,7 +278,7 @@ R.tools = ctx => toolsAct(ctx);
 R.turtlepad = ctx => turtlePad(ctx);
 R.robopad = ctx => roboPad(ctx);
 R.ifplay = ctx => ifPlay(ctx);
-R.rush = ctx => rushAct(ctx); R.trap = ctx => trapAct(ctx); R.cyber = ctx => cyberAct(ctx); R.exit = ctx => exitAct(ctx);
+R.rush = ctx => rushAct(ctx); R.trap = ctx => trapAct(ctx); R.cyber = ctx => cyberAct(ctx); R.exit = ctx => exitAct(ctx); R.mind = ctx => mindAct(ctx);
 R.book = ctx => bookAct(ctx);
 R.fshapes = ctx => fShapes(ctx); R.fplay = ctx => fPlay(ctx); R.fhunt = ctx => fHunt(ctx); R.ffix = ctx => fFix(ctx);
 

@@ -4,6 +4,7 @@ function teachSlides(L) {
   const S_ = [];
   const add = (title, tag, fn) => S_.push({ title, tag, fn });
   add(L.title, 'START', el => { el.innerHTML = `<div class="tcenter"><div style="width:170px;margin:auto">${koda('happy')}</div><div class="mute">الوحدة الرابعة · الكتاب ص${L.pages}</div><h1 class="tbig">${esc(L.title)}</h1><div class="tgoals"><b>🎯 أهداف المحطة</b>${L.skills.map(s => `<div>• ${rich(s)}</div>`).join('')}</div></div>`; });
+  if (typeof opSnippet === 'function' && opSnippet(L) && !L.extra && !L.project && !L.exam) add('افتتاحية المحطة', 'OPENER', el => { el.innerHTML = '<h2 class="th2">🎬 افتتاحية المحطة</h2><div class="tex"></div>'; revealBox($('.tex', el), L, null); });
   L.acts.forEach(a => {
     if (a.t === 'comic') {
       a.panels.forEach((p, i) => add(a.title, 'COMIC', el => {
@@ -58,7 +59,7 @@ function teachSlides(L) {
     if (a.t === 'fplay') (a.flows || FLOWS).forEach((f, i) => add(`${f.icon} المرحلة ${ar(i + 1)}: ${f.title}`, 'LIVE', el => { el.innerHTML = '<div class="tex"></div>'; fPlay({ a: { ...a, only: i }, body: $('.tex', el), rec: () => true, got: () => null }); }));
     if (['fshapes', 'fhunt', 'ffix'].includes(a.t)) add(a.title, 'FLOW', el => { el.innerHTML = `<h2 class="th2">${esc(a.title)}</h2><div class="tex"></div>`; R[a.t]({ a, body: $('.tex', el), rec: () => true, got: () => null }); });
     if (a.t === 'book') a.items.forEach(it => add(`${it.n} · ص${it.p}`, 'BOOK', el => { el.innerHTML = `<h2 class="th2">📘 ${esc(it.n)} <span class="mute" style="font-size:16px">الكتاب ص${esc(it.p)}</span></h2><div class="tex"></div>`; bookAct({ a: { items: [it] }, body: $('.tex', el), rec: () => true, got: () => null }); }));
-    if (['rush', 'trap', 'cyber'].includes(a.t)) add(a.title, TYPE[a.t][1], el => { el.innerHTML = `<h2 class="th2">${esc(a.title)}</h2><div class="tex"></div>`; R[a.t]({ a, L, body: $('.tex', el), rec: () => true, got: () => null }); });
+    if (['rush', 'trap', 'cyber', 'mind'].includes(a.t)) add(a.title, TYPE[a.t][1], el => { el.innerHTML = `<h2 class="th2">${esc(a.title)}</h2><div class="tex"></div>`; R[a.t]({ a, L, body: $('.tex', el), rec: () => true, got: () => null }); });
     if (a.t === 'ifplay') a.stages.forEach((s, i) => add(`${s.icon} المرحلة ${ar(i + 1)}: ${s.title}`, 'LEVEL', el => { el.innerHTML = '<div class="tex"></div>'; ifPlay({ a: { ...a, only: i }, body: $('.tex', el), rec: () => true, got: () => null }); }));
     if (a.t === 'robopad') add(a.title, 'ROBOT', el => { el.innerHTML = `<h2 class="th2">${esc(a.title)}</h2><div class="tex"></div>`; roboPad({ a, body: $('.tex', el), rec: () => true, got: () => null }); });
     if (a.t === 'turtlepad') add(a.title, 'TURTLE', el => { el.innerHTML = `<h2 class="th2">${esc(a.title)}</h2><div class="tex"></div>`; turtlePad({ a, body: $('.tex', el), rec: () => true, got: () => null }); });

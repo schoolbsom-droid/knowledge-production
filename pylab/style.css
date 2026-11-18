@@ -513,3 +513,37 @@ pre.codeblk,.codeblk,.q pre,.panel .say pre,.tsay pre{max-width:100%;overflow-x:
 .ticket{border:3px dashed var(--plum);border-radius:18px;padding:12px;background:repeating-linear-gradient(135deg,var(--card),var(--card) 18px,var(--lilac3) 18px,var(--lilac3) 20px)}
 .ticket .q{background:var(--card)}
 .tkh{font:700 20px Lalezar,Rubik,sans-serif;color:var(--plum);margin-bottom:6px}
+/* افتتاحية المحطة */
+.opn .oph{font-weight:700;margin-bottom:6px}
+.opstage{position:relative;overflow:hidden;border-radius:14px;border:3px solid var(--plum);background:var(--code);height:220px;direction:ltr}
+.opcode{margin:0;padding:16px;color:var(--codeink);font-size:17px;line-height:1.6;white-space:pre;transition:transform .7s ease}
+.opgrid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr)}
+.opgrid i{background:linear-gradient(135deg,#6C5CE7,#A29BFE);border:2px solid #fff;transition:opacity .5s,transform .5s}
+.opgrid i.off{opacity:0;transform:scale(.6) rotate(8deg)}
+/* الخريطة الذهنية */
+.mmc{margin:0 auto 12px;max-width:340px;text-align:center;font:700 19px Rubik,sans-serif;background:var(--plum);color:#fff;border-radius:999px;padding:10px 18px;box-shadow:0 4px 0 rgba(0,0,0,.15)}
+.mmcats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:10px}
+.mmcat{border:3px solid var(--c);border-radius:16px;padding:8px;min-height:96px;background:color-mix(in srgb,var(--c) 8%,var(--card));cursor:pointer;position:relative}
+.mmcat::before{content:"";position:absolute;top:-14px;left:50%;width:3px;height:12px;background:var(--c)}
+.mmcat>b{display:block;text-align:center;color:var(--c);margin-bottom:6px}.mmcat.over{transform:scale(1.02);box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 30%,transparent)}
+.mmdrop,.mmpool{display:flex;flex-wrap:wrap;gap:6px;min-height:34px}
+.mmpool{border:2px dashed var(--line);border-radius:14px;padding:8px}
+.mmchip{background:var(--card);border:2px solid var(--line);border-radius:10px;padding:5px 10px;cursor:grab;font-weight:600;user-select:none}
+.mmchip.sel{border-color:var(--plum);background:var(--lilac3);transform:scale(1.05)}
+.mm.done .mmchip{border-color:var(--g)}
+/* عجلة الحظ */
+.wheelwrap{position:relative;width:min(340px,90vw);margin:10px auto}
+.wheel{width:100%;height:auto;transition:transform 4s cubic-bezier(.17,.67,.12,1);filter:drop-shadow(0 6px 10px rgba(0,0,0,.2))}
+.wptr{position:absolute;top:-6px;left:50%;transform:translateX(-50%);font-size:34px;color:var(--plum);z-index:2;line-height:1}
+.wleg{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}.wleg span{border:2px solid var(--c);color:var(--c);border-radius:999px;padding:2px 10px;font-weight:700;font-size:13px}
+.wcard{border:3px solid var(--c)}.wtag{display:inline-block;background:var(--c);color:#fff;border-radius:999px;padding:3px 14px;font-weight:700;margin-bottom:8px}
+/* لوحة الفرق */
+.teams{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:12px}
+.team{border:3px solid var(--c);border-radius:18px;padding:10px;background:var(--card)}
+.team .tname{font-weight:700;color:var(--c);flex:1;min-width:0}
+.tscore{font:700 30px Lalezar,Rubik,sans-serif;color:var(--c);min-width:56px;text-align:center}
+.tbadges{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0;font-size:13px}.tbadges span{background:var(--lilac3);border-radius:999px;padding:1px 8px}
+.troles{display:grid;gap:3px;font-size:14px;margin:6px 0;background:var(--bg);border-radius:10px;padding:6px 8px}
+.tbtns{display:flex;flex-wrap:wrap;gap:4px}.tbtns .btn{padding:4px 10px;display:flex;flex-direction:column;align-items:center;line-height:1.2}.tbtns small{font-size:10px;font-weight:400}
+.trank{display:grid;gap:6px}.trank>div{display:flex;align-items:center;gap:10px;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:4px 12px;font-weight:700}
+.trank .tscore{font-size:22px;margin-inline-start:auto}

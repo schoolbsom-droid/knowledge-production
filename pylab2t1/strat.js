@@ -132,8 +132,9 @@ const STRAT = {
 };
 LESSONS.forEach(L => {
   const S_ = STRAT[L.id]; if (!S_) return;
-  const ci = L.acts.findIndex(a => a.t === 'code' || a.t === 'book');
-  L.acts.splice(ci < 0 ? L.acts.length - 1 : ci, 0, { t: 'trap', title: 'Mr. Trap: صائد الأخطاء', goal: 'Mr. Trap يخبّئ فخاخًا في كلامه وكوده. هل فيه فخ؟ أين؟ وكيف نصححه؟', items: S_.trap });
+  // قبل بطاقة الإتقان فقط: لا تتغير أرقام الأنشطة القديمة المحفوظ عليها التقدّم
+  const ci = L.acts.findIndex(a => a.t === 'master');
+  L.acts.splice(ci < 0 ? L.acts.length : ci, 0, { t: 'trap', title: 'Mr. Trap: صائد الأخطاء', goal: 'Mr. Trap يخبّئ فخاخًا في كلامه وكوده. هل فيه فخ؟ أين؟ وكيف نصححه؟', items: S_.trap });
   const mi = L.acts.findIndex(a => a.t === 'master');
   L.acts.splice(mi, 0, { t: 'rush', title: 'تحدي 30 ثانية', goal: 'أسئلة سريعة، لكل سؤال 30 ثانية. الدقة أهم من السرعة.', items: S_.rush },
     { t: 'exit', title: 'التذكرة الختامية', goal: 'قبل أن تغادري: أجيبي مع ذكر السبب، وصحّحي خطأ، وأخبري معلمتكِ بما كان صعبًا.', ticket: S_.exit });

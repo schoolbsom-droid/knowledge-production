@@ -29,6 +29,7 @@ function eachItem(p, cb) {
       else if (a.t === 'story') q = k === 'q' ? a.quiz.q : a.steps[i]?.ask?.q;
       else if (a.t === 'tools' || a.t === 'turtlepad' || a.t === 'robopad') q = a.missions?.[i]?.goal || ('مهمة ' + (i + 1));
       else if (a.t === 'fplay') { if (k[0] === 'm') q = 'مرحلة ' + (a.flows || FLOWS)[i].title + ' · مهارة «' + (a.flows || FLOWS)[i].sk.n + '»'; else if (k[0] !== 'q') continue; else q = 'مرحلة ' + (a.flows || FLOWS)[i].title + ': ' + (a.flows || FLOWS)[i].quiz.q; }
+      else if (a.t === 'mind') q = 'الخريطة الذهنية: ' + a.center;
       else if (a.t === 'rush') { q = a.items[i].q; code = a.items[i].code || ''; }
       else if (a.t === 'trap') q = 'Mr. Trap: ' + a.items[i].say;
       else if (a.t === 'cyber') { if (k === 'rb') { q = 'إعادة بناء الدرس (الاختراق السيبراني)'; code = d.text || ''; } else q = 'الاختراق السيبراني: ' + a.items[i].s; }
