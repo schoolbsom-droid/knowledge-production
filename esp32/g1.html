@@ -26,6 +26,13 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 Rubik,Tahoma,s
 h1{margin:0;font:34px/1.3 Lalezar,Rubik,sans-serif;color:var(--brand)}
 .hd p{margin:0;color:var(--mute)}
 .links{display:flex;gap:8px;flex-wrap:wrap}
+.links .film{font:inherit;font-size:15px;font-weight:700;border:0;border-radius:999px;padding:7px 16px;cursor:pointer;color:#fff;background:linear-gradient(135deg,#ff6b8b,#6c5ce7);box-shadow:0 4px 14px #6c5ce755;animation:fpulse 1.6s ease-in-out infinite alternate}
+@keyframes fpulse{to{box-shadow:0 4px 22px #ff6b8baa;transform:scale(1.04)}}
+#filmDlg{border:0;border-radius:18px;padding:0;background:#0e0b25;max-width:min(960px,94vw);width:100%;box-shadow:0 20px 60px #000a}
+#filmDlg::backdrop{background:#0b0920cc}
+#filmDlg video{display:block;width:100%;aspect-ratio:16/9;background:#000}
+#filmDlg .fx{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;color:#fff;font-weight:700}
+#filmDlg .fx button{font:inherit;border:0;border-radius:999px;padding:6px 16px;background:#6c5ce7;color:#fff;cursor:pointer}
 .links a{text-decoration:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 14px;font-size:14px}
 .map{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
 .map button{font:inherit;display:flex;flex-direction:column;align-items:center;gap:0;min-width:88px;padding:8px 10px;border-radius:16px;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
@@ -110,7 +117,7 @@ h1{margin:0;font:34px/1.3 Lalezar,Rubik,sans-serif;color:var(--brand)}
 <div class="wrap">
   <div class="hd">
     <div><h1>💡 مغامرة المنارة</h1><p>برمجي مصباح المنارة بلغة بايثون لتنقذي السفن في الليل</p></div>
-    <div class="links"><a href="wire.html">🔧 كيف أوصّل الليد؟</a><a href="./">🧪 المعمل الكامل</a></div>
+    <div class="links"><button type="button" class="film" id="filmBtn">🎬 شاهدي الفلم</button><a href="wire.html">🔧 كيف أوصّل الليد؟</a><a href="./">🧪 المعمل الكامل</a></div>
   </div>
   <nav class="map" id="map" aria-label="المهمات"></nav>
   <div class="grid">
@@ -141,6 +148,7 @@ h1{margin:0;font:34px/1.3 Lalezar,Rubik,sans-serif;color:var(--brand)}
   </div>
 </div>
 <div class="conf" id="conf"></div>
+<dialog id="filmDlg" aria-label="فلم المغامرة"><div class="fx"><span>🎬 نورة وومضة في مغامرة المنارة</span><button type="button" id="filmX">✕ إغلاق</button></div><video id="filmV" controls playsinline preload="none" poster="film.jpg" src="film.mp4"></video></dialog>
 <script>
 'use strict';
 const $ = id => document.getElementById(id);
@@ -177,6 +185,10 @@ function map() {
   }).join('');
   $('map').querySelectorAll('button').forEach(b => b.onclick = () => open(+b.dataset.i));
 }
+function goM(i) { open(i); } // زر «المهمة التالية»: open داخل onclick تعني document.open
+$('filmBtn').onclick = () => { $('filmDlg').showModal(); $('filmV').play().catch(() => {}); };
+const filmClose = () => { $('filmV').pause(); if ($('filmDlg').open) $('filmDlg').close(); };
+$('filmX').onclick = filmClose; $('filmDlg').addEventListener('close', () => $('filmV').pause());
 function open(i) {
   stop(); M = i; prog = []; inLoop = false; const m = MIS[i];
   $('story').innerHTML = `<b>${m.t}</b><br>${m.story}`;
@@ -310,7 +322,7 @@ function done(tl) {
     P.done[M] = Math.max(P.done[M] || 0, stars); saveP(); map();
     ship(1); confetti();
     const more = stars < 3 ? ` استخدمتِ ${ar(n)} لبنة — هل تستطيعين بعدد أقل؟` : '';
-    return msg(`🎉 <b>أنقذتِ السفينة!</b> ${'⭐'.repeat(stars)}${more}${M + 1 < MIS.length ? ` <button onclick="open(${M + 1})" style="font:inherit;border:0;border-radius:999px;background:var(--brand);color:#fff;padding:4px 14px;cursor:pointer">المهمة التالية ←</button>` : ''}`, 'ok');
+    return msg(`🎉 <b>أنقذتِ السفينة!</b> ${'⭐'.repeat(stars)}${more}${M + 1 < MIS.length ? ` <button onclick="goM(${M + 1})" style="font:inherit;border:0;border-radius:999px;background:var(--brand);color:#fff;padding:4px 14px;cursor:pointer">المهمة التالية ←</button>` : ''}`, 'ok');
   }
   // تلميحات ذكية
   const on = a => a.filter(s => s[0] === 1).length;
