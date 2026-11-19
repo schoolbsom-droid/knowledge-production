@@ -50,6 +50,16 @@
     <div><h3>معمل بايثون · ثالث متوسط</h3><p id="labsum">إجابات الطالبات في المعمل الافتراضي: آراؤهن، وثقتهن، والكود، وأخطاؤهن، وأصعب الأسئلة</p></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="pylab/#students">إجابات الطالبات</a><a class="btn" href="pylab/#teacher">وضع الشرح</a></div>
   </div>
+
+  <div class="feature">
+    <div><h3>معامل البرمجة · كل المراحل</h3><p>أول متوسط، ثاني متوسط (الفصل الأول والروبوت)، ثالث متوسط: روابط الطالبات، ووضع الشرح، والإجابات، والعجلة، والفرق، والأفلام</p></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="labs.html#teacher">أدوات المعلمة</a><a class="btn" href="pylab1/#teacher">أول</a><a class="btn" href="pylab2t1/#teacher">ثاني · ف١</a><a class="btn" href="pylab2/#teacher">ثاني · الروبوت</a><a class="btn" href="pylab/#teacher">ثالث</a></div>
+  </div>
+
+  <div class="feature">
+    <div><h3>صفحات الطالبات</h3><p>مشاريع الفيديو لثاني متوسط، ومبادرة «درع الوطن»</p></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="video.html">مشاريع الفيديو</a><a class="btn" href="dir3/">درع الوطن</a></div>
+  </div>
   <script>
   // ملخص المعمل (أرقام فقط بلا أسماء)
   fetch('https://uautjfgslrfhceciqwyn.supabase.co/rest/v1/rpc/api_lab_summary', { method: 'POST', headers: { apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhdXRqZmdzbHJmaGNlY2lxd3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNjI3NzMsImV4cCI6MjEwODgzODc3M30.Dj1dYWNMwhp02hJEko8XnDD23Mi-gK-Q82BkICdrj_Q', Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhdXRqZmdzbHJmaGNlY2lxd3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNjI3NzMsImV4cCI6MjEwODgzODc3M30.Dj1dYWNMwhp02hJEko8XnDD23Mi-gK-Q82BkICdrj_Q', 'Content-Type': 'application/json' }, body: JSON.stringify({ p_lab: 'pylab-g3', p_slug: 'store-1448' }) })
